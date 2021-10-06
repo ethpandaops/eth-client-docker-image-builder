@@ -20,7 +20,6 @@ ADD nimbus-eth2 /root/nimbus-eth2
 # We need to run `make update` again because some absolute paths changed.
 RUN cd /root/nimbus-eth2 \
  && make -j$(nproc) update \
- && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="" nimbus_validator_client \
  && make -j$(nproc) LOG_LEVEL="TRACE" NIMFLAGS="" nimbus_beacon_node
 
 # alternatively:
@@ -44,7 +43,6 @@ RUN ldd --version ldd
 RUN rm -rf /home/user/nimbus-eth2/build/beacon_node
 
 # "COPY" creates new image layers, so we cram all we can into one command
-COPY --from=build /root/nimbus-eth2/build/nimbus_validator_client /home/user/nimbus-eth2/build/validator_client
 COPY --from=build /root/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-eth2/build/beacon_node
 
 ENV PATH="/home/user/nimbus-eth2/build:${PATH}"
