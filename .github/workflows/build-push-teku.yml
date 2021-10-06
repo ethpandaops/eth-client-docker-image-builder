@@ -29,22 +29,36 @@ jobs:
         run: |
           cd teku
           echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: docker-build-push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./teku
-          file: ./teku/docker/jdk16/Dockerfile
-          tags: parithoshj/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
-          push: true
+      - name: build docker image with gradle
+        id: git_commit_hash
+        shell: bash
+        run: |
+          cd teku
+          docker image rm consensys/teku:develop-jdk16
+          ./gradlew distDocker
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker tag consensys/teku:develop-jdk16 parithoshj/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          docker push parithoshj/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          docker image rm consensys/teku:develop-jdk16
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v1
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v1
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v1
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#      - name: docker-build-push
+#        id: docker_build
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: ./teku
+#          file: ./teku/docker/jdk16/Dockerfile
+#          tags: parithoshj/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+#          push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
