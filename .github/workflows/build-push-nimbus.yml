@@ -1,4 +1,4 @@
-name: Build geth docker image
+name: Build nimbus docker image
 on:
   workflow_dispatch:
     inputs:
