@@ -1,4 +1,4 @@
-name: Build nimbus-eth2 docker image
+name: Build geth docker image
 on:
   workflow_dispatch:
     inputs:
@@ -13,7 +13,7 @@ jobs:
   git-sync:
     name: git-sync
     # This job runs on Linux
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v2
