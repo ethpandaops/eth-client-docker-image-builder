@@ -1,15 +1,12 @@
-FROM debian:buster-slim AS build
+FROM debian:testing-slim AS build
 
 SHELL ["/bin/bash", "-c"]
 
 # switch to testing branch to enable an update to >=glibc 2.29 which is required by the nim compiler
-RUN echo deb http://ftp.us.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
 
 # use gcc 10.2.0-15 or older, see https://github.com/status-im/nimbus-eth2/issues/1970#issuecomment-723736321
-RUN apt-get -qq update \
- && apt-get -qq -y install build-essential git &>/dev/null \
- && apt-get -qq clean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt update \
+ && apt -y install build-essential git
 
 
 RUN ldd --version ldd
@@ -32,9 +29,17 @@ RUN cd /root/nimbus-eth2 \
 # --------------------------------- #
 # Starting new image to reduce size #
 # --------------------------------- #
-FROM statusim/nimbus-eth2:amd64-latest as deploy
+FROM debian:testing-slim as deploy
 
 SHELL ["/bin/bash", "-c"]
+
+
+# use gcc 10.2.0-15 or older, see https://github.com/status-im/nimbus-eth2/issues/1970#issuecomment-723736321
+RUN apt update \
+ && apt -y install build-essential
+
+
+RUN ldd --version ldd
 
 RUN rm -rf /home/user/nimbus-eth2/build/beacon_node
 
