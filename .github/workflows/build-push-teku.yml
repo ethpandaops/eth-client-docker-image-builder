@@ -30,7 +30,6 @@ jobs:
           cd teku
           echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
       - name: build docker image with gradle
-        id: git_commit_hash
         shell: bash
         run: |
           cd teku
