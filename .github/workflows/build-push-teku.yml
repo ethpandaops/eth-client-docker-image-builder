@@ -33,12 +33,10 @@ jobs:
         shell: bash
         run: |
           cd teku
-          docker image rm consensys/teku:develop-jdk16
           ./gradlew distDocker
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker tag consensys/teku:develop-jdk16 parithoshj/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
           docker push parithoshj/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
-          docker image rm consensys/teku:develop-jdk16
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
