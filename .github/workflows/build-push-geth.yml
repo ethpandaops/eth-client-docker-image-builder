@@ -22,7 +22,7 @@ jobs:
         with:
           repository: MariusVanDerWijden/go-ethereum
           path: 'geth'
-          ref: 'merge-interop-spec'
+          ref: ${{ github.event.inputs.commitRef }}
       - name: get git commit hash
         id: git_commit_hash
         shell: bash

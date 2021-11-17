@@ -22,7 +22,7 @@ jobs:
         with:
           repository: ConsenSys/teku.git
           path: 'teku'
-          ref: 'merge-interop'
+          ref: ${{ github.event.inputs.commitRef }}
       - name: get git commit hash
         id: git_commit_hash
         shell: bash
