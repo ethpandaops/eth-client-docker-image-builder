@@ -1,4 +1,8 @@
 name: Build nimbus docker image
+
+env:
+  DEFAULT_BRANCH: "kiln"
+  
 on:
   workflow_dispatch:
     inputs:
@@ -6,8 +10,8 @@ on:
         description: The branch, tag or SHA to checkout and build from
         default: stable
         required: true
-  #schedule:
-   # - cron: '0 * * * *'
+  schedule:
+    - cron: '10 2 * * *'
 
 jobs:
   git-sync:
@@ -22,7 +26,7 @@ jobs:
         with:
           repository: status-im/nimbus-eth2
           path: 'nimbus/nimbus-eth2'
-          ref: ${{ github.event.inputs.commitRef }}
+          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: get git commit hash
         id: git_commit_hash
         shell: bash
