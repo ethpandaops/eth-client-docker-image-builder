@@ -1,4 +1,9 @@
 name: Build geth docker image
+
+
+env:
+  DEFAULT_BRANCH: "merge-kiln"
+
 on:
   workflow_dispatch:
     inputs:
@@ -22,7 +27,7 @@ jobs:
         with:
           repository: MariusVanDerWijden/go-ethereum
           path: 'geth'
-          ref: ${{ github.event.inputs.commitRef }}
+          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: get git commit hash
         id: git_commit_hash
         shell: bash
