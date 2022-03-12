@@ -1,4 +1,8 @@
 name: Build ethereumjs docker image
+
+env:
+  DEFAULT_BRANCH: "master"
+  
 on:
   workflow_dispatch:
     inputs:
@@ -22,7 +26,7 @@ jobs:
         with:
           repository: ethereumjs/ethereumjs-monorepo.git
           path: 'ethereumjs/ethereumjs-monorepo'
-          ref: 'merge-pithos'
+          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: get git commit hash
         id: git_commit_hash
         shell: bash
