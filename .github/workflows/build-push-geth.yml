@@ -2,7 +2,7 @@ name: Build geth docker image
 
 
 env:
-  DEFAULT_BRANCH: "merge-kiln"
+  DEFAULT_BRANCH: "merge-kiln-v2"
 
 on:
   workflow_dispatch:
