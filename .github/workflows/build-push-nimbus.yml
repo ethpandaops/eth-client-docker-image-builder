@@ -1,7 +1,7 @@
 name: Build nimbus docker image
 
 env:
-  DEFAULT_BRANCH: "kiln"
+  DEFAULT_BRANCH: "kiln-dev-auth"
   
 on:
   workflow_dispatch:
