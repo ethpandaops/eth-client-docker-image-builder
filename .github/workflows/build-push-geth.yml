@@ -2,14 +2,19 @@ name: Build geth docker image
 
 
 env:
-  DEFAULT_BRANCH: "merge-kiln-v2"
+  DEFAULT_REPO: "ethereum/go-ethereum"
+  DEFAULT_BRANCH: "master"
 
 on:
   workflow_dispatch:
     inputs:
+      reponame:
+        description: The geth repo to clone
+        default: ethereum/go-ethereum
+        required: true
       commitRef:
         description: The branch, tag or SHA to checkout and build from
-        default: stable
+        default: master
         required: true
   schedule:
     - cron: '0 2 * * *'
@@ -25,7 +30,7 @@ jobs:
       - name: Check out my other private repo
         uses: actions/checkout@v2
         with:
-          repository: MariusVanDerWijden/go-ethereum
+          repository: ${{ github.event.inputs.commitRef || env.DEFAULT_REPO }}
           path: 'geth'
           ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: get git commit hash
@@ -49,7 +54,7 @@ jobs:
         with:
           context: ./geth
           file: ./geth/Dockerfile
-          tags: parithoshj/geth:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          tags: parithoshj/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }}
           push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
