@@ -8,7 +8,7 @@ on:
     inputs:
       commitRef:
         description: The branch, tag or SHA to checkout and build from
-        default: stable
+        default: kiln-dev-auth
         required: true
   schedule:
     - cron: '10 2 * * *'
