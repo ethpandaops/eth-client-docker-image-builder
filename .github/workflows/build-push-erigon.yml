@@ -1,4 +1,4 @@
-name: Build geth docker image
+name: Build erigon docker image
 
 
 env:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       reponame:
-        description: The geth repo to clone
+        description: The erigon repo to clone
         default: ledgerwatch/erigon
         required: true
       commitRef:
@@ -37,7 +37,7 @@ jobs:
         id: git_commit_hash
         shell: bash
         run: |
-          cd geth
+          cd erigon
           echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
