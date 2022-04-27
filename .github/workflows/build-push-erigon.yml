@@ -1,0 +1,60 @@
+name: Build geth docker image
+
+
+env:
+  DEFAULT_REPO: "ledgerwatch/erigon"
+  DEFAULT_BRANCH: "devel"
+
+on:
+  workflow_dispatch:
+    inputs:
+      reponame:
+        description: The geth repo to clone
+        default: ledgerwatch/erigon
+        required: true
+      commitRef:
+        description: The branch, tag or SHA to checkout and build from
+        default: devel
+        required: true
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  git-sync:
+    name: git-sync
+    # This job runs on Linux
+    runs-on: self-hosted
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v2
+      - name: Check out my other private repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
+          path: 'erigon'
+          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
+      - name: get git commit hash
+        id: git_commit_hash
+        shell: bash
+        run: |
+          cd geth
+          echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: docker-build-push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./erigon
+          file: ./erigon/Dockerfile
+          tags: parithoshj/erigon:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},parithoshj/erigon:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
+          push: true
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
