@@ -1,14 +1,14 @@
 name: Build nimbus docker image
 
 env:
-  DEFAULT_BRANCH: "kiln-dev-auth"
+  DEFAULT_BRANCH: "unstable"
   
 on:
   workflow_dispatch:
     inputs:
       commitRef:
         description: The branch, tag or SHA to checkout and build from
-        default: kiln-dev-auth
+        default: unstable
         required: true
   schedule:
     - cron: '10 2 * * *'
