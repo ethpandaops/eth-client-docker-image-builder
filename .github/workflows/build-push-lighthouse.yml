@@ -1,0 +1,54 @@
+name: Build lighthouse docker image
+
+env:
+  DEFAULT_BRANCH: "stable"
+  
+on:
+  workflow_dispatch:
+    inputs:
+      commitRef:
+        description: The branch, tag or SHA to checkout and build from
+        default: stable
+        required: true
+  schedule:
+    - cron: '10 2 * * *'
+
+jobs:
+  git-sync:
+    name: git-sync
+    # This job runs on Linux
+    runs-on: self-hosted
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v2
+      - name: Check out my other private repo
+        uses: actions/checkout@v2
+        with:
+          repository: sigp/lighthouse
+          path: 'lighthouse/lighthouse'
+          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
+      - name: get git commit hash
+        id: git_commit_hash
+        shell: bash
+        run: |
+          cd lighthouse/lighthouse
+          echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: docker-build-push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./lighthouse
+          file: ./lighthouse/Dockerfile
+          tags: parithoshj/lighthouse:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},parithoshj/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
+          push: true
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
