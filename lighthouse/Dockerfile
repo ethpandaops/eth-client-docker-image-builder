@@ -4,7 +4,7 @@ COPY . lighthouse
 ARG FEATURE_1
 ARG FEATURE_2
 ENV FEATURES $FEATURE_1 $FEATURE_2
-RUN cd lighthouse/lighthouse && ls && make
+RUN cd lighthouse/lighthouse && make
 
 FROM ubuntu:22.04
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
