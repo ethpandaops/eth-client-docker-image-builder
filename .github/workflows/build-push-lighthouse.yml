@@ -1,11 +1,16 @@
 name: Build lighthouse docker image
 
 env:
+  DEFAULT_REPO: "sigp/lighthouse"
   DEFAULT_BRANCH: "stable"
   
 on:
   workflow_dispatch:
     inputs:
+      reponame:
+        description: The geth repo to clone
+        default: sigp/lighthouse
+        required: true
       commitRef:
         description: The branch, tag or SHA to checkout and build from
         default: stable
