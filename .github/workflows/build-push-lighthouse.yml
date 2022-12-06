@@ -19,8 +19,6 @@ on:
         description: Enable withdrawals feature
         default: false
         required: true
-  schedule:
-    - cron: '10 2 * * *'
 
 jobs:
   git-sync:
