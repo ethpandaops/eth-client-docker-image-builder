@@ -54,7 +54,7 @@ jobs:
         with:
           context: ./erigon
           file: ./erigon/Dockerfile
-          tags: parithoshj/erigon:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},parithoshj/erigon:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
+          tags: ethpandaops/erigon:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},ethpandaops/erigon:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
           push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

@@ -54,7 +54,7 @@ jobs:
         with:
           context: ./geth
           file: ./geth/Dockerfile
-          tags: parithoshj/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},parithoshj/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
+          tags: ethpandaops/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},ethpandaops/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
           push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

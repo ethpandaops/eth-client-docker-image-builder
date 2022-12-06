@@ -48,7 +48,7 @@ jobs:
         with:
           context: ./nimbus
           file: ./nimbus/Dockerfile
-          tags: parithoshj/nimbus:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          tags: ethpandaops/nimbus:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
           push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

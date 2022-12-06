@@ -48,7 +48,7 @@ jobs:
         with:
           context: ./ethereumjs
           file: ./ethereumjs/Dockerfile
-          tags: parithoshj/ethereumjs:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          tags: ethpandaops/ethereumjs:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
           push: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
