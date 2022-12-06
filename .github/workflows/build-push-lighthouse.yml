@@ -53,7 +53,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Set feature variable
         id: set_feature
-        if: ${{ github.event.inputs.commitRef == 'capella' || ((github.event.inputs.enableWithdrawals || env.DEFAULT_WITHDRAWALS ) == "true") }}
+        if: ${{ github.event.inputs.commitRef == 'capella' || ((github.event.inputs.enableWithdrawals || env.DEFAULT_WITHDRAWALS ) == 'true') }}
         run: |
           echo "::set-output name=feature1::withdrawals"
           echo "::set-output name=feature2::withdrawals-processing"
