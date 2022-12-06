@@ -3,7 +3,7 @@ name: Build lighthouse docker image
 env:
   DEFAULT_REPO: "sigp/lighthouse"
   DEFAULT_BRANCH: "stable"
-  
+  DEFAULT_WITHDRAWALS: "false"
 on:
   workflow_dispatch:
     inputs:
@@ -14,6 +14,10 @@ on:
       commitRef:
         description: The branch, tag or SHA to checkout and build from
         default: stable
+        required: true
+      enableWithdrawals:
+        description: Enable withdrawals feature
+        default: false
         required: true
   schedule:
     - cron: '10 2 * * *'
@@ -49,7 +53,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Set feature variable
         id: set_feature
-        if: github.event.inputs.commitRef == 'capella'
+        if: ${{ github.event.inputs.commitRef == 'capella' || ((github.event.inputs.enableWithdrawals || env.DEFAULT_WITHDRAWALS ) == "true") }}
         run: |
           echo "::set-output name=feature1::withdrawals"
           echo "::set-output name=feature2::withdrawals-processing"
