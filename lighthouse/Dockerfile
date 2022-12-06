@@ -4,7 +4,7 @@ COPY . lighthouse
 ARG FEATURES1=withdrawals
 ARG FEATURES2=withdrawals-processing
 ENV FEATURES $FEATURES1 $FEATURES2
-RUN cd lighthouse && ls && make
+RUN cd lighthouse/lighthouse && ls && make
 
 FROM ubuntu:22.04
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
