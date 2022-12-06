@@ -48,10 +48,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Set feature variable
+        id: set_feature
         if: github.event.inputs.commitRef == 'capella'
         run: |
-          echo "::set-env name=FEATURE_1::withdrawals"
-          echo "::set-env name=FEATURE_2::withdrawals-processing"
+          echo "::set-output name=feature1::withdrawals"
+          echo "::set-output name=feature2::withdrawals-processing"
       - name: docker-build-push
         id: docker_build
         uses: docker/build-push-action@v3
@@ -61,7 +62,7 @@ jobs:
           tags: parithoshj/lighthouse:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},parithoshj/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
           push: true
           build-args: |
-            FEATURE_1=${{env.FEATURE_1}}
-            FEATURE_2=${{env.FEATURE_2}}
+            FEATURE_1=${{ steps.set_feature.outputs.feature1 }}
+            FEATURE_2=${{ steps.set_feature.outputs.feature2 }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
