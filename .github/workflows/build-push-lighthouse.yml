@@ -61,7 +61,7 @@ jobs:
           tags: parithoshj/lighthouse:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},parithoshj/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
           push: true
           build-args: |
-            FEATURE_1=${{env.FEATURE_1}}}
-            FEATURE_2=${{env.FEATURE_2}}}
+            FEATURE_1=${{env.FEATURE_1}}
+            FEATURE_2=${{env.FEATURE_2}}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
