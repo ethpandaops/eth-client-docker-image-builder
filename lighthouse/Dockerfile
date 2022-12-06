@@ -1,9 +1,9 @@
 FROM rust:1.65.0-bullseye AS builder
 RUN apt-get update && apt-get -y upgrade && apt-get install -y cmake libclang-dev protobuf-compiler
 COPY . lighthouse
-ARG FEATURES1=withdrawals
-ARG FEATURES2=withdrawals-processing
-ENV FEATURES $FEATURES1 $FEATURES2
+ARG FEATURE_1
+ARG FEATURE_2
+ENV FEATURES $FEATURE_1 $FEATURE_2
 RUN cd lighthouse/lighthouse && ls && make
 
 FROM ubuntu:22.04
