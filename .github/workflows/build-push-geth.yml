@@ -56,5 +56,8 @@ jobs:
           file: ./geth/Dockerfile
           tags: ethpandaops/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},ethpandaops/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
           push: true
+          labels: |
+            ethpandaops.io.repo=${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
+            ethpandaops.io.commitRef=${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
