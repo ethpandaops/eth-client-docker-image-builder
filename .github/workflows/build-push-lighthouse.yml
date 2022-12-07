@@ -63,6 +63,9 @@ jobs:
           file: ./lighthouse/Dockerfile
           tags: ethpandaops/lighthouse:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},ethpandaops/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
           push: true
+          labels: |
+            ethpandaops.io.repo=${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
+            ethpandaops.io.commitRef=${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
           build-args: |
             FEATURE_1=${{ steps.set_feature.outputs.feature1 }}
             FEATURE_2=${{ steps.set_feature.outputs.feature2 }}

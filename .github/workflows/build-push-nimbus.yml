@@ -50,5 +50,8 @@ jobs:
           file: ./nimbus/Dockerfile
           tags: ethpandaops/nimbus:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
           push: true
+          labels: |
+            ethpandaops.io.repo=${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
+            ethpandaops.io.commitRef=${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
