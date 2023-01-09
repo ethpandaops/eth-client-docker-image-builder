@@ -1,4 +1,9 @@
 name: Build teku docker image
+
+env:
+  DEFAULT_REPO: "ConsenSys/teku"
+  DEFAULT_BRANCH: "master"
+
 on:
   workflow_dispatch:
     inputs:
@@ -20,23 +25,25 @@ jobs:
       - name: Check out my other private repo
         uses: actions/checkout@v2
         with:
-          repository: ConsenSys/teku.git
+          repository: ${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
           path: 'teku'
-          ref: ${{ github.event.inputs.commitRef }}
+          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: get git commit hash
         id: git_commit_hash
         shell: bash
         run: |
           cd teku
           echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
       - name: build docker image with gradle
         shell: bash
         run: |
           cd teku
           ./gradlew distDocker
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker tag consensys/teku:develop-jdk16 ethpandaops/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
-          docker push ethpandaops/teku:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          docker tag consensys/teku:develop-jdk16 ethpandaops/teku:capella-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          docker push ethpandaops/teku:capella-${{ steps.git_commit_hash.outputs.git-commit-hash }}
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
