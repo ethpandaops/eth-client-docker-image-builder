@@ -46,8 +46,8 @@ jobs:
           cd teku
           ./gradlew distDocker
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker tag consensys/teku:develop-jdk16 ethpandaops/teku:capella-${{ steps.git_commit_hash.outputs.git-commit-hash }}
-          docker push ethpandaops/teku:capella-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          docker tag consensys/teku:develop-jdk16 ethpandaops/teku:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          docker push ethpandaops/teku:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }}
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
