@@ -1,11 +1,16 @@
 name: Build nimbus docker image
 
 env:
+  DEFAULT_REPO: "nimbus/nimbus-eth2"
   DEFAULT_BRANCH: "unstable"
   
 on:
   workflow_dispatch:
     inputs:
+      reponame: 
+        description: Nimbus repo to clone
+        default: nimbus/nimbus-eth2
+        required: true
       commitRef:
         description: The branch, tag or SHA to checkout and build from
         default: unstable
@@ -48,7 +53,7 @@ jobs:
         with:
           context: ./nimbus
           file: ./nimbus/Dockerfile
-          tags: ethpandaops/nimbus:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
+          tags: ethpandaops/nimbus:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }}
           push: true
           labels: |
             ethpandaops.io.repo=${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
