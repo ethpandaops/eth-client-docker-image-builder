@@ -1,7 +1,7 @@
 name: Build nimbus docker image
 
 env:
-  DEFAULT_REPO: "nimbus/nimbus-eth2"
+  DEFAULT_REPO: "status-im/nimbus-eth2"
   DEFAULT_BRANCH: "unstable"
   
 on:
@@ -9,7 +9,7 @@ on:
     inputs:
       reponame: 
         description: Nimbus repo to clone
-        default: nimbus/nimbus-eth2
+        default: status-im/nimbus-eth2
         required: true
       commitRef:
         description: The branch, tag or SHA to checkout and build from
