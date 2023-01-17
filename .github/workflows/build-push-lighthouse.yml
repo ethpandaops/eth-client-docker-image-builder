@@ -31,7 +31,7 @@ jobs:
       - name: Check out my other private repo
         uses: actions/checkout@v2
         with:
-          repository: sigp/lighthouse
+          repository: ${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
           path: 'lighthouse/lighthouse'
           ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
       - name: get git commit hash
