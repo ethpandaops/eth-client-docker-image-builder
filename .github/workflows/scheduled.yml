@@ -1,0 +1,109 @@
+name: Scheduled
+
+on:
+  schedule:
+    - cron:  '0 * * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      configs: ${{ steps.repo_check.outputs.configs }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: mikefarah/yq@v4.30.8
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - id: repo_check
+        run: |
+          # This script checks the source github repository for the latest commit hash and checks if the tag exists in the target dockerhub repository.
+          # If the tag does not exist in dockerhub, we add the config to an array for the deploy job to build and push.
+          OUPUT="configs=["
+          # iterate over all images in config file
+          while IFS=$'\t' read -r INDEX SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
+            echo "========================================"
+            echo "Checking config index: $INDEX"
+            echo "Source repository: $SOURCE_REPOSITORY"
+            echo "Source ref: $SOURCE_REF"
+            
+            # fetch latest commit hash for image
+            set -e
+            RESPONSE=$(curl -s -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${SOURCE_REPOSITORY}/commits/${SOURCE_REF}\?per_page\=1)
+            set +e
+            STATUS=$?
+            # if we got a response, extract the commit hash
+            if [ $STATUS -eq 0 ]; then
+              COMMIT_HASH="$(jq -r '.sha' <<< "$RESPONSE" | cut -c1-7)"
+            else
+              echo "Failed to fetch commit hash for ${SOURCE_REPOSITORY}#${SOURCE_REF}"
+              echo "Response: $RESPONSE"
+              echo "Status: $STATUS"
+              exit 1
+            fi
+            # catch empty commit hash from jq extraction
+            if [ -z "$COMMIT_HASH" ]; then
+              echo "Response: $RESPONSE"
+              echo "Status: $STATUS"
+              echo "Failed to fetch commit hash for ${SOURCE_REPOSITORY}#${SOURCE_REF}"
+              exit 1
+            fi
+            if [ "$COMMIT_HASH" = "null" ]; then
+              echo "Response: $RESPONSE"
+              echo "Status: $STATUS"
+              echo "Got null commit hash for ${SOURCE_REPOSITORY}#${SOURCE_REF}"
+              exit 1
+            fi
+
+            # generate image tag
+            IMAGE_TAG=${TARGET_TAG}-${COMMIT_HASH}
+            IMAGE=${TARGET_REPOSITORY}:${IMAGE_TAG}
+
+            # check if image exists
+            docker image pull $IMAGE >/dev/null 2>&1
+            docker image inspect $IMAGE >/dev/null 2>&1
+            STATUS=$?
+            
+            # if image exists, we don't need to build and push it
+            if [ $STATUS -eq 0 ]; then
+              echo "Image $IMAGE already exists"
+              continue
+            fi
+
+            if [ "$(yq -r ".[${INDEX}]" config.yaml)" = "null" ]; then
+              echo "config data at index ${INDEX} is null"
+              exit 1
+            fi
+            
+            OUPUT="${OUPUT}$(yq -r -o=json ".[${INDEX}]" config.yaml),"
+          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' config.yaml)
+
+          # check if last character is a comma and remove it
+          [[ $OUPUT == *, ]] &&
+              OUPUT="${OUPUT%?}"
+
+          # close json array
+          OUPUT="${OUPUT}]"
+
+          echo "OUPUT: $OUPUT"
+
+          echo $OUPUT >> $GITHUB_OUTPUT
+  scheduled:
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{fromJson(needs.check.outputs.configs)}}
+    uses: ./.github/workflows/deploy.yml
+    with:
+      source_repository: ${{ matrix.config.source.repository }}
+      source_ref: ${{ matrix.config.source.ref }}
+      build_script: ${{ matrix.config.build_script }}
+      target_tag: ${{ matrix.config.target.tag }}
+      target_repository: ${{ matrix.config.target.repository }}
+      target_dockerfile: ${{ matrix.config.target.dockerfile }}
+    secrets:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

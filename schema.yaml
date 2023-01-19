@@ -1,0 +1,15 @@
+list(include('build'))
+---
+build:
+  source: include('source')
+  build_script: str(required=False)
+  target: include('target')
+
+source:
+  repository: str()
+  ref: str(required=False)
+
+target:
+  tag: str()
+  repository: str()
+  dockerfile: str(required=False)

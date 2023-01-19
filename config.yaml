@@ -1,0 +1,81 @@
+##########
+# erigon #
+##########
+- source:
+    repository: ledgerwatch/erigon
+    ref: devel
+  target:
+    tag: devel
+    repository: ethpandaops/erigon
+##############
+# ethereumjs #
+##############
+- source:
+    repository: ethereumjs/ethereumjs-monorepo
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/ethereumjs
+    dockerfile: ./ethereumjs/Dockerfile
+########
+# geth #
+########
+- source:
+    repository: ethereum/go-ethereum
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/geth
+##############
+# lighthouse #
+##############
+- source:
+    repository: sigp/lighthouse
+    ref: stable
+  target:
+    tag: stable
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: sigp/lighthouse
+    ref: capella
+  target:
+    tag: capella
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: sigp/lighthouse
+    ref: stable
+  build_script: ./lighthouse/xatu-sentry.sh
+  target:
+    tag: xatu-sentry
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
+##########
+# nimbus #
+##########
+- source:
+    repository: status-im/nimbus-eth2
+    ref: unstable
+  target:
+    tag: unstable
+    repository: ethpandaops/nimbus
+    dockerfile: ./nimbus/Dockerfile
+- source:
+    repository: status-im/nimbus-eth2
+    ref: unstable
+  build_script: ./nimbus/xatu-sentry.sh
+  target:
+    tag: xatu-sentry
+    repository: ethpandaops/nimbus
+    dockerfile: ./nimbus/Dockerfile
+########
+# teku #
+########
+- source:
+    repository: ConsenSys/teku
+    ref: master
+  build_script: ./teku/build.sh
+  target:
+    tag: master
+    repository: ethpandaops/teku
