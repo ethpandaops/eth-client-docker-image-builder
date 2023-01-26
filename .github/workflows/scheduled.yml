@@ -97,6 +97,7 @@ jobs:
           echo $OUPUT >> $GITHUB_OUTPUT
   scheduled:
     needs: check
+    if: ${{ needs.check.outputs.configs != '[]' && needs.check.outputs.configs != '' }}
     strategy:
       fail-fast: false
       matrix:
