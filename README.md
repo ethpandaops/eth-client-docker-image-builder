@@ -1,6 +1,6 @@
 # eth-client-docker-image-builder
 
-Automates docker builds for ethereum clients. The build process is scheduled every 15 minutes to check source repositories for new commits.
+Automates docker builds for ethereum clients. The build process is scheduled every hour to check source repositories for new commits.
 
 ## Build image on demand
 
