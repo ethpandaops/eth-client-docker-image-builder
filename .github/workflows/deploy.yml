@@ -36,8 +36,7 @@ on:
 
 jobs:
   deploy:
-    # This job runs on Linux
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v3
