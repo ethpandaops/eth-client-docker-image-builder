@@ -1,55 +1,30 @@
 name: Build teku docker image
 
-env:
-  DEFAULT_REPO: "ConsenSys/teku"
-  DEFAULT_BRANCH: "master"
-
 on:
   workflow_dispatch:
     inputs:
-      reponame: 
-        description: Teku repo to clone
+      repository: 
+        description: The source teku repository to build from
         default: ConsenSys/teku
         required: true
-      commitRef:
+      ref:
         description: The branch, tag or SHA to checkout and build from
         default: master
         required: true
-  #schedule:
-   # - cron: '0 * * * *'
+      docker_tag:
+        description: The docker tag to use (normally the ref name)
+        default: master
+        required: true
 
 jobs:
-  git-sync:
-    name: git-sync
-    # This job runs on Linux
-    runs-on: self-hosted
-    steps:
-      - name: Checkout this repo
-        uses: actions/checkout@v2
-      - name: Check out my other private repo
-        uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
-          path: 'teku'
-          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
-      - name: get git commit hash
-        id: git_commit_hash
-        shell: bash
-        run: |
-          cd teku
-          echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
-      - name: build docker image with gradle
-        shell: bash
-        run: |
-          cd teku
-          ./gradlew distDocker
-          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker tag consensys/teku:develop-jdk16 ethpandaops/teku:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }}
-          docker push ethpandaops/teku:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }}
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+  teku:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      source_repository: ${{ inputs.repository }}
+      source_ref: ${{ inputs.ref }}
+      build_script: ./teku/build.sh
+      target_tag: ${{ inputs.docker_tag }}
+      target_repository: ethpandaops/teku
+    secrets:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

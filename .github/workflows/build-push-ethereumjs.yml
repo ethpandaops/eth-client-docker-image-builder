@@ -1,57 +1,33 @@
 name: Build ethereumjs docker image
 
-env:
-  DEFAULT_BRANCH: "master"
-  
 on:
   workflow_dispatch:
     inputs:
-      commitRef:
-        description: The branch, tag or SHA to checkout and build from
-        default: stable
+      repository: 
+        description: The source geth repository to build from
+        default: ethereumjs/ethereumjs-monorepo
+        type: string
         required: true
-    #schedule:
-    # - cron: '0 * * * *'
+      ref:
+        description: The branch, tag or SHA to checkout and build from
+        default: master
+        type: string
+        required: true
+      docker_tag:
+        description: The docker tag to use (normally the ref name)
+        default: master
+        type: string
+        required: true
 
 jobs:
-  git-sync:
-    name: git-sync
-    # This job runs on Linux
-    runs-on: self-hosted
-    steps:
-      - name: Checkout this repo
-        uses: actions/checkout@v2
-      - name: Check out my other private repo
-        uses: actions/checkout@v2
-        with:
-          repository: ethereumjs/ethereumjs-monorepo.git
-          path: 'ethereumjs/ethereumjs-monorepo'
-          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
-      - name: get git commit hash
-        id: git_commit_hash
-        shell: bash
-        run: |
-          cd ethereumjs/ethereumjs-monorepo
-          echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: docker-build-push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./ethereumjs
-          file: ./ethereumjs/Dockerfile
-          tags: ethpandaops/ethereumjs:merge-${{ steps.git_commit_hash.outputs.git-commit-hash }}
-          push: true
-          labels: |
-            ethpandaops.io.repo=${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
-            ethpandaops.io.commitRef=${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+  ethereumjs:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      source_repository: ${{ inputs.repository }}
+      source_ref: ${{ inputs.ref }}
+      target_tag: ${{ inputs.docker_tag }}
+      target_repository: ethpandaops/ethereumjs
+      target_dockerfile: ./ethereumjs/Dockerfile
+    secrets:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

@@ -1,63 +1,32 @@
 name: Build geth docker image
 
-
-env:
-  DEFAULT_REPO: "ethereum/go-ethereum"
-  DEFAULT_BRANCH: "master"
-
 on:
   workflow_dispatch:
     inputs:
-      reponame:
-        description: The geth repo to clone
+      repository: 
+        description: The source geth repository to build from
         default: ethereum/go-ethereum
+        type: string
         required: true
-      commitRef:
+      ref:
         description: The branch, tag or SHA to checkout and build from
         default: master
+        type: string
         required: true
-  schedule:
-    - cron: '0 2 * * *'
+      docker_tag:
+        description: The docker tag to use (normally the ref name)
+        default: master
+        type: string
+        required: true
 
 jobs:
-  git-sync:
-    name: git-sync
-    # This job runs on Linux
-    runs-on: self-hosted
-    steps:
-      - name: Checkout this repo
-        uses: actions/checkout@v2
-      - name: Check out my other private repo
-        uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
-          path: 'geth'
-          ref: ${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
-      - name: get git commit hash
-        id: git_commit_hash
-        shell: bash
-        run: |
-          cd geth
-          echo "::set-output name=git-commit-hash::$(echo $(git log --pretty=format:'%h' -n 1))"
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: docker-build-push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./geth
-          file: ./geth/Dockerfile
-          tags: ethpandaops/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}-${{ steps.git_commit_hash.outputs.git-commit-hash }},ethpandaops/geth:${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
-          push: true
-          labels: |
-            ethpandaops.io.repo=${{ github.event.inputs.reponame || env.DEFAULT_REPO }}
-            ethpandaops.io.commitRef=${{ github.event.inputs.commitRef || env.DEFAULT_BRANCH }}
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+  geth:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      source_repository: ${{ inputs.repository }}
+      source_ref: ${{ inputs.ref }}
+      target_tag: ${{ inputs.docker_tag }}
+      target_repository: ethpandaops/geth
+    secrets:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

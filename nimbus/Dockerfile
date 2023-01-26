@@ -11,7 +11,7 @@ RUN apt update \
 
 RUN ldd --version ldd
 # TODO: use volumes or bind-mounts instead
-ADD nimbus-eth2 /root/nimbus-eth2
+ADD . /root/nimbus-eth2
 
 # It's up to you to run `git pull; make update` in "nimbus-eth2", outside the container,
 # preferably in the "devel" branch.

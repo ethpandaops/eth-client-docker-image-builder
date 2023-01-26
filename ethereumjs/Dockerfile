@@ -1,13 +1,13 @@
-FROM node:14-alpine as build
+FROM node:16-alpine as build
 WORKDIR /usr/app
-RUN apk update && apk add --no-cache g++ make python bash git && rm -rf /var/cache/apk/*
+RUN apk update && apk add --no-cache g++ make python3 bash git && rm -rf /var/cache/apk/*
 
-ADD ethereumjs-monorepo /usr/app/ethereumjs-monorepo
+ADD . /usr/app/ethereumjs-monorepo
 WORKDIR /usr/app/ethereumjs-monorepo
 RUN npm i -g npm@7
 RUN npm i
 
-FROM node:14-alpine
+FROM node:16-alpine
 WORKDIR /usr/app
 COPY --from=build /usr/app .
 
