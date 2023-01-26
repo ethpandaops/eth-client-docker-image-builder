@@ -3,6 +3,11 @@ name: Scheduled
 on:
   schedule:
     - cron:  '0 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: "scheduled"
+  cancel-in-progress: true
 
 jobs:
   check:
