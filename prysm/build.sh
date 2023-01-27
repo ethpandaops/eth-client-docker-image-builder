@@ -8,8 +8,9 @@ sudo apt install -y ca-certificates python2 golang-go
 go install github.com/bazelbuild/bazelisk@latest
 $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=release
 $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release
-# need to remove .dockerignore to copy build files
-rm .dockerignore
+# move to base dir to avoid any dockerignore/stat issues
+mv bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain beacon-chain
+mv bazel-bin/cmd/validator/validator_/validator validator
 
 docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" -f "../${target_dockerfile}" .
 docker push "${target_repository}:${target_tag}"
