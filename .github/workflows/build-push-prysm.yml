@@ -1,0 +1,34 @@
+name: Build prysm docker image
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository: 
+        description: The source prysm repository to build from
+        default: prysmaticlabs/prysm
+        type: string
+        required: true
+      ref:
+        description: The branch, tag or SHA to checkout and build from
+        default: develop
+        type: string
+        required: true
+      docker_tag:
+        description: The docker tag to use (normally the ref name)
+        default: develop
+        type: string
+        required: true
+
+jobs:
+  prysm:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      source_repository: ${{ inputs.repository }}
+      source_ref: ${{ inputs.ref }}
+      build_script: ./prysm/build.sh
+      target_tag: ${{ inputs.docker_tag }}
+      target_repository: ethpandaops/prysm
+      target_dockerfile: ./prysm/Dockerfile
+    secrets:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
