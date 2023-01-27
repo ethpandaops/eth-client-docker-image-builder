@@ -1,7 +1,7 @@
-FROM debian:11-slim
+FROM ubuntu:latest
 
 WORKDIR /app/cmd/beacon-chain/beacon-chain.runfiles/prysm
 ADD ./_beacon-chain /app/cmd/beacon-chain/beacon-chain
 ADD ./_validator /app/cmd/validator/validator
-RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates libc6 && update-ca-certificates
 ENTRYPOINT [ "/app/cmd/beacon-chain/beacon-chain" ]
