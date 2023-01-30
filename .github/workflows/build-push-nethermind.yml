@@ -10,12 +10,12 @@ on:
         required: true
       ref:
         description: The branch, tag or SHA to checkout and build from
-        default: unstable
+        default: master
         type: string
         required: true
       docker_tag:
         description: The docker tag to use (normally the ref name)
-        default: unstable
+        default: master
         type: string
         required: true
 
