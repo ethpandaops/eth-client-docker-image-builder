@@ -1,0 +1,32 @@
+name: Build lodestar docker image
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository: 
+        description: The source lodestar repository to build from
+        default: chainsafe/lodestar
+        type: string
+        required: true
+      ref:
+        description: The branch, tag or SHA to checkout and build from
+        default: unstable
+        type: string
+        required: true
+      docker_tag:
+        description: The docker tag to use (normally the ref name)
+        default: unstable
+        type: string
+        required: true
+
+jobs:
+  lodestar:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      source_repository: ${{ inputs.repository }}
+      source_ref: ${{ inputs.ref }}
+      target_tag: ${{ inputs.docker_tag }}
+      target_repository: ethpandaops/lodestar
+    secrets:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
