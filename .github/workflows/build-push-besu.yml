@@ -1,30 +1,30 @@
-name: Build teku docker image
+name: Build besu docker image
 
 on:
   workflow_dispatch:
     inputs:
       repository: 
-        description: The source teku repository to build from
-        default: consensys/teku
+        description: The source besu repository to build from
+        default: hyperledger/besu
         required: true
       ref:
         description: The branch, tag or SHA to checkout and build from
-        default: master
+        default: main
         required: true
       docker_tag:
         description: The docker tag to use (normally the ref name)
-        default: master
+        default: main
         required: true
 
 jobs:
-  teku:
+  besu:
     uses: ./.github/workflows/deploy.yml
     with:
       source_repository: ${{ inputs.repository }}
       source_ref: ${{ inputs.ref }}
-      build_script: ./teku/build.sh
+      build_script: ./besu/build.sh
       target_tag: ${{ inputs.docker_tag }}
-      target_repository: ethpandaops/teku
+      target_repository: ethpandaops/besu
     secrets:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

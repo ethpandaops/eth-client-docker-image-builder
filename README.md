@@ -5,13 +5,14 @@ Automates docker builds for ethereum clients. The build process is scheduled eve
 ## Build image on demand
 
 Run the *Build **client*** workflow;
+- [Build Besu](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-besu.yml)
 - [Build Erigon](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-erigon.yml)
 - [Build EthereumJS](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ethereumjs.yml)
 - [Build Geth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-geth.yml)
 - [Build Lighthouse](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-lighthouse.yml)
 - [Build Lodestar](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-lodestar.yml)
-- [Build Nimbus](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nimbus.yml)
 - [Build Nethermind](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nethermin.yml)
+- [Build Nimbus](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nimbus.yml)
 - [Build Prysm](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-prysm.yml)
 - [Build Teku](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-teku.yml)
 

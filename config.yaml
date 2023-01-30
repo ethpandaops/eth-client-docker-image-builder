@@ -1,3 +1,13 @@
+########
+# besu #
+########
+- source:
+    repository: hyperledger/besu
+    ref: main
+  build_script: ./besu/build.sh
+  target:
+    tag: main
+    repository: ethpandaops/besu
 ##########
 # erigon #
 ##########
@@ -51,45 +61,6 @@
     tag: xatu-sentry
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
-##########
-# nimbus #
-##########
-- source:
-    repository: status-im/nimbus-eth2
-    ref: unstable
-  target:
-    tag: unstable
-    repository: ethpandaops/nimbus
-    dockerfile: ./nimbus/Dockerfile
-- source:
-    repository: status-im/nimbus-eth2
-    ref: unstable
-  build_script: ./nimbus/xatu-sentry.sh
-  target:
-    tag: xatu-sentry
-    repository: ethpandaops/nimbus
-    dockerfile: ./nimbus/Dockerfile
-########
-# teku #
-########
-- source:
-    repository: ConsenSys/teku
-    ref: master
-  build_script: ./teku/build.sh
-  target:
-    tag: master
-    repository: ethpandaops/teku
-#########
-# prysm #
-#########
-- source:
-    repository: prysmaticlabs/prysm
-    ref: develop
-  build_script: ./prysm/build.sh
-  target:
-    tag: develop
-    repository: ethpandaops/prysm
-    dockerfile: ./prysm/Dockerfile
 ############
 # lodestar #
 ############
@@ -108,3 +79,42 @@
   target:
     tag: master
     repository: ethpandaops/nethermind
+##########
+# nimbus #
+##########
+- source:
+    repository: status-im/nimbus-eth2
+    ref: unstable
+  target:
+    tag: unstable
+    repository: ethpandaops/nimbus
+    dockerfile: ./nimbus/Dockerfile
+- source:
+    repository: status-im/nimbus-eth2
+    ref: unstable
+  build_script: ./nimbus/xatu-sentry.sh
+  target:
+    tag: xatu-sentry
+    repository: ethpandaops/nimbus
+    dockerfile: ./nimbus/Dockerfile
+#########
+# prysm #
+#########
+- source:
+    repository: prysmaticlabs/prysm
+    ref: develop
+  build_script: ./prysm/build.sh
+  target:
+    tag: develop
+    repository: ethpandaops/prysm
+    dockerfile: ./prysm/Dockerfile
+########
+# teku #
+########
+- source:
+    repository: consensys/teku
+    ref: master
+  build_script: ./teku/build.sh
+  target:
+    tag: master
+    repository: ethpandaops/teku
