@@ -6,15 +6,17 @@ on:
       repository: 
         description: The source teku repository to build from
         default: consensys/teku
+        type: string
         required: true
       ref:
         description: The branch, tag or SHA to checkout and build from
         default: master
+        type: string
         required: true
       docker_tag:
-        description: The docker tag to use (normally the ref name)
-        default: master
-        required: true
+        description: Override target docker tag (defaults to the above source ref if left blank)
+        type: string
+        required: false
 
 jobs:
   teku:
@@ -23,7 +25,7 @@ jobs:
       source_repository: ${{ inputs.repository }}
       source_ref: ${{ inputs.ref }}
       build_script: ./teku/build.sh
-      target_tag: ${{ inputs.docker_tag }}
+      target_tag: ${{ inputs.docker_tag || inputs.ref }}
       target_repository: ethpandaops/teku
     secrets:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
