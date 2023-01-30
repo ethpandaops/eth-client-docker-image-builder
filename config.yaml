@@ -118,10 +118,3 @@
   target:
     tag: master
     repository: ethpandaops/teku
-- source:
-    repository: consensys/teku
-    ref: master
-  build_script: ./teku/xatu-sentry.sh
-  target:
-    tag: xatu-sentry
-    repository: ethpandaops/teku
