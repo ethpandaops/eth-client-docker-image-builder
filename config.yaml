@@ -94,8 +94,17 @@
 # lodestar #
 ############
 - source:
-    repository: ChainSafe/lodestar
+    repository: chainsafe/lodestar
     ref: unstable
   target:
     tag: unstable
     repository: ethpandaops/lodestar
+##############
+# nethermind #
+##############
+- source:
+    repository: nethermindeth/nethermind
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/nethermind
