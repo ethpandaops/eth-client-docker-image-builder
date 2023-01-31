@@ -108,6 +108,14 @@
     tag: develop
     repository: ethpandaops/prysm
     dockerfile: ./prysm/Dockerfile
+- source:
+    repository: prysmaticlabs/prysm
+    ref: master
+  build_script: ./prysm/build.sh
+  target:
+    tag: master
+    repository: ethpandaops/prysm
+    dockerfile: ./prysm/Dockerfile
 ########
 # teku #
 ########
