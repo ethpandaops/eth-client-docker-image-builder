@@ -61,6 +61,13 @@
     tag: xatu-sentry
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: sigp/lighthouse
+    ref: eip4844
+  target:
+    tag: eip4844
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
 ############
 # lodestar #
 ############
