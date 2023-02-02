@@ -26,7 +26,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - uses: ./.github/actions/deploy.yml
+      - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
