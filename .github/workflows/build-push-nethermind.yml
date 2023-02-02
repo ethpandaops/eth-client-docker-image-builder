@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/install-deps
         with:
-          source_respository: ${{ inputs.repository }}
+          repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
