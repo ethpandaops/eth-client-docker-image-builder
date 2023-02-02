@@ -102,7 +102,7 @@ jobs:
       fail-fast: false
       matrix:
         config: ${{fromJson(needs.check.outputs.configs)}}
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/actions/deploy
     with:
       source_repository: ${{ matrix.config.source.repository }}
       source_ref: ${{ matrix.config.source.ref }}
@@ -110,7 +110,6 @@ jobs:
       target_tag: ${{ matrix.config.target.tag }}
       target_repository: ${{ matrix.config.target.repository }}
       target_dockerfile: ${{ matrix.config.target.dockerfile }}
-      runs_on: services-medium-cpu
-    secrets:
-      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      runs_on: ubuntu-latest
+      DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+      DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

@@ -17,9 +17,17 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
+      runs_on:
+        description: The runner to use
+        type: choice
+        required: true
+        default: ubuntu-latest
+        options:
+        - ubuntu-latest
+        - services-medium-cpu
 jobs:
   teku:
-    runs-on: [ubuntu-latest]
+    runs-on: ${{ inputs.runs_on }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
@@ -36,5 +44,3 @@ jobs:
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-        
-

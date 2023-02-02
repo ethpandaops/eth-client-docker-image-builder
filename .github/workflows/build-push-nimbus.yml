@@ -25,16 +25,19 @@ on:
         options:
         - ubuntu-latest
         - services-medium-cpu
+
 jobs:
   nimbus:
-    uses: ./.github/workflows/deploy.yml
-    with:
-      source_repository: ${{ inputs.repository }}
-      source_ref: ${{ inputs.ref }}
-      target_tag: ${{ inputs.docker_tag || inputs.ref }}
-      target_repository: ethpandaops/nimbus
-      target_dockerfile: ./nimbus/Dockerfile
-      runs_on: ${{ inputs.runs_on }}
-    secrets:
-      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/nimbus
+          target_dockerfile: ./nimbus/Dockerfile
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
