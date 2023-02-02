@@ -25,9 +25,11 @@ on:
         options:
         - ubuntu-latest
         - services-medium-cpu
+    secrets:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 jobs:
   teku:
-    runs-on: ${{ inputs.runs_on }}
     steps:
       - uses: actions/setup-java@v3
         with:
@@ -40,8 +42,6 @@ jobs:
           build_script: ./teku/build.sh
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/teku
-          runs_on: services-medium-cpu
-        secrets:
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-            
+          runs_on: ${{ inputs.runs_on }}
+        secrets: inherit
+
