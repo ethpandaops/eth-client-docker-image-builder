@@ -110,6 +110,7 @@ jobs:
       target_tag: ${{ matrix.config.target.tag }}
       target_repository: ${{ matrix.config.target.repository }}
       target_dockerfile: ${{ matrix.config.target.dockerfile }}
+      runs_on: services-medium-cpu
     secrets:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

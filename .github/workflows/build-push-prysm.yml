@@ -17,6 +17,14 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
+      runs_on:
+        description: The runner to use
+        type: choice
+        required: true
+        default: ubuntu-latest
+        options:
+        - ubuntu-latest
+        - services-medium-cpu
 
 jobs:
   prysm:
@@ -28,6 +36,7 @@ jobs:
       target_tag: ${{ inputs.docker_tag || inputs.ref }}
       target_repository: ethpandaops/prysm
       target_dockerfile: ./prysm/Dockerfile
+      runs_on: ${{ inputs.runs_on }}
     secrets:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

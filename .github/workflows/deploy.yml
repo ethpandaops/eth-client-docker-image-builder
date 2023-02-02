@@ -28,6 +28,11 @@ on:
         type: string
         default: ./source/Dockerfile
         required: false
+      runs_on:
+        description: The runner to run the job on
+        type: string
+        default: ubuntu-latest
+        required: true
     secrets:
       DOCKER_USERNAME:
         required: true
@@ -36,7 +41,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [ubuntu-latest]
+    runs-on: ${{ inputs.runs_on }}
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v3
