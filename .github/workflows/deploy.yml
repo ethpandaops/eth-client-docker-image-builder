@@ -28,11 +28,6 @@ on:
         type: string
         default: ./source/Dockerfile
         required: false
-      runs_on:
-        description: The runner to run the job on
-        type: string
-        default: ubuntu-latest
-        required: true
         
     secrets:
       DOCKER_USERNAME:
@@ -42,7 +37,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ${{ inputs.runs_on }}
+    runs-on: services-medium-cpu
     secrets: inherit
     steps:
       - name: Checkout this repo
