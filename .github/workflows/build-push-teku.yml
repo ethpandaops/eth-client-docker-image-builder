@@ -27,7 +27,12 @@ on:
         - services-medium-cpu
 jobs:
   teku:
-    uses: ./.github/workflows/deploy.yml
+    steps:
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: ./.github/workflows/deploy.yml
     with:
       source_repository: ${{ inputs.repository }}
       source_ref: ${{ inputs.ref }}
