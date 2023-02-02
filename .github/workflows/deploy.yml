@@ -36,7 +36,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [ubuntu]
+    runs-on: [ubuntu-latest]
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v3
