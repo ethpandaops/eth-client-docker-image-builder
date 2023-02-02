@@ -37,7 +37,6 @@ on:
 
 jobs:
   deploy:
-    runs-on: services-medium-cpu
     secrets: inherit
     steps:
       - name: Checkout this repo
