@@ -31,9 +31,8 @@ jobs:
           build_script: ./teku/build.sh
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/teku
-          runs_on: services-medium-cpu
-        uses: ./.github/workflows/deploy.yml
-        secrets:
+          
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+        uses: ./.github/workflows/deploy.yml
 
