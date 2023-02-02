@@ -36,6 +36,12 @@
   target:
     tag: master
     repository: ethpandaops/geth
+- source:
+    repository: mdehoog/go-ethereum
+    ref: eip-4844
+  target:
+    tag: mdehoog-eip4844
+    repository: ethpandaops/geth
 ##############
 # lighthouse #
 ##############
@@ -123,6 +129,14 @@
     tag: master
     repository: ethpandaops/prysm
     dockerfile: ./prysm/Dockerfile
+- source:
+    repository: prysmaticlabs/prysm
+    ref: eip4844
+  build_script: ./prysm/build.sh
+  target:
+    tag: eip4844
+    repository: ethpandaops/prysm
+    dockerfile: ./prysm/Dockerfile
 ########
 # teku #
 ########
@@ -132,4 +146,11 @@
   build_script: ./teku/build.sh
   target:
     tag: master
+    repository: ethpandaops/teku
+- source:
+    repository: consensys/teku
+    ref: 4844-interop
+  build_script: ./teku/build.sh
+  target:
+    tag: 4844-interop
     repository: ethpandaops/teku
