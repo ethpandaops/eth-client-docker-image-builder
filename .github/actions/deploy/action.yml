@@ -67,6 +67,7 @@ runs:
       password: ${{ inputs.DOCKER_PASSWORD }}
   # run the build script if it exists instead of the docker build & push
   - name: Build script
+    shell: bash
     if: inputs.build_script
     run: |
       source_repository=${{ inputs.source_repository }} \
@@ -77,6 +78,7 @@ runs:
       source_git_commit_hash=${{ steps.git_commit_hash.outputs.git_commit_hash }} \
       ${{ inputs.build_script }}
   - name: Image digest & tags (build script)
+    shell: bash
     if: inputs.build_script
     run: |
       cat << EOF
@@ -102,6 +104,7 @@ runs:
         ethpandaops.io.repo=${{ inputs.source_repository }}
         ethpandaops.io.commitRef=${{ inputs.source_ref }}
   - name: Image digest & tags
+    shell: bash
     if: ${{ inputs.build_script == '' }}
     run: |
       cat << EOF
