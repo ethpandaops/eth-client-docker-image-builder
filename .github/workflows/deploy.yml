@@ -1,38 +1,36 @@
 name: Deploy
 
-on:
-  workflow_call:
-    inputs:
-      source_repository:
-        description: The source repository to build from
-        type: string
-        required: true
-      source_ref:
-        description: The branch, tag or SHA to checkout and build from
-        type: string
-        required: true
-      build_script:
-        description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
-        type: string
-        required: false
-      target_tag:
-        description: Docker hub tag to push to
-        type: string
-        required: true
-      target_repository:
-        description: Docker hub repository to push to
-        type: string
-        required: true
-      target_dockerfile:
-        description: Dockerfile path in this repository to build from. Omit to use source repository Dockerfile
-        type: string
-        default: ./source/Dockerfile
-        required: false
-      # Secrets
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_PASSWORD:
-        required: true
+inputs:
+  source_repository:
+    description: The source repository to build from
+    type: string
+    required: true
+  source_ref:
+    description: The branch, tag or SHA to checkout and build from
+    type: string
+    required: true
+  build_script:
+    description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
+    type: string
+    required: false
+  target_tag:
+    description: Docker hub tag to push to
+    type: string
+    required: true
+  target_repository:
+    description: Docker hub repository to push to
+    type: string
+    required: true
+  target_dockerfile:
+    description: Dockerfile path in this repository to build from. Omit to use source repository Dockerfile
+    type: string
+    default: ./source/Dockerfile
+    required: false
+  # Secrets
+  DOCKER_USERNAME:
+    required: true
+  DOCKER_PASSWORD:
+    required: true
 
 runs:
   using: composite
