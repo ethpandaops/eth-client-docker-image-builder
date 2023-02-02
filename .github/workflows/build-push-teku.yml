@@ -27,6 +27,7 @@ on:
         - services-medium-cpu
 jobs:
   teku:
+    runs-on: ${{ inputs.runs_on }}
     steps:
       - uses: actions/setup-java@v3
         with:
