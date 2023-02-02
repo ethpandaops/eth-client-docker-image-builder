@@ -27,16 +27,12 @@ on:
         - services-medium-cpu
 jobs:
   teku:
-    secrets:
-      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
       - uses: ./.github/workflows/deploy.yml
-        secrets: inherit
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -44,4 +40,7 @@ jobs:
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/teku
           runs_on: ${{ inputs.runs_on }}
-        
+        secrets:
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+            
