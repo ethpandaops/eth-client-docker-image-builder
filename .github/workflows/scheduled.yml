@@ -102,14 +102,16 @@ jobs:
       fail-fast: false
       matrix:
         config: ${{fromJson(needs.check.outputs.configs)}}
-    uses: ./.github/actions/deploy
-    with:
-      source_repository: ${{ matrix.config.source.repository }}
-      source_ref: ${{ matrix.config.source.ref }}
-      build_script: ${{ matrix.config.build_script }}
-      target_tag: ${{ matrix.config.target.tag }}
-      target_repository: ${{ matrix.config.target.repository }}
-      target_dockerfile: ${{ matrix.config.target.dockerfile }}
-      runs_on: ubuntu-latest
-      DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-      DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ matrix.config.source.repository }}
+          source_ref: ${{ matrix.config.source.ref }}
+          build_script: ${{ matrix.config.build_script }}
+          target_tag: ${{ matrix.config.target.tag }}
+          target_repository: ${{ matrix.config.target.repository }}
+          target_dockerfile: ${{ matrix.config.target.dockerfile }}
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
