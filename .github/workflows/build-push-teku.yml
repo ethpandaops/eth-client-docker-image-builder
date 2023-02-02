@@ -17,14 +17,6 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
-      runs_on:
-        description: The runner to use
-        type: choice
-        required: true
-        default: ubuntu-latest
-        options:
-        - ubuntu-latest
-        - services-medium-cpu
 jobs:
   teku:
     steps:
