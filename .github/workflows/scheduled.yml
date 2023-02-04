@@ -105,6 +105,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ matrix.config.source.repository }}
