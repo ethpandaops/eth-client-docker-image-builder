@@ -115,14 +115,6 @@
 #########
 - source:
     repository: prysmaticlabs/prysm
-    ref: latest
-  build_script: ./prysm/build.sh
-  target:
-    tag: latest
-    repository: ethpandaops/prysm
-    dockerfile: ./prysm/Dockerfile
-- source:
-    repository: prysmaticlabs/prysm
     ref: develop
   build_script: ./prysm/build.sh
   target:
