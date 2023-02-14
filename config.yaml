@@ -8,6 +8,13 @@
   target:
     tag: main
     repository: ethpandaops/besu
+- source:
+    repository: hyperledger/besu
+    ref: eip-4844-interop
+  build_script: ./besu/build.sh
+  target:
+    tag: eip-4844-interop
+    repository: ethpandaops/besu
 ##########
 # erigon #
 ##########
