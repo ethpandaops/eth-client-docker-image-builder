@@ -23,14 +23,7 @@ runs:
       distribution: 'temurin'
       java-version: '17'
   - uses: actions/setup-node@v3
-    if: contains(inputs.repository, 'ethereumjs')
+    if: contains(inputs.repository, 'lodestar') || contains(inputs.repository, 'ethereumjs')
     with:
       node-version: 18
       check-latest: true
-      cache: 'npm'
-  - uses: actions/setup-node@v3
-    if: contains(inputs.repository, 'lodestar')
-    with:
-      node-version: 18
-      check-latest: true
-      cache: 'yarn'
