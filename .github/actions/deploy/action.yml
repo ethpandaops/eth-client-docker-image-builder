@@ -92,7 +92,7 @@ runs:
   - name: Docker build & push
     if: ${{ inputs.build_script == '' }}
     id: docker_build
-    uses: docker/build-push-action@v3
+    uses: docker/build-push-action@v4
     with:
       context: ./source
       file: ${{ inputs.target_dockerfile }}
@@ -101,6 +101,7 @@ runs:
       #   - $target_tag-commit
       tags: ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }},${{ inputs.target_repository }}:${{ inputs.target_tag }}
       push: true
+      platforms: linux/amd64
       labels: |
         ethpandaops.io.repo=${{ inputs.source_repository }}
         ethpandaops.io.commitRef=${{ inputs.source_ref }}
