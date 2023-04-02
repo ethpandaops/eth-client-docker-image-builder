@@ -1,3 +1,8 @@
+############################################################################
+# Taken from https://github.com/ChainSafe/lodestar/blob/unstable/Dockerfile
+# Changed "yarn build" to "yarn build --concurrency 1"
+# Fixes build order errors when running on a slow runner
+############################################################################
 
 # --platform=$BUILDPLATFORM is used build javascript source with host arch
 # Otherwise TS builds on emulated archs and can be extremely slow (+1h)
@@ -9,7 +14,7 @@ RUN apk update && apk add --no-cache g++ make python3 && rm -rf /var/cache/apk/*
 COPY . .
 
 RUN yarn install --non-interactive --frozen-lockfile && \
-  yarn build --loglevel=silly --concurrency 1 && \
+  yarn build --concurrency 1 && \
   yarn install --non-interactive --frozen-lockfile --production
 
 # To have access to the specific branch and commit used to build this source,
