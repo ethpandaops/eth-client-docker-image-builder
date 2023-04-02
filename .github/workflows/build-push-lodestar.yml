@@ -21,8 +21,9 @@ on:
         description: The runner to use
         type: choice
         required: true
-        default: ubuntu-latest
+        default: ubuntu-20.04
         options:
+        - ubuntu-20.04
         - ubuntu-latest
         - services-medium-cpu
 jobs:
