@@ -21,10 +21,10 @@ on:
         description: The runner to use
         type: choice
         required: true
-        default: ubuntu-20.04
+        default: ubuntu-latest
         options:
-        - ubuntu-20.04
         - ubuntu-latest
+        - ubuntu-20.04
         - services-medium-cpu
 jobs:
   lodestar:
