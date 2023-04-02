@@ -40,6 +40,7 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/lodestar
+          target_dockerfile: ./lodestar/Dockerfile
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
