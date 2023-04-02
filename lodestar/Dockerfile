@@ -9,7 +9,7 @@ RUN apk update && apk add --no-cache g++ make python3 && rm -rf /var/cache/apk/*
 COPY . .
 
 RUN yarn install --non-interactive --frozen-lockfile && \
-  yarn build --loglevel=silly && \
+  yarn build --loglevel=silly --concurrency 1 && \
   yarn install --non-interactive --frozen-lockfile --production
 
 # To have access to the specific branch and commit used to build this source,
