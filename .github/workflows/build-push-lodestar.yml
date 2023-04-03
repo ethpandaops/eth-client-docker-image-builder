@@ -24,7 +24,6 @@ on:
         default: ubuntu-latest
         options:
         - ubuntu-latest
-        - ubuntu-20.04
         - services-medium-cpu
 jobs:
   lodestar:
@@ -40,7 +39,6 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/lodestar
-          target_dockerfile: ./lodestar/Dockerfile
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
