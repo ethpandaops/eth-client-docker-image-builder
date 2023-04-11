@@ -68,7 +68,7 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: stable
+    ref: unstable
   build_script: ./lighthouse/xatu-sentry.sh
   target:
     tag: xatu-sentry
