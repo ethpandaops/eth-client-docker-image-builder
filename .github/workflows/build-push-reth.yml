@@ -1,16 +1,16 @@
-name: Build ethereumjs docker image
+name: Build reth docker image
 
 on:
   workflow_dispatch:
     inputs:
       repository: 
-        description: The source ethereumjs repository to build from
-        default: ethereumjs/ethereumjs-monorepo
+        description: The source reth repository to build from
+        default: paradigmxyz/reth
         type: string
         required: true
       ref:
         description: The branch, tag or SHA to checkout and build from
-        default: master
+        default: main
         type: string
         required: true
       docker_tag:
@@ -27,7 +27,7 @@ on:
         - services-medium-cpu
 
 jobs:
-  ethereumjs:
+  reth:
     runs-on: ${{ inputs.runs_on }}
     steps:
       - uses: actions/checkout@v3
@@ -39,8 +39,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
-          target_repository: ethpandaops/ethereumjs
-          target_dockerfile: ./ethereumjs/Dockerfile
+          target_repository: ethpandaops/reth
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
