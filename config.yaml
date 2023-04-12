@@ -49,6 +49,15 @@
   target:
     tag: mdehoog-eip4844
     repository: ethpandaops/geth
+########
+# reth #
+########
+- source:
+    repository: paradigmxyz/reth
+    ref: main
+  target:
+    tag: main
+    repository: ethpandaops/reth
 ##############
 # lighthouse #
 ##############

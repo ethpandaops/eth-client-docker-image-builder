@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       repository: 
-        description: The source geth repository to build from
+        description: The source nimbus repository to build from
         default: status-im/nimbus-eth2
         type: string
         required: true
