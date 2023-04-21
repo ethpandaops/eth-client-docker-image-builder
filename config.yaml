@@ -24,6 +24,12 @@
   target:
     tag: devel
     repository: ethpandaops/erigon
+- source:
+    repository: roberto-bayardo/erigon
+    ref: eip-4844
+  target:
+    tag: roberto-bayardo-eip-4844
+    repository: ethpandaops/erigon
 ##############
 # ethereumjs #
 ##############
