@@ -170,3 +170,13 @@
   target:
     tag: 4844-interop
     repository: ethpandaops/teku
+#########
+# eleel #
+#########
+- source:
+    repository: sigp/eleel
+    ref: main
+  target:
+    tag: main
+    repository: ethpandaops/eleel
+    dockerfile: ./eleel/Dockerfile
