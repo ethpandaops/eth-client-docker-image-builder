@@ -1,0 +1,46 @@
+name: Build eleel docker image
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository: 
+        description: The source eleel repository to build from
+        default: sigp/eleel
+        type: string
+        required: true
+      ref:
+        description: The branch, tag or SHA to checkout and build from
+        default: stable
+        type: string
+        required: true
+      docker_tag:
+        description: Override target docker tag (defaults to the above source ref if left blank)
+        type: string
+        required: false
+      runs_on:
+        description: The runner to use
+        type: choice
+        required: true
+        default: ubuntu-latest
+        options:
+        - ubuntu-latest
+        - services-medium-cpu
+
+jobs:
+  eleel:
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.repository }}
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/eleel
+          target_dockerfile: ./eleel/Dockerfile
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
