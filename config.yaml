@@ -96,6 +96,13 @@
     tag: eip4844
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: realbigsean/lighthouse
+    ref: devnetv5
+  target:
+    tag: realbigsean-devnetv5
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
 ############
 # lodestar #
 ############
