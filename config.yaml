@@ -76,13 +76,6 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: capella
-  target:
-    tag: capella
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-- source:
-    repository: sigp/lighthouse
     ref: unstable
   build_script: ./lighthouse/xatu-sentry.sh
   target:
