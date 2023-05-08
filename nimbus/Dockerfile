@@ -47,7 +47,7 @@ COPY --from=build /root/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-e
 COPY --from=build /root/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-eth2/build/nimbus_beacon_node
 
 ENV PATH="/home/user/nimbus-eth2/build:${PATH}"
-ENTRYPOINT [""]
+ENTRYPOINT ["nimbus_beacon_node"]
 WORKDIR /home/user/nimbus-eth2/build
 
 STOPSIGNAL SIGINT
