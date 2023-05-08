@@ -135,7 +135,6 @@
 - source:
     repository: henridf/nimbus-eth2
     ref: eip4844-devnet
-  build_script: ./nimbus/build.sh
   target:
     tag: henridf-eip4844-devnet
     repository: ethpandaops/nimbus
