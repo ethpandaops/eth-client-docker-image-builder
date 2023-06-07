@@ -39,6 +39,7 @@
   target:
     tag: master
     repository: ethpandaops/ethereumjs
+    dockerfile: ./ethereumjs/Dockerfile
 ########
 # geth #
 ########
