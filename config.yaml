@@ -15,6 +15,13 @@
   target:
     tag: eip-4844-interop
     repository: ethpandaops/besu
+- source:
+    repository: hyperledger/besu
+    ref: 4844-devnet-5b
+  build_script: ./besu/build.sh
+  target:
+    tag: devnet6
+    repository: ethpandaops/besu
 ##########
 # erigon #
 ##########
