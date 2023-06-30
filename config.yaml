@@ -167,10 +167,10 @@
     dockerfile: ./prysm/Dockerfile
 - source:
     repository: prysmaticlabs/prysm
-    ref: deneb-devnet6
+    ref: deneb-devnet7
   build_script: ./prysm/build.sh
   target:
-    tag: deneb-devnet6
+    tag: deneb-devnet7
     repository: ethpandaops/prysm
     dockerfile: ./prysm/Dockerfile
 ########
