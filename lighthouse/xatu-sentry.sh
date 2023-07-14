@@ -16,19 +16,6 @@ fi
 
 mv $NEW_FILE $ORIGINAL_FILE
 
-ORIGINAL_FILE="beacon_node/beacon_chain/src/events.rs"
-NEW_FILE="beacon_node/beacon_chain/src/events.new.rs"
-
-sed 's/const DEFAULT_CHANNEL_CAPACITY: usize = [0-9]*;/const DEFAULT_CHANNEL_CAPACITY: usize = 128;/' $ORIGINAL_FILE > $NEW_FILE
-
-if((`stat -c%s "${ORIGINAL_FILE}"`==`stat -c%s "${NEW_FILE}"`));then
-  echo "no changes detected, aborting..."
-  echo "to change channel capacity, change this line (on the ref branch/tag/commit) https://github.com/sigp/lighthouse/blob/stable/beacon_node/beacon_chain/src/events.rs#L7"
-  exit 1
-fi
-
-mv $NEW_FILE $ORIGINAL_FILE
-
 docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" -f "../${target_dockerfile}" .
 docker push "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
