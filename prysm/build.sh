@@ -16,6 +16,6 @@ docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${
 docker push "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
 
-docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" --build-arg ENTRY=/app/cmd/validator/validator -f "../${target_dockerfile}" .
+docker build -t "${target_repository}-validator:${target_tag}" -t "${target_repository}-validator:${target_tag}-${source_git_commit_hash}" --build-arg ENTRY=/app/cmd/validator/validator -f "../${target_dockerfile}" .
 docker push "${target_repository}-validator:${target_tag}"
 docker push "${target_repository}-validator:${target_tag}-${source_git_commit_hash}"
