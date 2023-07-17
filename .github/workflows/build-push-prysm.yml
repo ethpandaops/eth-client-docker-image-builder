@@ -45,3 +45,14 @@ jobs:
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          build_script: ./prysm/build.sh
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/prysm-validator
+          target_dockerfile: ./prysm/DockerfileValidator
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
