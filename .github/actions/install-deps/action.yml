@@ -25,5 +25,5 @@ runs:
   - uses: actions/setup-node@v3
     if: contains(inputs.repository, 'lodestar') || contains(inputs.repository, 'ethereumjs')
     with:
-      node-version: 18
+      node-version: 20
       check-latest: true
