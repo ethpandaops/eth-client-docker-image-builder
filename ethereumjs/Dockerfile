@@ -1,4 +1,4 @@
-FROM node:18-alpine as build
+FROM node:20-alpine as build
 RUN apk update && apk add --no-cache bash git g++ make python3 && rm -rf /var/cache/apk/*
 WORKDIR /usr/app
 
@@ -9,7 +9,7 @@ RUN npm i --ignore-scripts
 COPY . .
 RUN npm i
 
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /usr/app
 RUN apk --no-cache add dumb-init
 COPY --from=build /usr/app .
