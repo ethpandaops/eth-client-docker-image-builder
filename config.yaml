@@ -57,10 +57,10 @@
     tag: master
     repository: ethpandaops/geth
 - source:
-    repository: mdehoog/go-ethereum
-    ref: eip-4844
+    repository: lightclient/go-ethereum
+    ref: devnet-8
   target:
-    tag: mdehoog-eip4844
+    tag: dencun-devnet-8
     repository: ethpandaops/geth
 ########
 # reth #
