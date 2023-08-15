@@ -29,6 +29,10 @@ on:
 jobs:
   prysm:
     runs-on: ${{ inputs.runs_on }}
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/install-deps
@@ -42,6 +46,6 @@ jobs:
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/prysm
           target_dockerfile: ./prysm/Dockerfile
-
+          platform: ${{ matrix.platform }}
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

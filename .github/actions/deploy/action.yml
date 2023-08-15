@@ -27,6 +27,11 @@ inputs:
     type: string
     default: ./source/Dockerfile
     required: false
+  platform:
+    description: Platform to build the Docker image for
+    type: string
+    default: linux/amd64
+    required: false
   # Secrets
   DOCKER_USERNAME:
     required: true
@@ -101,7 +106,7 @@ runs:
       #   - $target_tag-commit
       tags: ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }},${{ inputs.target_repository }}:${{ inputs.target_tag }}
       push: true
-      platforms: linux/amd64
+      platforms: ${{ inputs.platform }}
       labels: |
         ethpandaops.io.repo=${{ inputs.source_repository }}
         ethpandaops.io.commitRef=${{ inputs.source_ref }}

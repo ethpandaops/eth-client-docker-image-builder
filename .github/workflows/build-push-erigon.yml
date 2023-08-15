@@ -29,6 +29,14 @@ on:
 jobs:
   erigon:
     runs-on: ${{ inputs.runs_on }}
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+      fail-fast: false
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/install-deps
@@ -40,6 +48,6 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/erigon
-
+          platform: ${{ matrix.platform }}
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
