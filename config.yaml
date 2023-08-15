@@ -103,6 +103,14 @@
     tag: realbigsean-devnetv5
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: michaelsproul/lighthouse
+    ref: sse-reliability
+  build_script: ./lighthouse/xatu-sentry.sh
+  target:
+    tag: xatu-sentry-channel-test
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
 ############
 # lodestar #
 ############
