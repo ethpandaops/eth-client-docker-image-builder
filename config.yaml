@@ -129,6 +129,12 @@
   target:
     tag: master
     repository: ethpandaops/nethermind
+- source:
+    repository: nethermindeth/nethermind
+    ref: cancun
+  target:
+    tag: dencun-devnet-8
+    repository: ethpandaops/nethermind
 ##########
 # nimbus #
 ##########
