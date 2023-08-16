@@ -60,7 +60,7 @@
     repository: lightclient/go-ethereum
     ref: devnet-8
   target:
-    tag: dencun-devnet-8
+    tag: lightclient-devnet-8
     repository: ethpandaops/geth
 ########
 # reth #
@@ -97,13 +97,6 @@
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 - source:
-    repository: realbigsean/lighthouse
-    ref: devnetv5
-  target:
-    tag: realbigsean-devnetv5
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-- source:
     repository: michaelsproul/lighthouse
     ref: sse-reliability
   build_script: ./lighthouse/xatu-sentry.sh
@@ -133,7 +126,7 @@
     repository: nethermindeth/nethermind
     ref: cancun
   target:
-    tag: dencun-devnet-8
+    tag: cancun
     repository: ethpandaops/nethermind
 ##########
 # nimbus #
@@ -184,7 +177,7 @@
     ref: deneb-integration
   build_script: ./prysm/build.sh
   target:
-    tag: dencun-devnet-8
+    tag: deneb-integration
     repository: ethpandaops/prysm
     dockerfile: ./prysm/Dockerfile
 ########
