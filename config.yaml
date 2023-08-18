@@ -114,12 +114,6 @@
   target:
     tag: master
     repository: ethpandaops/nethermind
-- source:
-    repository: nethermindeth/nethermind
-    ref: cancun
-  target:
-    tag: cancun
-    repository: ethpandaops/nethermind
 ##########
 # nimbus #
 ##########
