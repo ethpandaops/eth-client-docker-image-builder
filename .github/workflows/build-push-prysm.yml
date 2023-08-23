@@ -45,3 +45,15 @@ jobs:
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  notify:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+    needs:
+      - prysm
+    if: failure()
+    steps:
+      - name: Notify
+        uses: nobrayner/discord-webhook@v1
+        with:
+          github-token: ${{ secrets.github_token }}
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
