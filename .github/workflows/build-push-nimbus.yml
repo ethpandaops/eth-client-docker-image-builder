@@ -66,7 +66,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
-          target_repository: ethpandaops/besu
+          target_repository: ethpandaops/nimbus
           platforms: ${{ needs.prepare.outputs.platforms }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
