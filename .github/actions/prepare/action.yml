@@ -10,6 +10,7 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - uses: mikefarah/yq@v4.35.1
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: Generate platform and runner matrix from config files
