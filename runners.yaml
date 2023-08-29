@@ -1,0 +1,2 @@
+linux/amd64: ubuntu-latest
+darwin/arm64: macos

@@ -1,0 +1,24 @@
+besu:
+  - linux/amd64
+eleel:
+  - linux/amd64
+erigon:
+  - linux/amd64
+ethereumjs:
+  - linux/amd64
+geth:
+  - linux/amd64
+lighthouse:
+  - linux/amd64
+lodestar:
+  - linux/amd64
+nethermind:
+  - linux/amd64
+nimbus:
+  - linux/amd64
+prysm:
+  - linux/amd64
+reth:
+  - linux/amd64
+teku:
+  - linux/amd64
