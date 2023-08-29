@@ -47,6 +47,7 @@ runs:
       echo "git_commit_hash=$(echo $(git log --pretty=format:'%h' -n 1))" >> $GITHUB_OUTPUT
   - name: Generate images list
     id: generate_images_list
+    shell: bash
     run: |
       PLATFORMS="${{ inputs.platforms }}"
       IMAGES=""
@@ -68,7 +69,7 @@ runs:
     id: docker_manifest
     uses: Noelware/docker-manifest-action@0.4.0
     with:
-      inputs: ${{ inputs.target_repository }}:${{ target_tag }},${{ inputs.target_repository }}:${{ target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
+      inputs: ${{ inputs.target_repository }}:${{ inputs.target_tag }},${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
       images: ${{ steps.generate_images_list.outputs.images }}
       push: true
   - name: Image digest & tags
