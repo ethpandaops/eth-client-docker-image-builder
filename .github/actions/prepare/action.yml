@@ -39,6 +39,5 @@ runs:
       id: setup_platforms
       shell: bash
       run: |
-        MATRIX="${{ steps.matrix.outputs.matrix }}"
-        PLATFORMS=$(echo "${{ steps.setup-matrix.outputs.matrix }}" | jq -r '.[] | .platform' | paste -sd "," -)
+        PLATFORMS=$(echo "${{ steps.setup_matrix.outputs.matrix }}" | jq -r '.[] | .platform' | paste -sd "," -)
         echo "platforms=$PLATFORMS" >> $GITHUB_OUTPUT
