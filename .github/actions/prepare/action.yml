@@ -5,16 +5,21 @@ inputs:
     description: 'The client'
     required: true
 outputs:
-  matrix: ${{ steps.matrix.outputs.matrix }}
-  platforms: ${{ steps.platforms.outputs.platforms }}
+  matrix:
+    description: "Matrix of platforms and runner to use"
+    value: ${{ steps.setup_matrix.outputs.matrix }}
+  platforms:
+    description: "Comma-separated list of platforms"
+    value: ${{ steps.setup_platforms.outputs.platforms }}
 runs:
   using: "composite"
   steps:
-    - uses: mikefarah/yq@v4.35.1
     - name: Checkout repository
       uses: actions/checkout@v3
+    - uses: mikefarah/yq@v4.35.1
     - name: Generate platform and runner matrix from config files
-      id: matrix
+      id: setup_matrix
+      shell: bash
       run: |
         MATRIX_JSON="["
         client="${{ inputs.client }}"
@@ -29,9 +34,9 @@ runs:
 
         MATRIX_JSON="${MATRIX_JSON%,}]"
         echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
-      shell: bash
     - name: Generate platforms comma-separated list
-      id: platforms
+      id: setup_platforms
+      shell: bash
       run: |
         MATRIX="${{ steps.matrix.outputs.matrix }}"
         PLATFORMS=$(echo "${{ steps.setup-matrix.outputs.matrix }}" | jq -r '.[] | .platform' | paste -sd "," -)
