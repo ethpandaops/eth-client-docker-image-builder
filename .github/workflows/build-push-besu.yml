@@ -25,11 +25,12 @@ jobs:
       matrix: ${{ steps.setup.outputs.matrix }}
       platforms: ${{ steps.setup.outputs.platforms }}
     steps:
-    - name: Prepare Matrix
-      id: setup
-      uses: ./.github/actions/prepare
-      with:
-        client: 'besu'
+      - uses: actions/checkout@v3
+      - name: Prepare Matrix
+        id: setup
+        uses: ./.github/actions/prepare
+        with:
+          client: 'besu'
   deploy:
     needs:
       - prepare
