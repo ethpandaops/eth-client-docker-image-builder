@@ -28,8 +28,9 @@ runs:
         platforms=$(yq e ".$client[]" platforms.yaml)
 
         for platform in $platforms; do
+          slug=$(echo "$platform" | tr '/' '-')
           runner=$(yq e ".\"$platform\"" runners.yaml)
-          MATRIX_JSON+="{\"platform\":\"$platform\", \"runner\":\"$runner\"},"
+          MATRIX_JSON+="{\"platform\":\"$platform\", \"runner\":\"$runner\", \"slug\":\"$slug\"},"
         done
 
         MATRIX_JSON="${MATRIX_JSON%,}]"

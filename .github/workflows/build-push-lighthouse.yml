@@ -47,7 +47,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.platform_slug }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
           target_repository: ethpandaops/lighthouse
           target_dockerfile: ./lighthouse/Dockerfile
           platform: ${{ matrix.platform }}
