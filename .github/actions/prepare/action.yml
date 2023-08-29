@@ -1,0 +1,37 @@
+name: 'Setup'
+description: 'Read and parse config files for specified client'
+inputs:
+  client:
+    description: 'The client'
+    required: true
+outputs:
+  matrix: ${{ steps.matrix.outputs.matrix }}
+  platforms: ${{ steps.platforms.outputs.platforms }}
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Generate platform and runner matrix from config files
+      id: matrix
+      run: |
+        MATRIX_JSON="["
+        client="${{ inputs.client }}"
+
+        # Extract the platforms for the specified client
+        platforms=$(yq e ".$client[]" platforms.yaml)
+
+        for platform in $platforms; do
+          runner=$(yq e ".\"$platform\"" runners.yaml)
+          MATRIX_JSON+="{\"platform\":\"$platform\", \"runner\":\"$runner\"},"
+        done
+
+        MATRIX_JSON="${MATRIX_JSON%,}]"
+        echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Generate platforms comma-separated list
+      id: platforms
+      run: |
+        MATRIX="${{ steps.matrix.outputs.matrix }}"
+        PLATFORMS=$(echo "${{ steps.setup-matrix.outputs.matrix }}" | jq -r '.[] | .platform' | paste -sd "," -)
+        echo "platforms=$PLATFORMS" >> $GITHUB_OUTPUT
