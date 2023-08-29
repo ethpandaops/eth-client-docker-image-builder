@@ -88,6 +88,33 @@ docker push "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
 ```
 
+## Additional Configuration Files
+Our image building process utilizes two additional configuration files: [`platforms.yaml`](./platforms.yaml) and [`runners.yaml`](./runners.yaml). These files help in determining the platforms for which docker images should be built and specifying the runners to use for those platforms, respectively.
+
+### [`platforms.yaml`](./platforms.yaml)
+This configuration determines the platforms for which each client will have a Docker image built.
+
+Sample Content:
+```yaml
+besu:
+  - linux/amd64
+lighthouse:
+  - linux/amd64
+  - linux/arm64
+```
+In the example above, the client 'besu' and 'lighthouse' are both configured to have Docker images built for the linux/amd64 platform. While 'lighthouse' is also configured to have Docker images built for the linux/arm64 platform.
+
+### [`runners.yaml`](./runners.yaml)
+This configuration maps platforms to GitHub Action runners. It tells our workflow which runner should be used when building a Docker image for a specific platform.
+
+Sample Content:
+```yaml
+linux/amd64: ubuntu-latest
+linux/arm64: self-hosted
+```
+
+In this example, the platform linux/amd64 will use the ubuntu-latest runner, while darwin/arm64 will use the self-hosted runner.
+
 ## Lint locally
 
 Requirements;

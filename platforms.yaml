@@ -10,7 +10,6 @@ geth:
   - linux/amd64
 lighthouse:
   - linux/amd64
-  - darwin/arm64
 lodestar:
   - linux/amd64
 nethermind:
