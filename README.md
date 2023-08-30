@@ -19,7 +19,7 @@ Run the *Build **client*** workflow;
 - [Build Teku](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-teku.yml) [[source](https://github.com/consensys/teku)]
 
 Run the *Build **tooling*** workflow;
-- [Build Flashbots](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-flashbots.yml) [[source](https://github.com/flashbots/builder)]
+- [Build Flashbots Builder](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-flashbots-builder.yml) [[source](https://github.com/flashbots/builder)]
 
 ## Adding a new image to build on schedule
 
