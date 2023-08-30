@@ -62,6 +62,12 @@
   target:
     tag: lightclient-devnet-8
     repository: ethpandaops/geth
+- source:
+    repository: gballet/go-ethereum
+    ref: kaustinen-with-shapella
+  target:
+    tag: gballet-kaustinen-with-shapella
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
