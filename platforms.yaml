@@ -7,7 +7,6 @@ erigon:
 ethereumjs:
   - linux/amd64
 geth:
-  - linux/amd64
   - linux/arm64
 lighthouse:
   - linux/amd64
