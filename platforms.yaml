@@ -1,25 +1,35 @@
 besu:
   - linux/amd64
+  - linux/arm64
 eleel:
   - linux/amd64
 erigon:
   - linux/amd64
+  - linux/arm64
 ethereumjs:
   - linux/amd64
+  - linux/arm64
 geth:
   - linux/amd64
   - linux/arm64
 lighthouse:
   - linux/amd64
+  - linux/arm64
 lodestar:
   - linux/amd64
+  - linux/arm64
 nethermind:
   - linux/amd64
+  - linux/arm64
 nimbus:
   - linux/amd64
+  - linux/arm64
 prysm:
   - linux/amd64
+  - linux/arm64
 reth:
   - linux/amd64
+  - linux/arm64
 teku:
   - linux/amd64
+  - linux/arm64
