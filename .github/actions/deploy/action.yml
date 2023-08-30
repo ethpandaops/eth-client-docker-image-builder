@@ -40,7 +40,7 @@ inputs:
     required: true
   MACOS_PASSWORD:
     required: true
-
+    
 runs:
   using: composite
   steps:
