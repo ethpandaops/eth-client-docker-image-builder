@@ -201,4 +201,4 @@
     ref: main
   target:
     tag: main
-    repository: ethpandaops/flashbots
+    repository: ethpandaops/flashbots-builder
