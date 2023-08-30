@@ -134,7 +134,7 @@ jobs:
           source_repository: ${{ matrix.config.source.repository }}
           source_ref: ${{ matrix.config.source.ref }}
           build_script: ${{ matrix.config.build_script }}
-          target_tag: ${{ matrix.config.target.tag }}
+          target_tag: ${{ matrix.config.target.tag }}-${{ matrix.config.slug }}
           target_repository: ${{ matrix.config.target.repository }}
           target_dockerfile: ${{ matrix.config.target.dockerfile }}
           platforms: ${{ matrix.config.platform }}
