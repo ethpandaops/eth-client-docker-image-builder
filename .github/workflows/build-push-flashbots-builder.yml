@@ -1,4 +1,4 @@
-name: Build flashbots docker image
+name: Build flashbots builder docker image
 
 on:
   workflow_dispatch:
