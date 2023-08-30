@@ -64,7 +64,7 @@ runs:
     shell: bash
     id: buildx-context
     run: |
-      docker context use builders || docker context create builders
+      docker context create builders
   - name: Set up Docker Buildx
     uses: docker/setup-buildx-action@v2
     with:
