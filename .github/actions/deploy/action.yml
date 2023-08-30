@@ -68,6 +68,8 @@ runs:
   #   with:
   #     endpoint: builders
   - name: Unlock MacOS keychain for Docker Hub login
+    shell: bash
+    if: runner.os == 'macOS'
     run: |
       security -v unlock-keychain ~/Library/Keychains/login.keychain-db
   - name: Login to Docker Hub
