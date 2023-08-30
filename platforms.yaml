@@ -33,3 +33,6 @@ reth:
 teku:
   - linux/amd64
   - linux/arm64
+flashbots:
+  - linux/amd64
+  - linux/arm64

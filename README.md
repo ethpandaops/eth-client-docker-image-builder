@@ -18,6 +18,9 @@ Run the *Build **client*** workflow;
 - [Build Reth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-reth.yml) [[source](https://github.com/paradigmxyz/reth)]
 - [Build Teku](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-teku.yml) [[source](https://github.com/consensys/teku)]
 
+Run the *Build **tooling*** workflow;
+- [Build Flashbots](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-flashbots.yml) [[source](https://github.com/flashbots/builder)]
+
 ## Adding a new image to build on schedule
 
 Add a new image to [`config.yaml`](./config.yaml) file and it will be built on schedule from [this workflow](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/scheduled.yml).

@@ -193,3 +193,12 @@
     tag: main
     repository: ethpandaops/eleel
     dockerfile: ./eleel/Dockerfile
+#############
+# flashbots #
+#############
+- source: 
+    repository: flashbots/builder
+    ref: main
+  target:
+    tag: main
+    repository: ethpandaops/flashbots
