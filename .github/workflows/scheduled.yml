@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       configs: ${{ steps.repo_check.outputs.configs }}
+      platforms: ${{ steps.repo_check.outputs.platforms }}
     steps:
       - uses: actions/checkout@v3
       - uses: mikefarah/yq@v4.35.1
@@ -26,13 +27,16 @@ jobs:
         run: |
           # This script checks the source github repository for the latest commit hash and checks if the tag exists in the target dockerhub repository.
           # If the tag does not exist in dockerhub, we add the config to an array for the deploy job to build and push.
-          OUPUT="configs=["
+          CONFIGS="configs=["
+          PLATFORMS="platforms=["
           # iterate over all images in config file
           while IFS=$'\t' read -r INDEX SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
+            CLIENT="${TARGET_REPOSITORY#*/}"
             echo "========================================"
             echo "Checking config index: $INDEX"
             echo "Source repository: $SOURCE_REPOSITORY"
             echo "Source ref: $SOURCE_REF"
+            echo "Client: $CLIENT"
             
             # fetch latest commit hash for image
             set -e
@@ -82,27 +86,44 @@ jobs:
               exit 1
             fi
             
-            OUPUT="${OUPUT}$(yq -r -o=json ".[${INDEX}]" config.yaml),"
+            # Extract the platforms for the specified client
+            platforms=$(yq e ".$CLIENT[]" platforms.yaml)
+
+            platformsOutput=""
+            for platform in $platforms; do
+              slug=$(echo "$platform" | tr '/' '-')
+              runner=$(yq e ".\"$platform\"" runners.yaml)
+              CONFIGS="${CONFIGS}$(yq -r -o=json ".[${INDEX}]" config.yaml | jq --arg plat "$platform" --arg run "$runner" --arg slg "$slug" '. + {"platform": $plat, "runner": $run, "slug": $slg}'),"
+              platformsOutput+="$platform,"
+            done
+            platformsOutput="${platformsOutput%,}"
+
+            PLATFORMS="${PLATFORMS}$(yq -r -o=json ".[${INDEX}]" config.yaml | jq --arg platforms "$platformsOutput" '. + {"platforms": $platforms}'),"
           done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' config.yaml)
 
           # check if last character is a comma and remove it
-          [[ $OUPUT == *, ]] &&
-              OUPUT="${OUPUT%?}"
+          [[ $CONFIGS == *, ]] &&
+              CONFIGS="${CONFIGS%?}"
+          [[ $PLATFORMS == *, ]] &&
+              PLATFORMS="${PLATFORMS%?}"
 
           # close json array
-          OUPUT="${OUPUT}]"
+          CONFIGS="${CONFIGS}]"
+          PLATFORMS="${PLATFORMS}]"
 
-          echo "OUPUT: $OUPUT"
+          echo "CONFIGS: $CONFIGS"
+          echo "PLATFORMS: $PLATFORMS"
 
-          echo $OUPUT >> $GITHUB_OUTPUT
-  scheduled:
+          echo $CONFIGS >> $GITHUB_OUTPUT
+          echo $PLATFORMS >> $GITHUB_OUTPUT
+  deploy:
     needs: check
     if: ${{ needs.check.outputs.configs != '[]' && needs.check.outputs.configs != '' }}
     strategy:
       fail-fast: false
       matrix:
         config: ${{fromJson(needs.check.outputs.configs)}}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.runner }}
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/install-deps
@@ -116,6 +137,29 @@ jobs:
           target_tag: ${{ matrix.config.target.tag }}
           target_repository: ${{ matrix.config.target.repository }}
           target_dockerfile: ${{ matrix.config.target.dockerfile }}
+          platforms: ${{ matrix.config.platform }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  manifest:
+    needs:
+      - check
+      - deploy
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platforms: ${{fromJson(needs.check.outputs.platforms)}}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/manifest
+        with:
+          source_repository: ${{ matrix.platforms.source.repository }}
+          source_ref: ${{ matrix.platforms.source.ref }}
+          target_tag: ${{ matrix.platforms.target.tag }}
+          target_repository: ${{ matrix.platforms.target.repository }}
+          platforms: ${{ matrix.platforms.platforms }}
+
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
   notify:
@@ -123,7 +167,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - check
-      - scheduled
+      - deploy
+      - manifest
     if: cancelled() || failure()
     steps:
       - name: Notify
