@@ -58,8 +58,6 @@ runs:
     run: |
       cd source
       echo "git_commit_hash=$(echo $(git log --pretty=format:'%h' -n 1))" >> $GITHUB_OUTPUT
-  # - name: Set up QEMU
-  #   uses: docker/setup-qemu-action@v2
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context

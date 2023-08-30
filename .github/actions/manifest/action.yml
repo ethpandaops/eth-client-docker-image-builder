@@ -27,8 +27,6 @@ inputs:
     required: true
   DOCKER_PASSWORD:
     required: true
-  MACOS_PASSWORD:
-    required: true
 
 runs:
   using: composite
