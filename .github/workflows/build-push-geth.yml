@@ -53,6 +53,7 @@ jobs:
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
   manifest:
     needs:
       - prepare

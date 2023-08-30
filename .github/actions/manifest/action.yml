@@ -27,6 +27,8 @@ inputs:
     required: true
   DOCKER_PASSWORD:
     required: true
+  MACOS_PASSWORD:
+    required: true
 
 runs:
   using: composite
@@ -64,7 +66,7 @@ runs:
     shell: bash
     id: buildx-context
     run: |
-      docker context create builders
+      docker context use builders || docker context create builders
   - name: Set up Docker Buildx
     uses: docker/setup-buildx-action@v2
     with:
