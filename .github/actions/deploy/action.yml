@@ -68,7 +68,6 @@ runs:
   #   with:
   #     endpoint: builders
   - name: Unlock MacOS keychain for Docker Hub login
-    uses: levibostian/action-hide-sensitive-inputs@v1
     shell: bash
     if: runner.os == 'macOS'
     run: |
