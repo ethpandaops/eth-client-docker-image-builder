@@ -137,7 +137,7 @@ jobs:
           target_tag: ${{ matrix.config.target.tag }}-${{ matrix.config.slug }}
           target_repository: ${{ matrix.config.target.repository }}
           target_dockerfile: ${{ matrix.config.target.dockerfile }}
-          platforms: ${{ matrix.config.platform }}
+          platform: ${{ matrix.config.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
