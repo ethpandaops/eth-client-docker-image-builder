@@ -2,9 +2,13 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
-
-sudo apt-get update
-sudo apt install -y ca-certificates python2 golang-go
+OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
+if [ "${OS_NAME}" == "Darwin" ]; then
+  brew install go
+else 
+  sudo apt-get update
+  sudo apt install -y ca-certificates python2 golang-go
+fi
 go install github.com/bazelbuild/bazelisk@latest
 $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=release
 $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release
