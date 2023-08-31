@@ -102,6 +102,13 @@
     tag: eip4844
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: macladson/lighthouse
+    ref: verkle-trees-capella
+  target:
+    tag: macladson-verkle-trees-capella
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
 ############
 # lodestar #
 ############
