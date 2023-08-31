@@ -4,8 +4,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
 OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 if [ "${OS_NAME}" == "darwin" ]; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  brew install go
+  /opt/homebrew/bin/brew install go
 else 
   sudo apt-get update
   sudo apt install -y ca-certificates python2 golang-go
