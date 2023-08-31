@@ -2,10 +2,15 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
-
-sudo apt-get update
-sudo apt install -y ca-certificates python2 golang-go
-go install github.com/bazelbuild/bazelisk@latest
+OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
+if [ "${OS_NAME}" == "darwin" ]; then
+  /opt/homebrew/bin/brew install go
+  /opt/homebrew/bin/go install github.com/bazelbuild/bazelisk@latest
+else 
+  sudo apt-get update
+  sudo apt install -y ca-certificates python2 golang-go
+  go install github.com/bazelbuild/bazelisk@latest
+fi
 $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=release
 $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release
 # move to base dir to avoid any dockerignore/stat issues
