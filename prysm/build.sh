@@ -3,7 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
 OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
-if [ "${OS_NAME}" == "Darwin" ]; then
+if [ "${OS_NAME}" == "darwin" ]; then
   brew install go
 else 
   sudo apt-get update
