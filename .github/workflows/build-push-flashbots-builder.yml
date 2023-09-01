@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'flashbots'
+          client: 'flashbots-builder'
   deploy:
     needs:
       - prepare
@@ -48,7 +48,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
-          target_repository: ethpandaops/flashbots
+          target_repository: ethpandaops/flashbots-builder
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
@@ -66,7 +66,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
-          target_repository: ethpandaops/flashbots
+          target_repository: ethpandaops/flashbots-builder
           platforms: ${{ needs.prepare.outputs.platforms }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"

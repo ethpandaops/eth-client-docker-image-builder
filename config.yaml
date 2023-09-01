@@ -177,14 +177,6 @@
     tag: master
     repository: ethpandaops/prysm
     dockerfile: ./prysm/Dockerfile
-- source:
-    repository: prysmaticlabs/prysm
-    ref: deneb-integration
-  build_script: ./prysm/build.sh
-  target:
-    tag: deneb-integration
-    repository: ethpandaops/prysm
-    dockerfile: ./prysm/Dockerfile
 ########
 # teku #
 ########
