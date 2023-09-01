@@ -62,6 +62,12 @@
   target:
     tag: lightclient-devnet-8
     repository: ethpandaops/geth
+- source:
+    repository: gballet/go-ethereum
+    ref: kaustinen-with-shapella
+  target:
+    tag: gballet-kaustinen-with-shapella
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
@@ -96,6 +102,13 @@
     tag: eip4844
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: macladson/lighthouse
+    ref: verkle-trees-capella
+  target:
+    tag: macladson-verkle-trees-capella
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
 ############
 # lodestar #
 ############
@@ -104,6 +117,12 @@
     ref: unstable
   target:
     tag: unstable
+    repository: ethpandaops/lodestar
+- source:
+    repository: chainsafe/lodestar
+    ref: g11tech/verge
+  target:
+    tag: g11tech-verge
     repository: ethpandaops/lodestar
 ##############
 # nethermind #
