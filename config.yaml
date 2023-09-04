@@ -118,12 +118,12 @@
   target:
     tag: unstable
     repository: ethpandaops/lodestar
-# - source:
-#     repository: chainsafe/lodestar
-#     ref: g11tech/verge
-#   target:
-#     tag: g11tech-verge
-#     repository: ethpandaops/lodestar
+- source:
+    repository: chainsafe/lodestar
+    ref: g11tech/verge
+  target:
+    tag: g11tech-verge
+    repository: ethpandaops/lodestar
 ##############
 # nethermind #
 ##############
