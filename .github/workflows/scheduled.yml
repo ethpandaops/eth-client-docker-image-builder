@@ -147,6 +147,8 @@ jobs:
       - check
       - deploy
     runs-on: ubuntu-latest
+    # Always run the manifest job irrespective of the deploy job's outcome
+    if: always()
     strategy:
       fail-fast: false
       matrix:
