@@ -35,3 +35,6 @@ teku:
 flashbots-builder:
   - linux/amd64
   - linux/arm64
+tx-fuzz:
+  - linux/amd64
+  - linux/arm64

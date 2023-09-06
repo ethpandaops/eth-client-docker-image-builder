@@ -213,3 +213,12 @@
   target:
     tag: main
     repository: ethpandaops/flashbots-builder
+#############
+#  tx-fuzz  #
+#############
+- source: 
+    repository: MariusVanDerWijden/tx-fuzz
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/tx-fuzz
