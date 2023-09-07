@@ -20,6 +20,7 @@ Run the *Build **client*** workflow;
 
 Run the *Build **tooling*** workflow;
 - [Build Flashbots Builder](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-flashbots-builder.yml) [[source](https://github.com/flashbots/builder)]
+- [Build tx-fuzz](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-tx-fuzz.yaml) [[source](https://github.com/MariusVanDerWijden/tx-fuzz)]
 
 ## Adding a new image to build on schedule
 
