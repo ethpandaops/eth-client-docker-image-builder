@@ -147,8 +147,7 @@ jobs:
       - check
       - deploy
     runs-on: ubuntu-latest
-    # Always run the manifest job irrespective of the deploy job's outcome
-    if: always()
+    if: ${{ !cancelled() && needs.check.outputs.platforms != '[]' && needs.check.outputs.platforms != '' }}
     strategy:
       fail-fast: false
       matrix:
