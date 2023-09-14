@@ -6,7 +6,7 @@ SHELL ["/bin/bash", "-c"]
 
 # use gcc 10.2.0-15 or older, see https://github.com/status-im/nimbus-eth2/issues/1970#issuecomment-723736321
 RUN apt update \
- && apt -y install build-essential git
+ && apt -y install build-essential git-lfs
 
 
 RUN ldd --version ldd
