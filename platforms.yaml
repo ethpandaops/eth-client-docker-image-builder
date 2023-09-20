@@ -44,3 +44,9 @@ consensus-monitor:
 execution-monitor:
   - linux/amd64
   - linux/arm64
+dora-the-explorer:
+  - linux/amd64
+  - linux/arm64
+beacon-metrics-gazer:
+  - linux/amd64
+  - linux/arm64

@@ -222,3 +222,12 @@
   target:
     tag: master
     repository: ethpandaops/tx-fuzz
+#############
+#  dora-the-explorer  #
+#############
+- source:
+    repository: pk910/light-beaconchain-explorer
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/dora-the-explorer
