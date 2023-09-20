@@ -230,4 +230,4 @@
     ref: main
   target:
     tag: main
-    repository: ethpandaops/tx-fuzz
+    repository: ethpandaops/consensus-monitor
