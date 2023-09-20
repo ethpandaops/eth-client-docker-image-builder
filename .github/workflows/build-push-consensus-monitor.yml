@@ -1,10 +1,10 @@
-name: Build tx-fuzz docker image
+name: Build consensus-monitor docker image
 
 on:
   workflow_dispatch:
     inputs:
       repository: 
-        description: The source tx-fuzz repository to build from
+        description: The source consensus-monitor repository to build from
         default: h4ck3rk3y/ethereum_consensus_monitor
         type: string
         required: true
@@ -66,7 +66,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
-          target_repository: ethpandaops/tx-fuzz
+          target_repository: ethpandaops/consensus-monitor
           platforms: ${{ needs.prepare.outputs.platforms }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
