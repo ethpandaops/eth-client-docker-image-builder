@@ -41,3 +41,6 @@ tx-fuzz:
 consensus-monitor:
   - linux/amd64
   - linux/arm64
+execution-monitor:
+  - linux/amd64
+  - linux/arm64
