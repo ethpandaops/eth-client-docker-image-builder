@@ -1,4 +1,4 @@
-name: Build tx-fuzz docker image
+name: Build consensus-monitor docker image
 
 on:
   workflow_dispatch:
