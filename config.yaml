@@ -222,12 +222,3 @@
   target:
     tag: master
     repository: ethpandaops/tx-fuzz
-#############
-#  consensus-monitor  #
-#############
-- source:
-    repository: ralexstokes/ethereum_consensus_monitor
-    ref: main
-  target:
-    tag: main
-    repository: ethpandaops/consensus-monitor
