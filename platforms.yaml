@@ -38,3 +38,6 @@ flashbots-builder:
 tx-fuzz:
   - linux/amd64
   - linux/arm64
+consensus-monitor:
+  - linux/amd64
+  - linux/arm64
