@@ -226,7 +226,7 @@
 #  dora-the-explorer  #
 #############
 - source:
-    repository: pk910/light-beaconchain-explorer
+    repository: pk910/dora-the-explorer
     ref: master
   target:
     tag: master
