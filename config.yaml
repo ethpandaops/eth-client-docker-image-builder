@@ -89,7 +89,7 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: unstable
+    ref: stable
   build_script: ./lighthouse/xatu-sentry.sh
   target:
     tag: xatu-sentry
@@ -145,7 +145,7 @@
     dockerfile: ./nimbus/Dockerfile
 - source:
     repository: status-im/nimbus-eth2
-    ref: unstable
+    ref: stable
   build_script: ./nimbus/xatu-sentry.sh
   target:
     tag: xatu-sentry
