@@ -188,12 +188,12 @@
   target:
     tag: master
     repository: ethpandaops/tx-fuzz
-#############
-#  dora-the-explorer  #
-#############
+##########
+#  dora  #
+##########
 - source:
-    repository: pk910/dora-the-explorer
+    repository: pk910/dora
     ref: master
   target:
     tag: master
-    repository: ethpandaops/dora-the-explorer
+    repository: ethpandaops/dora
