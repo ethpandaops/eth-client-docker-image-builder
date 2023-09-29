@@ -8,20 +8,6 @@
   target:
     tag: main
     repository: ethpandaops/besu
-- source:
-    repository: hyperledger/besu
-    ref: eip-4844-interop
-  build_script: ./besu/build.sh
-  target:
-    tag: eip-4844-interop
-    repository: ethpandaops/besu
-- source:
-    repository: hyperledger/besu
-    ref: 4844-devnet-5b
-  build_script: ./besu/build.sh
-  target:
-    tag: devnet6
-    repository: ethpandaops/besu
 ##########
 # erigon #
 ##########
@@ -30,12 +16,6 @@
     ref: devel
   target:
     tag: devel
-    repository: ethpandaops/erigon
-- source:
-    repository: roberto-bayardo/erigon
-    ref: eip-4844
-  target:
-    tag: roberto-bayardo-eip-4844
     repository: ethpandaops/erigon
 ##############
 # ethereumjs #
@@ -65,9 +45,9 @@
     repository: ethpandaops/geth
 - source:
     repository: lightclient/go-ethereum
-    ref: devnet-8
+    ref: devnet-9
   target:
-    tag: lightclient-devnet-8
+    tag: lightclient-devnet-9
     repository: ethpandaops/geth
 - source:
     repository: gballet/go-ethereum
@@ -104,9 +84,9 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: eip4844
+    ref: deneb-free-blobs
   target:
-    tag: eip4844
+    tag: deneb-free-blobs
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 - source:
@@ -158,13 +138,6 @@
     tag: xatu-sentry
     repository: ethpandaops/nimbus
     dockerfile: ./nimbus/Dockerfile
-- source:
-    repository: henridf/nimbus-eth2
-    ref: eip4844-devnet
-  target:
-    tag: henridf-eip4844-devnet
-    repository: ethpandaops/nimbus
-    dockerfile: ./nimbus/Dockerfile
 #########
 # prysm #
 #########
@@ -194,13 +167,6 @@
   target:
     tag: master
     repository: ethpandaops/teku
-- source:
-    repository: consensys/teku
-    ref: 4844-interop
-  build_script: ./teku/build.sh
-  target:
-    tag: 4844-interop
-    repository: ethpandaops/teku
 #########
 # eleel #
 #########
@@ -229,12 +195,12 @@
   target:
     tag: master
     repository: ethpandaops/tx-fuzz
-#############
-#  dora-the-explorer  #
-#############
+##########
+#  dora  #
+##########
 - source:
-    repository: pk910/dora-the-explorer
+    repository: pk910/dora
     ref: master
   target:
     tag: master
-    repository: ethpandaops/dora-the-explorer
+    repository: ethpandaops/dora

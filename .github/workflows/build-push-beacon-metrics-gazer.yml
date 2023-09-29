@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       repository: 
-        description: The source dora-the-explorer repository to build from
+        description: The source beacon-metrics-gazer repository to build from
         default: dapplion/beacon-metrics-gazer
         type: string
         required: true
