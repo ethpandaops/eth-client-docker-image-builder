@@ -46,7 +46,7 @@ execution-monitor:
   - linux/arm64
 dora:
   - linux/amd64
-  #- linux/arm64
+  - linux/arm64
 beacon-metrics-gazer:
   - linux/amd64
   - linux/arm64
