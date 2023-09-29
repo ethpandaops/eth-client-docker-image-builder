@@ -23,7 +23,7 @@ Run the *Build **tooling*** workflow;
 - [Build tx-fuzz](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-tx-fuzz.yaml) [[source](https://github.com/MariusVanDerWijden/tx-fuzz)]
 - [Build consesnus-monitor](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-consensus-monitor.yml) [[source]](https://github.com/ralexstokes/ethereum_consensus_monitor)
 - [Build execution-monitor](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-execution-monitor.yml) [[source]](https://github.com/ethereum/nodemonitor)
-- [Build dora-the-explorer](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-dora-the-explorer.yml) [[source]](https://github.com/pk910/light-beaconchain-explorer)
+- [Build dora](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-dora.yml) [[source]](https://github.com/pk910/light-beaconchain-explorer)
 - [Build beacon-metrics-gazer](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-beacon-metrics-gazer.yml) [[source]](https://github.com/dapplion/beacon-metrics-gazer)
 
 

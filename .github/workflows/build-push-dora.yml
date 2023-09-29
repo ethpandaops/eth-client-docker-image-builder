@@ -1,11 +1,11 @@
-name: Build dora-the-explorer image
+name: Build dora image
 
 on:
   workflow_dispatch:
     inputs:
       repository: 
-        description: The source dora-the-explorer repository to build from
-        default: pk910/light-beaconchain-explorer
+        description: The source dora repository to build from
+        default: pk910/dora-the-explorer
         type: string
         required: true
       ref:
@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'dora-the-explorer'
+          client: 'dora'
   deploy:
     needs:
       - prepare
@@ -48,7 +48,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
-          target_repository: ethpandaops/dora-the-explorer
+          target_repository: ethpandaops/dora
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
@@ -66,7 +66,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
-          target_repository: ethpandaops/dora-the-explorer
+          target_repository: ethpandaops/dora
           platforms: ${{ needs.prepare.outputs.platforms }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
