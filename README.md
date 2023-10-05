@@ -25,6 +25,7 @@ Run the *Build **tooling*** workflow;
 - [Build execution-monitor](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-execution-monitor.yml) [[source]](https://github.com/ethereum/nodemonitor)
 - [Build dora](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-dora.yml) [[source]](https://github.com/pk910/dora)
 - [Build beacon-metrics-gazer](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-beacon-metrics-gazer.yml) [[source]](https://github.com/dapplion/beacon-metrics-gazer)
+- [Build blob-spammer](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-blob-spammer.yaml) [[source](https://github.com/pk910/blob-spammer)]
 
 
 ## Adding a new image to build on schedule
