@@ -5,7 +5,7 @@ on:
     inputs:
       repository: 
         description: The source blob-spammer repository to build from
-        default: pk910/blob-spammer
+        default: ethpandaops/blob-spammer
         type: string
         required: true
       ref:

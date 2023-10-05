@@ -208,7 +208,7 @@
 # blob-spammer #
 ################
 - source: 
-    repository: pk910/blob-spammer
+    repository: ethpandaops/blob-spammer
     ref: master
   target:
     tag: master
