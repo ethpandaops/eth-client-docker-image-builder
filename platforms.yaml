@@ -50,3 +50,6 @@ dora:
 beacon-metrics-gazer:
   - linux/amd64
   - linux/arm64
+blob-spammer:
+  - linux/amd64
+  - linux/arm64
