@@ -204,12 +204,12 @@
   target:
     tag: master
     repository: ethpandaops/dora
-################
-# blob-spammer #
-################
+##############
+# goomy-blob #
+##############
 - source: 
-    repository: ethpandaops/blob-spammer
+    repository: ethpandaops/goomy-blob
     ref: master
   target:
     tag: master
-    repository: ethpandaops/blob-spammer
+    repository: ethpandaops/goomy-blob
