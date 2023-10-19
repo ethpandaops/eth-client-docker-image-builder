@@ -213,3 +213,24 @@
   target:
     tag: master
     repository: ethpandaops/goomy-blob
+##############################
+# ethereum-genesis-generator #
+##############################
+- source: 
+    repository: ethpandaops/ethereum-genesis-generator
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/ethereum-genesis-generator
+- source:
+    repository: ethpandaops/ethereum-genesis-generator
+    ref: verkle
+  target:
+    tag: verkle
+    repository: ethpandaops/ethereum-genesis-generator
+- source:
+    repository: ethpandaops/ethereum-genesis-generator
+    ref: bellatrix-genesis
+  target:
+    tag: bellatrix-genesis
+    repository: ethpandaops/ethereum-genesis-generator
