@@ -53,3 +53,6 @@ beacon-metrics-gazer:
 goomy-blob:
   - linux/amd64
   - linux/arm64
+ethereum-genesis-generator:
+  - linux/amd64
+  - linux/arm64
