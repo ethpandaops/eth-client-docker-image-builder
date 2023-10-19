@@ -224,9 +224,9 @@
     repository: ethpandaops/ethereum-genesis-generator
 - source:
     repository: ethpandaops/ethereum-genesis-generator
-    ref: verkle
+    ref: verkle-genesis
   target:
-    tag: verkle
+    tag: verkle-genesis
     repository: ethpandaops/ethereum-genesis-generator
 - source:
     repository: ethpandaops/ethereum-genesis-generator
