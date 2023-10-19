@@ -50,6 +50,12 @@
     tag: lightclient-devnet-9
     repository: ethpandaops/geth
 - source:
+    repository: lightclient/go-ethereum
+    ref: devnet-10
+  target:
+    tag: lightclient-devnet-10
+    repository: ethpandaops/geth
+- source:
     repository: gballet/go-ethereum
     ref: kaustinen-with-shapella
   target:
