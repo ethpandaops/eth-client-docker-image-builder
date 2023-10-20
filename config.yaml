@@ -96,6 +96,13 @@
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 - source:
+    repository: sigp/lighthouse
+    ref: devnet-10
+  target:
+    tag: devnet-10
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
+- source:
     repository: macladson/lighthouse
     ref: verkle-trees-capella
   target:
@@ -125,6 +132,12 @@
     ref: master
   target:
     tag: master
+    repository: ethpandaops/nethermind
+- source:
+    repository: nethermindeth/nethermind
+    ref: upgrade-ckzg
+  target:
+    tag: upgrade-ckzg
     repository: ethpandaops/nethermind
 ##########
 # nimbus #
@@ -161,6 +174,14 @@
   build_script: ./prysm/build.sh
   target:
     tag: master
+    repository: ethpandaops/prysm
+    dockerfile: ./prysm/Dockerfile
+- source:
+    repository: prysmaticlabs/prysm
+    ref: devnet-10
+  build_script: ./prysm/build.sh
+  target:
+    tag: devnet-10
     repository: ethpandaops/prysm
     dockerfile: ./prysm/Dockerfile
 ########
