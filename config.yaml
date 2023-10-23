@@ -133,12 +133,6 @@
   target:
     tag: master
     repository: ethpandaops/nethermind
-- source:
-    repository: nethermindeth/nethermind
-    ref: upgrade-ckzg
-  target:
-    tag: upgrade-ckzg
-    repository: ethpandaops/nethermind
 ##########
 # nimbus #
 ##########
