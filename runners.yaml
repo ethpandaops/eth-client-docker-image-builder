@@ -1,3 +1,8 @@
-linux/amd64: ubuntu-latest
+linux/amd64: 
+  - environment=production
+  - size=xlarge
+  - provider=ethpandaops
+  - realm=platform
+  - cluster=analytics
 linux/arm64: ARM64
 darwin/arm64: ARM64
