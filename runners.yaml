@@ -1,3 +1,7 @@
-linux/amd64: X64
+linux/amd64: 
+  - environment=production
+  - size=xlarge
+  - provider=ethpandaops
+  - realm=platform
 linux/arm64: ARM64
 darwin/arm64: ARM64
