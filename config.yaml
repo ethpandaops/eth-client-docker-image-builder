@@ -124,12 +124,6 @@
   target:
     tag: g11tech-verge
     repository: ethpandaops/lodestar
-- source:
-    repository: chainsafe/lodestar
-    ref: deneb-builder
-  target:
-    tag: deneb-builder
-    repository: ethpandaops/lodestar
 ##############
 # nethermind #
 ##############
