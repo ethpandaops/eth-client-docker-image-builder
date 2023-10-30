@@ -3,5 +3,6 @@ linux/amd64:
   - size=xlarge
   - provider=ethpandaops
   - realm=platform
+  - cluster=analytics
 linux/arm64: ARM64
 darwin/arm64: ARM64
