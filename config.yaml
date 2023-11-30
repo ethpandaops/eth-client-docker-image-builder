@@ -216,15 +216,6 @@
   target:
     tag: master
     repository: ethpandaops/tx-fuzz
-##########
-#  dora  #
-##########
-- source:
-    repository: pk910/dora
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/dora
 ##############
 # goomy-blob #
 ##############
