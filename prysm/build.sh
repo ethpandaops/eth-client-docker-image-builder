@@ -11,8 +11,8 @@ else
   sudo apt install -y ca-certificates python2 golang-go
   go install github.com/bazelbuild/bazelisk@latest
 fi
-$HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=release
-$HOME/go/bin/bazelisk build //cmd/validator:validator --config=release
+$HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=release --define pgo_enabled=0
+$HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0
 # move to base dir to avoid any dockerignore/stat issues
 mv bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain _beacon-chain
 mv bazel-bin/cmd/validator/validator_/validator _validator
