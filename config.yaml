@@ -44,22 +44,16 @@
     tag: master
     repository: ethpandaops/geth
 - source:
-    repository: lightclient/go-ethereum
-    ref: devnet-9
-  target:
-    tag: lightclient-devnet-9
-    repository: ethpandaops/geth
-- source:
-    repository: lightclient/go-ethereum
-    ref: devnet-10
-  target:
-    tag: lightclient-devnet-10
-    repository: ethpandaops/geth
-- source:
     repository: gballet/go-ethereum
     ref: kaustinen-with-shapella
   target:
     tag: gballet-kaustinen-with-shapella
+    repository: ethpandaops/geth
+- source:
+    repository: gballet/go-ethereum
+    ref: refactor-transition-post-genesis
+  target:
+    tag: gballet-refactor-transition-post-genesis
     repository: ethpandaops/geth
 ########
 # reth #
