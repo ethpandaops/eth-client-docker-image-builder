@@ -1,0 +1,87 @@
+name: Build armiarma docker image
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository: 
+        description: The source armiarma repository to build from
+        default: ethpandaops/armiarma
+        type: string
+        required: true
+      ref:
+        description: The branch, tag or SHA to checkout and build from
+        default: master
+        type: string
+        required: true
+      docker_tag:
+        description: Override target docker tag (defaults to the above source ref if left blank)
+        type: string
+        required: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.setup.outputs.matrix }}
+      platforms: ${{ steps.setup.outputs.platforms }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare Matrix
+        id: setup
+        uses: ./.github/actions/prepare
+        with:
+          client: 'armiarma'
+  deploy:
+    needs:
+      - prepare
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include: ${{fromJson(needs.prepare.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.repository }}
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+          target_repository: ethpandaops/armiarma
+          platform: ${{ matrix.platform }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+  manifest:
+    needs:
+      - prepare
+      - deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/manifest
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/armiarma
+          platforms: ${{ needs.prepare.outputs.platforms }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  notify:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+      - deploy
+      - manifest
+    if: failure()
+    steps:
+      - name: Notify
+        uses: nobrayner/discord-webhook@v1
+        with:
+          github-token: ${{ secrets.github_token }}
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
