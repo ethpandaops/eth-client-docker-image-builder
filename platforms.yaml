@@ -53,3 +53,6 @@ goomy-blob:
 ethereum-genesis-generator:
   - linux/amd64
   - linux/arm64
+armiarma:
+  - linux/amd64
+  - linux/arm64
