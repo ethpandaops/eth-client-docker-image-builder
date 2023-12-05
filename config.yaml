@@ -240,3 +240,18 @@
   target:
     tag: bellatrix-genesis
     repository: ethpandaops/ethereum-genesis-generator
+#############
+# armiarma #
+#############
+- source: 
+    repository: migalabs/armiarma
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/armiarma
+- source:
+    repository: samcm/armiarma
+    ref: feat/sse-events
+  target:
+    tag: samcm-sse-events
+    repository: ethpandaops/armiarma
