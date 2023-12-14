@@ -20,7 +20,7 @@ ADD . /root/nimbus-eth2
 # We need to run `make update` again because some absolute paths changed.
 RUN cd /root/nimbus-eth2 \
  && make -j$(nproc) update \
- && make -j$(nproc) V=1 NIMFLAGS="-d:const_preset=mainnet -d:disableMarchNative" LOG_LEVEL=TRACE nimbus_beacon_node
+ && make -j$(nproc) V=1 NIMFLAGS="-d:const_preset=mainnet -d:disableMarchNative" LOG_LEVEL=TRACE nimbus_beacon_node nimbus_validator_client
 
 # alternatively:
 # && make -j$(nproc) LOG_LEVEL=TRACE NIMFLAGS="-d:insecure -d:ETH2_SPEC=v0.12.1 -d:BLS_ETH2_SPEC=v0.12.x -d:const_preset=/root/config.yaml" nimbus_validator_client
@@ -45,6 +45,7 @@ RUN rm -rf /home/user/nimbus-eth2/build/beacon_node
 # "COPY" creates new image layers, so we cram all we can into one command
 COPY --from=build /root/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-eth2/build/beacon_node
 COPY --from=build /root/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-eth2/build/nimbus_beacon_node
+COPY --from=build /root/nimbus-eth2/build/nimbus_validator_client /home/user/nimbus-eth2/build/nimbus_validator_client
 
 ENV PATH="/home/user/nimbus-eth2/build:${PATH}"
 ENTRYPOINT ["nimbus_beacon_node"]
