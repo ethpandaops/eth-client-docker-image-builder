@@ -117,12 +117,14 @@
 - source:
     repository: chainsafe/lodestar
     ref: unstable
+  build_script: ./lodestar/build.sh
   target:
     tag: unstable
     repository: ethpandaops/lodestar
 - source:
     repository: chainsafe/lodestar
     ref: g11tech/verge
+  build_script: ./lodestar/build.sh
   target:
     tag: g11tech-verge
     repository: ethpandaops/lodestar
@@ -203,7 +205,7 @@
 #############
 # flashbots #
 #############
-- source: 
+- source:
     repository: flashbots/builder
     ref: main
   target:
@@ -212,7 +214,7 @@
 #############
 #  tx-fuzz  #
 #############
-- source: 
+- source:
     repository: MariusVanDerWijden/tx-fuzz
     ref: master
   target:
@@ -221,7 +223,7 @@
 ##############
 # goomy-blob #
 ##############
-- source: 
+- source:
     repository: ethpandaops/goomy-blob
     ref: master
   target:
@@ -230,7 +232,7 @@
 ##############################
 # ethereum-genesis-generator #
 ##############################
-- source: 
+- source:
     repository: ethpandaops/ethereum-genesis-generator
     ref: master
   target:
@@ -257,7 +259,7 @@
 #############
 # armiarma #
 #############
-- source: 
+- source:
     repository: migalabs/armiarma
     ref: master
   target:
