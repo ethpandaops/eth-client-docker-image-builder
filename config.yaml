@@ -91,6 +91,14 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
+    ref: unstable
+  build_script: ./lighthouse/xatu-sentry.sh
+  target:
+    tag: xatu-sentry-unstable
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: sigp/lighthouse
     ref: deneb-free-blobs
   target:
     tag: deneb-free-blobs
