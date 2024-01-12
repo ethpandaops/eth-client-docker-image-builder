@@ -66,6 +66,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          build_script: ./lodestar/build.sh
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/lodestar
           platforms: ${{ needs.prepare.outputs.platforms }}
