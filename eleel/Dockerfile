@@ -1,4 +1,4 @@
-FROM rust:1.68-bullseye AS builder
+FROM rust:1.75-buster AS builder
 RUN apt-get update && apt-get -y upgrade && apt-get install -y cmake clang libclang-dev protobuf-compiler
 COPY . eleel
 RUN cd eleel && cargo build --release --bin eleel --target x86_64-unknown-linux-gnu
