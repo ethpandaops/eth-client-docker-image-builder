@@ -15,7 +15,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - uses: mikefarah/yq@v4.35.1
     - name: Generate platform and runner matrix from config files
       id: setup_matrix

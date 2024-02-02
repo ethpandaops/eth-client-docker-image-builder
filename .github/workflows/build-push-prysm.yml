@@ -25,7 +25,7 @@ jobs:
       matrix: ${{ steps.setup.outputs.matrix }}
       platforms: ${{ steps.setup.outputs.platforms }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Prepare Matrix
         id: setup
         uses: ./.github/actions/prepare
@@ -39,7 +39,7 @@ jobs:
       matrix:
         include: ${{fromJson(needs.prepare.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -62,7 +62,7 @@ jobs:
       - deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
