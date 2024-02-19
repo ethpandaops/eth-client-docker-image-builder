@@ -28,7 +28,7 @@ RUN ldd --version ldd
 
 RUN rm -rf /home/user/nimbus-eth1/build/nimbus
 
-COPY --from=build /root/nimbus-eth1/build/nimbus /home/user/nimbus-eth2/build/nimbus
+COPY --from=build /root/nimbus-eth1/build/nimbus /home/user/nimbus-eth1/build/nimbus
 
 ENV PATH="/home/user/nimbus-eth1/build:${PATH}"
 ENTRYPOINT ["nimbus"]
