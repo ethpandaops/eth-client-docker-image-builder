@@ -14,6 +14,7 @@ Run the *Build **client*** workflow;
 - [Build Lodestar](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-lodestar.yml) [[source](https://github.com/chainsafe/lodestar)]
 - [Build Nethermind](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nethermin.yml) [[source](https://github.com/nethermindeth/nethermind)]
 - [Build Nimbus](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nimbus.yml) [[source](https://github.com/status-im/nimbus-eth2)]
+- [Build Nimbus-EL](https://github.com/ethpandaops/eth-client-docker-iamge-builder/actions/workflows/build-push-nimbus-eth1.yml) [[source](https://github.com/status-im/nimbus-eth1)]
 - [Build Prysm](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-prysm.yml) [[source](https://github.com/prysmaticlabs/prysm)]
 - [Build Reth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-reth.yml) [[source](https://github.com/paradigmxyz/reth)]
 - [Build Teku](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-teku.yml) [[source](https://github.com/consensys/teku)]
