@@ -20,7 +20,7 @@ FROM debian:testing-slim as deploy
 
 SHELL ["/bin/bash", "-c"]
 RUN apt update \
- && apt -y install build-essential
+ && apt -y install build-essential librocksdb-dev libpcre3-dev
 RUN apt update && apt -y upgrade
 
 RUN ldd --version ldd
