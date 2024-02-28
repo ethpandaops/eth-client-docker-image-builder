@@ -38,3 +38,5 @@ ENTRYPOINT ["/bin/bash", "-c"]
 WORKDIR /home/user/nimbus-eth2/build
 
 STOPSIGNAL SIGINT
+
+# Caller can use either 'beacon_node' or 'validator_client' binary
