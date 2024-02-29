@@ -31,7 +31,7 @@ jobs:
         uses: ./.github/actions/prepare
         with:
           client: 'prysm'
-  deploy:
+  deploy-beacon:
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
@@ -47,19 +47,45 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          build_script: ./prysm/build.sh
+          build_script: ./prysm/build_beacon.sh
           target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
-          target_repository: ethpandaops/prysm
-          target_dockerfile: ./prysm/Dockerfile
+          target_repository: ethpandaops/prysm-beacon-chain
+          target_dockerfile: ./prysm/Dockerfile.beacon
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+    deploy-validator:
+      needs:
+        - prepare
+      runs-on: ${{ matrix.runner }}
+      strategy:
+        matrix:
+          include: ${{fromJson(needs.prepare.outputs.matrix)}}
+      steps:
+        - uses: actions/checkout@v4
+        - uses: ./.github/actions/install-deps
+          with:
+            repository: ${{ inputs.repository }}
+        - uses: ./.github/actions/deploy
+          with:
+            source_repository: ${{ inputs.repository }}
+            source_ref: ${{ inputs.ref }}
+            build_script: ./prysm/build_validator.sh
+            target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+            target_repository: ethpandaops/prysm-validator
+            target_dockerfile: ./prysm/Dockerfile.validator
+            platform: ${{ matrix.platform }}
+
+            DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+            DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+            MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
   manifest:
     needs:
       - prepare
-      - deploy
+      - deploy-beacon
+      - deploy-validator
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,7 +104,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - prepare
-      - deploy
+      - deploy-beacon
+      - deploy-validator
       - manifest
     if: failure()
     steps:
