@@ -200,27 +200,35 @@
 - source:
     repository: prysmaticlabs/prysm
     ref: develop
-  build_script: ./prysm/build.sh
+  build_script: ./prysm/build_beacon.sh
   target:
     tag: develop
-    repository: ethpandaops/prysm
-    dockerfile: ./prysm/Dockerfile
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: develop
+  build_script: ./prysm/build_validator.sh
+  target:
+    tag: develop
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
 - source:
     repository: prysmaticlabs/prysm
     ref: master
-  build_script: ./prysm/build.sh
+  build_script: ./prysm/build_beacon.sh
   target:
     tag: master
-    repository: ethpandaops/prysm
-    dockerfile: ./prysm/Dockerfile
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
 - source:
     repository: prysmaticlabs/prysm
-    ref: devnet-10
-  build_script: ./prysm/build.sh
+    ref: master
+  build_script: ./prysm/build_validator.sh
   target:
-    tag: devnet-10
-    repository: ethpandaops/prysm
-    dockerfile: ./prysm/Dockerfile
+    tag: master
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
 ########
 # teku #
 ########
