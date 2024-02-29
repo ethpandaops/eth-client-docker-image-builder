@@ -76,11 +76,10 @@ jobs:
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
-  manifest:
+  manifest-beacon:
     needs:
       - prepare
       - deploy-beacon
-      - deploy-validator
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -94,6 +93,23 @@ jobs:
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  manifest-validator:
+    needs:
+      - prepare
+      - deploy-validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/manifest
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/nimbus-validator-client
+          platforms: ${{ needs.prepare.outputs.platforms }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest
@@ -101,7 +117,8 @@ jobs:
       - prepare
       - deploy-beacon
       - deploy-validator
-      - manifest
+      - manifest-beacon
+      - manifest-validator
     if: failure()
     steps:
       - name: Notify
