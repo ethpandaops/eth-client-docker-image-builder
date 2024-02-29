@@ -146,44 +146,44 @@
   target:
     tag: unstable
     repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus/Dockerfile.beacon
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
 - source:
     repository: status-im/nimbus-eth2
     ref: unstable
   target:
     tag: unstable
     repository: ethpandaops/nimbus-validator-client
-    dockerfile: ./nimbus/Dockerfile.validator
+    dockerfile: ./nimbus-eth2/Dockerfile.validator
 - source:
     repository: status-im/nimbus-eth2
     ref: stable
   target:
     tag: stable
     repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus/Dockerfile.beacon
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
 - source:
     repository: status-im/nimbus-eth2
     ref: stable
   target:
     tag: stable
     repository: ethpandaops/nimbus-validator-client
-    dockerfile: ./nimbus/Dockerfile.validator
+    dockerfile: ./nimbus-eth2/Dockerfile.validator
 - source:
     repository: status-im/nimbus-eth2
     ref: stable
-  build_script: ./nimbus/xatu-sentry.sh
+  build_script: ./nimbus-eth2/xatu-sentry.sh
   target:
     tag: xatu-sentry
     repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus/Dockerfile.beacon
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
 - source:
     repository: status-im/nimbus-eth2
     ref: unstable
-  build_script: ./nimbus/xatu-sentry.sh
+  build_script: ./nimbus-eth2/xatu-sentry.sh
   target:
     tag: xatu-sentry-unstable
     repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus/Dockerfile.beacon
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
 ###############
 # nimbus-eth1 #
 ###############
