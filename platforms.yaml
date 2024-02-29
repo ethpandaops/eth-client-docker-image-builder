@@ -21,7 +21,7 @@ lodestar:
 nethermind:
   - linux/amd64
   - linux/arm64
-nimbus:
+nimbus-eth2:
   - linux/amd64
   - linux/arm64
 nimbus-eth1:
