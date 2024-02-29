@@ -56,31 +56,31 @@ jobs:
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
-    deploy-validator:
-      needs:
-        - prepare
-      runs-on: ${{ matrix.runner }}
-      strategy:
-        matrix:
-          include: ${{fromJson(needs.prepare.outputs.matrix)}}
-      steps:
-        - uses: actions/checkout@v4
-        - uses: ./.github/actions/install-deps
-          with:
-            repository: ${{ inputs.repository }}
-        - uses: ./.github/actions/deploy
-          with:
-            source_repository: ${{ inputs.repository }}
-            source_ref: ${{ inputs.ref }}
-            build_script: ./prysm/build_validator.sh
-            target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
-            target_repository: ethpandaops/prysm-validator
-            target_dockerfile: ./prysm/Dockerfile.validator
-            platform: ${{ matrix.platform }}
+  deploy-validator:
+    needs:
+      - prepare
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include: ${{fromJson(needs.prepare.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.repository }}
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          build_script: ./prysm/build_validator.sh
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+          target_repository: ethpandaops/prysm-validator
+          target_dockerfile: ./prysm/Dockerfile.validator
+          platform: ${{ matrix.platform }}
 
-            DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-            DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-            MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
   manifest:
     needs:
       - prepare
