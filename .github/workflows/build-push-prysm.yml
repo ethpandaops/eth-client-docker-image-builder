@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'prysm'
+          client: 'prysm-beacon-chain'
   deploy-beacon:
     needs:
       - prepare
