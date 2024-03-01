@@ -22,7 +22,7 @@ runs:
     with:
       distribution: 'temurin'
       java-version: '17'
-  - uses: actions/setup-node@v3
+  - uses: actions/setup-node@v4
     if: contains(inputs.repository, 'lodestar') || contains(inputs.repository, 'ethereumjs')
     with:
       node-version: 20
