@@ -64,3 +64,6 @@ ethereum-genesis-generator:
 armiarma:
   - linux/amd64
   - linux/arm64
+grandine:
+  - linux/amd64
+  - linux/arm64
