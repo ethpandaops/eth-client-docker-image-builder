@@ -36,7 +36,7 @@ getImageTag() {
     echo "${lastModified}-develop-${commitHash}-openjdk-17"
 }
 
-docker tag "hyperledger/besu:${getImageTag 10}" "${target_repository}:${target_tag}"
+docker tag "hyperledger/besu:$(getImageTag 10)" "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}"
-docker tag "hyperledger/besu:${getImageTag 10}" "${target_repository}:${target_tag}-${source_git_commit_hash}"
+docker tag "hyperledger/besu:$(getImageTag 10)" "${target_repository}:${target_tag}-${source_git_commit_hash}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
