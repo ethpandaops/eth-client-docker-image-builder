@@ -26,6 +26,8 @@ jobs:
       platforms: ${{ steps.setup.outputs.platforms }}
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout submodules
+        run: git submodule update --init dedicated_executor eth2_libp2p
       - name: Prepare Matrix
         id: setup
         uses: ./.github/actions/prepare
