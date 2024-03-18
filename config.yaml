@@ -327,3 +327,9 @@
   target:
     tag: master
     repository: ethpandaops/grandine
+- source:
+    repository: grandinetech/grandine
+    ref: develop
+  target:
+    tag: develop
+    repository: ethpandaops/grandine
