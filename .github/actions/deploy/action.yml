@@ -94,7 +94,7 @@ runs:
     if: inputs.build_script
     run: |
       cat << EOF
-      digest: $(docker image inspect  --format='{{index .RepoDigests 0}}' ${{ inputs.target_repository }}:${{ inputs.target_tag }} | grep -oP "@\K.*")
+      digest: $(docker image inspect  --format='{{index .RepoDigests 0}}' ${{ inputs.target_repository }}:${{ inputs.target_tag }} | grep -oE "@(.*)" | cut -d'@' -f2-)
       tags:
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
