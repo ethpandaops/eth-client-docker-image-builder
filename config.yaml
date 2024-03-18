@@ -318,3 +318,18 @@
   target:
     tag: samcm-sse-events
     repository: ethpandaops/armiarma
+#############
+# grandine  #
+#############
+- source:
+    repository: grandinetech/grandine
+    ref: master
+  target:
+    tag: master
+    repository: ethpandaops/grandine
+- source:
+    repository: grandinetech/grandine
+    ref: develop
+  target:
+    tag: develop
+    repository: ethpandaops/grandine
