@@ -323,13 +323,8 @@
 #############
 - source:
     repository: grandinetech/grandine
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/grandine
-- source:
-    repository: grandinetech/grandine
     ref: develop
+  build_script: ./grandine/build.sh
   target:
     tag: develop
     repository: ethpandaops/grandine
