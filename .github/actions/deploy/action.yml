@@ -86,7 +86,7 @@ runs:
       source_ref=${{ inputs.source_ref }} \
       target_tag=${{ inputs.target_tag }} \
       target_repository=${{ inputs.target_repository }} \
-      target_dockerfile=${{ inputs.target_dockerfile }} \
+      target_dockerfile=${{ inputs.target_dockerfile:-source/Dockerfile }} \
       source_git_commit_hash=${{ steps.git_commit_hash.outputs.git_commit_hash }} \
       ${{ inputs.build_script }}
   - name: Image digest & tags (build script)
