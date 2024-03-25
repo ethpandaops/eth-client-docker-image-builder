@@ -369,6 +369,7 @@
 #############
 # grandine  #
 #############
+  # Develop branch
 - source:
     repository: grandinetech/grandine
     ref: develop
@@ -376,3 +377,13 @@
   target:
     tag: develop
     repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
+  # Minimal builds
+- source:
+    repository: grandinetech/grandine
+    ref: develop
+  build_script: ./grandine/build.sh
+  target:
+    tag: develop-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
