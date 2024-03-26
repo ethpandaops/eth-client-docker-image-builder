@@ -1,0 +1,38 @@
+FROM debian:testing-slim AS build
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt update \
+ && apt -y install build-essential git-lfs
+
+RUN ldd --version ldd
+
+ADD . /root/nimbus-eth2
+
+RUN cd /root/nimbus-eth2 \
+ && make -j$(nproc) update \
+ && make -j$(nproc) V=1 NIMFLAGS="-d:const_preset=minimal -d:disableMarchNative" LOG_LEVEL=TRACE nimbus_validator_client
+
+
+# --------------------------------- #
+# Starting new image to reduce size #
+# --------------------------------- #
+FROM debian:testing-slim as deploy
+
+SHELL ["/bin/bash", "-c"]
+RUN apt update \
+ && apt -y install build-essential
+RUN apt update && apt -y upgrade
+
+RUN ldd --version ldd
+
+RUN rm -rf /home/user/nimbus-eth2/build/nimbus_validator_client
+
+# "COPY" creates new image layers, so we cram all we can into one command
+COPY --from=build /root/nimbus-eth2/build/nimbus_validator_client /home/user/nimbus-eth2/build/nimbus_validator_client
+
+ENV PATH="/home/user/nimbus-eth2/build:${PATH}"
+ENTRYPOINT ["nimbus_validator_client"]
+WORKDIR /home/user/nimbus-eth2/build
+
+STOPSIGNAL SIGINT

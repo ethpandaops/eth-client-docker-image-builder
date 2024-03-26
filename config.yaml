@@ -67,6 +67,7 @@
 ##############
 # lighthouse #
 ##############
+  # Stable branch
 - source:
     repository: sigp/lighthouse
     ref: stable
@@ -74,6 +75,7 @@
     tag: stable
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+  # Unstable branch
 - source:
     repository: sigp/lighthouse
     ref: unstable
@@ -81,6 +83,15 @@
     tag: unstable
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+  # Minimal builds
+- source:
+    repository: sigp/lighthouse
+    ref: unstable
+  target:
+    tag: unstable-minimal
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile.minimal
+  # Xatu Sentry builds
 - source:
     repository: sigp/lighthouse
     ref: stable
@@ -140,6 +151,7 @@
 ###############
 # nimbus-eth2 #
 ###############
+  # Unstable branch
 - source:
     repository: status-im/nimbus-eth2
     ref: unstable
@@ -154,6 +166,22 @@
     tag: unstable
     repository: ethpandaops/nimbus-validator-client
     dockerfile: ./nimbus-eth2/Dockerfile.validator
+  # Minimal builds
+- source:
+    repository: status-im/nimbus-eth2
+    ref: unstable
+  target:
+    tag: unstable-minimal
+    repository: ethpandaops/nimbus-eth2
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+- source:
+    repository: status-im/nimbus-eth2
+    ref: unstable
+  target:
+    tag: unstable-minimal
+    repository: ethpandaops/nimbus-validator-client
+    dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
+  # Stable branch
 - source:
     repository: status-im/nimbus-eth2
     ref: stable
@@ -168,6 +196,7 @@
     tag: stable
     repository: ethpandaops/nimbus-validator-client
     dockerfile: ./nimbus-eth2/Dockerfile.validator
+  # Xatu Sentry builds
 - source:
     repository: status-im/nimbus-eth2
     ref: stable
@@ -197,6 +226,7 @@
 #########
 # prysm #
 #########
+  # Develop branch
 - source:
     repository: prysmaticlabs/prysm
     ref: develop
@@ -213,6 +243,24 @@
     tag: develop
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
+  # Minimal builds
+- source:
+    repository: prysmaticlabs/prysm
+    ref: develop
+  build_script: ./prysm/build_beacon_minimal.sh
+  target:
+    tag: develop-minimal
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: develop
+  build_script: ./prysm/build_validator_minimal.sh
+  target:
+    tag: develop-minimal
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+  # Master branch
 - source:
     repository: prysmaticlabs/prysm
     ref: master
@@ -321,6 +369,7 @@
 #############
 # grandine  #
 #############
+  # Develop branch
 - source:
     repository: grandinetech/grandine
     ref: develop
@@ -328,3 +377,13 @@
   target:
     tag: develop
     repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
+  # Minimal builds
+- source:
+    repository: grandinetech/grandine
+    ref: develop
+  build_script: ./grandine/build.sh
+  target:
+    tag: develop-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
