@@ -1,5 +1,5 @@
 FROM rust:1.76.0-bullseye AS builder
-RUN apt-get update && apt-get --yes upgrade && apt-get install --yes cmake libclang-dev
+RUN apt-get clean && apt-get update && apt-get --yes upgrade && apt-get install --yes cmake libclang-dev
 COPY . .
 RUN scripts/build/minimal.sh
 

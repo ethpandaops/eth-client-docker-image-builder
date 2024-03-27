@@ -1,5 +1,5 @@
 FROM rust:1.76-bullseye AS builder
-RUN apt-get update && apt-get -y upgrade && apt-get install -y cmake clang libclang-dev protobuf-compiler
+RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y cmake clang libclang-dev protobuf-compiler
 ARG FEATURES=spec-minimal
 COPY . lighthouse
 RUN cd lighthouse && make
