@@ -55,6 +55,12 @@
   target:
     tag: gballet-transition-post-genesis
     repository: ethpandaops/geth
+- source:
+    repository: gballet/go-ethereum
+    ref: eip-4762-rewrite
+  target:
+    tag: gballet-eip-4762-rewrite
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
