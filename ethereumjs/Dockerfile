@@ -1,5 +1,5 @@
 FROM node:20-alpine as build
-RUN apk update && apk add --no-cache bash git g++ make python3 && rm -rf /var/cache/apk/*
+RUN apk clean && apk update && apk add --no-cache bash git g++ make python3 && rm -rf /var/cache/apk/*
 WORKDIR /usr/app
 
 COPY package.json .
