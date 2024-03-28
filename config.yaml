@@ -293,6 +293,13 @@
   target:
     tag: master
     repository: ethpandaops/teku
+- source:
+    repository: zilm13/teku
+    ref: verkle-trees
+  build_script: ./teku/build.sh
+  target:
+    tag: verkle-trees
+    repository: ethpandaops/teku
 #########
 # eleel #
 #########
