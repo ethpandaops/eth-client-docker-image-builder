@@ -298,7 +298,7 @@
     ref: verkle-trees
   build_script: ./teku/build.sh
   target:
-    tag: verkle-trees
+    tag: zilm13-verkle-trees
     repository: ethpandaops/teku
 #########
 # eleel #
