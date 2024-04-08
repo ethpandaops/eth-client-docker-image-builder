@@ -373,12 +373,15 @@
   target:
     tag: master
     repository: ethpandaops/armiarma
+#############
+# goteth #
+#############
 - source:
-    repository: samcm/armiarma
-    ref: feat/sse-events
+    repository: migalabs/goteth
+    ref: master
   target:
-    tag: samcm-sse-events
-    repository: ethpandaops/armiarma
+    tag: master
+    repository: ethpandaops/goteth
 #############
 # grandine  #
 #############
