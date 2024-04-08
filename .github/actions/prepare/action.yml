@@ -5,11 +5,8 @@ inputs:
     description: 'The client'
     required: true
 outputs:
-  matrix:
-    description: "Matrix of platforms and runner to use"
-    value: ${{ steps.setup_matrix.outputs.matrix }}
   platforms:
-    description: "Comma-separated list of platforms"
+    description: "Matrix of platforms and runner to use"
     value: ${{ steps.setup_platforms.outputs.platforms }}
 runs:
   using: "composite"
@@ -18,10 +15,10 @@ runs:
       uses: actions/checkout@v4
     - uses: mikefarah/yq@v4.35.1
     - name: Generate platform and runner matrix from config files
-      id: setup_matrix
+      id: setup_platforms
       shell: bash
       run: |
-        MATRIX_JSON="["
+        PLATFORMS_JSON="["
         client="${{ inputs.client }}"
 
         # Extract the platforms for the specified client
@@ -30,14 +27,8 @@ runs:
         for platform in $platforms; do
           slug=$(echo "$platform" | tr '/' '-')
           runner=$(yq e ".\"$platform\"" runners.yaml)
-          MATRIX_JSON+="{\"platform\":\"$platform\", \"runner\":\"$runner\", \"slug\":\"$slug\"},"
+          PLATFORMS_JSON+="{\"platform\":\"$platform\", \"runner\":\"$runner\", \"slug\":\"$slug\"},"
         done
 
-        MATRIX_JSON="${MATRIX_JSON%,}]"
-        echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
-    - name: Generate platforms comma-separated list
-      id: setup_platforms
-      shell: bash
-      run: |
-        PLATFORMS=$(echo '${{ steps.setup_matrix.outputs.matrix }}' | jq -r '.[] | .platform' | paste -sd "," -)
-        echo "platforms=$PLATFORMS" >> $GITHUB_OUTPUT
+        PLATFORMS_JSON="${PLATFORMS_JSON%,}]"
+        echo "platforms=$PLATFORMS_JSON" >> $GITHUB_OUTPUT

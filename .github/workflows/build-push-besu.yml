@@ -22,7 +22,6 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.setup.outputs.matrix }}
       platforms: ${{ steps.setup.outputs.platforms }}
     steps:
       - uses: actions/checkout@v4
@@ -34,10 +33,10 @@ jobs:
   deploy:
     needs:
       - prepare
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ platforms.runner }}
     strategy:
-      matrix:
-        include: ${{fromJson(needs.prepare.outputs.matrix)}}
+      platform:
+        include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-deps
@@ -48,9 +47,9 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           build_script: ./besu/build.sh
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ platform.slug }}
           target_repository: ethpandaops/besu
-          platform: ${{ matrix.platform }}
+          platform: ${{ platform.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

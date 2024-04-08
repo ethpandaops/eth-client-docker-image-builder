@@ -3,7 +3,8 @@ description: Build and push a docker manifest to Docker Hub
 
 inputs:
   platforms:
-    description: Comma-separated list of platforms (e.g. linux/amd64,linux/arm64)
+    #  eg [{"platform":"linux/amd64", "runner": "ARM64", "slug": "something-arm64"},{"platform":"linux/arm64", "runner": "ubuntu-latest", "slug": "something-amd64"}]
+    description: JSON list of platforms to build for
     type: string
     required: true
   source_repository:
@@ -22,7 +23,6 @@ inputs:
     description: Docker hub repository to push to
     type: string
     required: true
-  # Secrets
   DOCKER_USERNAME:
     required: true
   DOCKER_PASSWORD:
@@ -49,12 +49,12 @@ runs:
     id: generate_images_list
     shell: bash
     run: |
-      PLATFORMS="${{ inputs.platforms }}"
-      IMAGES=""
+      PLATFORMS='${{ inputs.platforms }}'
 
-      IFS=',' read -ra ADDR <<< "$PLATFORMS"
-      for platform in "${ADDR[@]}"; do
-          slug=$(echo "$platform" | tr '/' '-')
+      # Iterate over the platforms and build the image list
+      len=$(echo $PLATFORMS | jq '. | length')
+      for ((i=0; i<$len; i++)); do
+          slug=$(echo $PLATFORMS | jq -r --argjson i $i '.[$i].slug')
           IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
       done
 
