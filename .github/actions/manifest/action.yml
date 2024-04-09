@@ -55,11 +55,20 @@ runs:
       len=$(echo $PLATFORMS | jq '. | length')
       for ((i=0; i<$len; i++)); do
           slug=$(echo $PLATFORMS | jq -r --argjson i $i '.[$i].slug')
-          IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
+          imagetag="${{ inputs.target_tag }}-$slug"
+          image="${{ inputs.target_repository }}:$imagetag"
+          url="https://hub.docker.com/v2/repositories/${{ inputs.target_repository }}/tags?page_size=25&page=1&ordering=&name=$imagetag"
+          exists=$(curl -s $url | jq '.results | length > 0')
+          if [ "$exists" == "true" ]; then
+            IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug"
+          fi
       done
 
       IMAGES=${IMAGES::-1}  # Remove the trailing space
       echo "images=$IMAGES" >> $GITHUB_OUTPUT
+  - name: Check if there is atleast one image
+    if: ${{ steps.generate_images_list.outputs.images = '[]' || steps.generate_images_list.outputs.images = '' }}
+    run: exit 1
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context
