@@ -33,10 +33,10 @@ getImageTag() {
     # Use head file modification time as a proxy for the build date
     local lastModified=$(date -r "$refHeadFile" "+%y.%-m") # Format date as "yy.M"
 
-    echo "${lastModified}-develop-${commitHash}-openjdk-21"
+    echo "${lastModified}-develop-${commitHash}"
 }
 
-docker tag "hyperledger/besu:$(getImageTag 10)" "${target_repository}:${target_tag}"
+docker tag "hyperledger/besu:$(getImageTag 7)" "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}"
-docker tag "hyperledger/besu:$(getImageTag 10)" "${target_repository}:${target_tag}-${source_git_commit_hash}"
+docker tag "hyperledger/besu:$(getImageTag 7)" "${target_repository}:${target_tag}-${source_git_commit_hash}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
