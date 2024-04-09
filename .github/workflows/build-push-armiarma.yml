@@ -33,9 +33,9 @@ jobs:
   deploy:
     needs:
       - prepare
-    runs-on: ${{ platforms.runner }}
+    runs-on: ${{ matrix.runner }}
     strategy:
-      platform:
+      matrix:
         include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
@@ -46,9 +46,9 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ platform.slug }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
           target_repository: ethpandaops/armiarma
-          platform: ${{ platform.platform }}
+          platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

@@ -115,8 +115,8 @@ jobs:
 
           process_image() {
               local LINE=$1
-              local IMAGE=$1
-              local URL=$2
+              local IMAGE=$2
+              local URL=$3
 
               local imageOutput="${TEMP_DIR}/${LINE}_image.json"
               touch $imageOutput
@@ -169,10 +169,9 @@ jobs:
           # Concatenate results, ensuring files exist before attempting to read
           for file in $TEMP_DIR/*_image.json; do
               if [ -f "$file" ]; then
-                  # parse json file
-                  local LINE=$(cat "$file" | jq -r '.line')
-                  local IMAGE=$(cat "$file" | jq -r '.image')
-                  local EXISTS=$(cat "$file" | jq -r '.exists')
+                  LINE=$(cat "$file" | jq -r '.line')
+                  IMAGE=$(cat "$file" | jq -r '.image')
+                  EXISTS=$(cat "$file" | jq -r '.exists')
                   images[$IMAGE]=$EXISTS
               fi
           done
