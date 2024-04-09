@@ -60,7 +60,7 @@ runs:
           url="https://hub.docker.com/v2/repositories/${{ inputs.target_repository }}/tags?page_size=25&page=1&ordering=&name=$imagetag"
           exists=$(curl -s $url | jq '.results | length > 0')
           if [ "$exists" == "true" ]; then
-            IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug"
+            IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
           fi
       done
 
