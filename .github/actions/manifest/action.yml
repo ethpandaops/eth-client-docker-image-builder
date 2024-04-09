@@ -68,6 +68,7 @@ runs:
       echo "images=$IMAGES" >> $GITHUB_OUTPUT
   - name: Check if there is atleast one image
     if: ${{ steps.generate_images_list.outputs.images == '[]' || steps.generate_images_list.outputs.images == '' }}
+    shell: bash
     run: exit 1
   - name: Set up Docker Context for Buildx
     shell: bash
