@@ -1,5 +1,6 @@
 besu:
   - linux/amd64
+  - linux/arm64
 eleel:
   - linux/amd64
 erigon:

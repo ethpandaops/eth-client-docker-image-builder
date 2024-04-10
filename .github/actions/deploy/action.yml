@@ -30,9 +30,7 @@ inputs:
   platform:
     description: The platform to build for
     type: string
-    # TODO: remove default and switch required true when tested
-    default: linux/amd64
-    required: false
+    required: true
   # Secrets
   DOCKER_USERNAME:
     required: true

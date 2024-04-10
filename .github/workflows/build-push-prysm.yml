@@ -22,7 +22,6 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.setup.outputs.matrix }}
       platforms: ${{ steps.setup.outputs.platforms }}
     steps:
       - uses: actions/checkout@v4
@@ -35,9 +34,10 @@ jobs:
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
+    continue-on-error: true
     strategy:
       matrix:
-        include: ${{fromJson(needs.prepare.outputs.matrix)}}
+        include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-deps
@@ -60,9 +60,10 @@ jobs:
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
+    continue-on-error: true
     strategy:
       matrix:
-        include: ${{fromJson(needs.prepare.outputs.matrix)}}
+        include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-deps

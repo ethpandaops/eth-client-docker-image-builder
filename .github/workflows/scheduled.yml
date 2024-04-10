@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       configs: ${{ steps.repo_check.outputs.configs }}
-      platforms: ${{ steps.repo_check.outputs.platforms }}
     steps:
       - uses: actions/checkout@v4
       - uses: mikefarah/yq@v4.35.1
@@ -24,153 +23,221 @@ jobs:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - id: repo_check
+        env:
+          CONCURRENT_IMAGE_PULL: ${{ vars.CONCURRENT_IMAGE_PULL }}
         run: |
-          # This script checks the source github repository for the latest commit hash and checks if the tag exists in the target dockerhub repository.
-          # If the tag does not exist in dockerhub, we add the config to an array for the deploy job to build and push.
+          # This script reads config.yaml, platforms.yaml and runners.yaml to generate a list of configurations to build and deploy
+          # It will;
+          #    - check the source respository for the latest commit hash
+          #    - check if the built image exists in our dockerhub registry
+          #    - generate a list of configurations to build and deploy
+          #
+          # Here is an example of generate output;
+          #  [{
+          #    "source": {
+          #      "repository": "hyperledger/besu",
+          #      "ref": "main"
+          #    },
+          #    "build_script": "./besu/build.sh",
+          #    "target": {
+          #      "tag": "main",
+          #      "repository": "ethpandaops/besu"
+          #    },
+          #    "platforms": [
+          #      {
+          #        "platform": "linux/amd64",
+          #        "runner": "ubuntu-latest",
+          #        "slug": "linux-amd64"
+          #      },
+          #      {
+          #        "platform": "linux/arm64",
+          #        "runner": "ARM64",
+          #        "slug": "linux-arm64"
+          #      }
+          #    ]
+          #  },{
+          #    "source": {
+          #      "repository": "sigp/lighthouse",
+          #      "ref": "unstable"
+          #    },
+          #    "target": {
+          #      "tag": "unstable",
+          #      "repository": "ethpandaops/lighthouse",
+          #      "dockerfile": "./lighthouse/Dockerfile"
+          #    },
+          #    "platforms": [
+          #      {
+          #        "platform": "linux/amd64",
+          #        "runner": "ubuntu-latest",
+          #        "slug": "linux-amd64"
+          #      },
+          #      {
+          #        "platform": "linux/arm64",
+          #        "runner": "ARM64",
+          #        "slug": "linux-arm64"
+          #      }
+          #    ]
+          #  }]
+
+          CONFIG_FILE="config.yaml"
+          PLATFORMS_FILE="platforms.yaml"
+          RUNNERS_FILE="runners.yaml"
+
+          # Create a temporary directory for storing intermediate results
+          TEMP_DIR=$(mktemp -d)
+          # Ensure the temporary directory is removed when the script exits
+          trap "rm -rf $TEMP_DIR" EXIT
+
+          process_commits() {
+              local LINE=$1
+              local SOURCE_REPOSITORY=$2
+              local SOURCE_REF=$3
+              local TARGET_REPOSITORY=$4
+              local TARGET_TAG=$5
+
+              local CLIENT="${TARGET_REPOSITORY#*/}"
+              local RESPONSE=$(curl -s -H "Accept: application/vnd.github+json" \
+                  -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  "https://api.github.com/repos/${SOURCE_REPOSITORY}/commits/${SOURCE_REF}?per_page=1")
+              local COMMIT_HASH=$(echo "$RESPONSE" | jq -r '.sha' | cut -c1-7)
+
+              if [[ -z "$COMMIT_HASH" || "$COMMIT_HASH" == "null" ]]; then
+                  # Log error but don't exit; just skip this configuration
+                  echo "[LINE:$LINE] Error fetching commit hash for ${SOURCE_REPOSITORY}#${SOURCE_REF}, skipping."
+                  return
+              fi
+
+              local configOutput="${TEMP_DIR}/${LINE}_commits.json"
+              touch $configOutput
+
+              echo "{\"line\": \"$LINE\", \"commit_hash\": \"$COMMIT_HASH\"}," >> $configOutput
+          }
+
+          process_image() {
+              local LINE=$1
+              local IMAGE=$2
+              local URL=$3
+
+              local imageOutput="${TEMP_DIR}/${LINE}_image.json"
+              touch $imageOutput
+              local exists=$(curl -s $URL | jq '.results | length > 0')
+
+              # check if exists == true
+              if [ "$exists" == "true" ]; then
+                exists=true
+              else
+                exists=false
+              fi
+              
+              echo "{\"line\": \"$LINE\", \"image\": \"$IMAGE\", \"exists\": $exists}" >> $imageOutput
+          }
+
+          # Get commit hashes for each configuration in parallel
+          while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
+              process_commits "$LINE" "$SOURCE_REPOSITORY" "$SOURCE_REF" "$TARGET_REPOSITORY" "$TARGET_TAG" &
+          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
+
+          wait
+
+          # Initialize JSON arrays
+          COMMITS="["
+
+          # Concatenate results, ensuring files exist before attempting to read
+          for file in $TEMP_DIR/*_commits.json; do
+              if [ -f "$file" ]; then
+                  COMMITS+=$(cat "$file")
+              fi
+          done
+
+          # Remove trailing commas and close JSON arrays
+          COMMITS="${COMMITS%,}]"
+
+          echo "Checking if images exist in dockerhub..."
+          while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
+              # get the image commit hash from LINE
+              COMMIT_HASH=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash')
+              IMAGE_TAG="${TARGET_TAG}-${COMMIT_HASH}"
+              IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
+              URL="https://hub.docker.com/v2/repositories/${TARGET_REPOSITORY}/tags?page_size=25&page=1&ordering=&name=${IMAGE_TAG}"
+              process_image $LINE $IMAGE $URL &
+          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
+
+          wait
+
+          declare -A images
+
+          # Concatenate results, ensuring files exist before attempting to read
+          for file in $TEMP_DIR/*_image.json; do
+              if [ -f "$file" ]; then
+                  LINE=$(cat "$file" | jq -r '.line')
+                  IMAGE=$(cat "$file" | jq -r '.image')
+                  EXISTS=$(cat "$file" | jq -r '.exists')
+                  images[$IMAGE]=$EXISTS
+              fi
+          done
+
           CONFIGS="configs=["
-          PLATFORMS="platforms=["
-          # iterate over all images in config file
-          while IFS=$'\t' read -r INDEX SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
-            CLIENT="${TARGET_REPOSITORY#*/}"
-            echo "========================================"
-            echo "Checking config index: $INDEX"
-            echo "Source repository: $SOURCE_REPOSITORY"
-            echo "Source ref: $SOURCE_REF"
-            echo "Client: $CLIENT"
-            
-            # fetch latest commit hash for image
-            set -e
-            RESPONSE=$(curl -s -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${SOURCE_REPOSITORY}/commits/${SOURCE_REF}\?per_page\=1)
-            set +e
-            STATUS=$?
-            # if we got a response, extract the commit hash
-            if [ $STATUS -eq 0 ]; then
-              COMMIT_HASH="$(jq -r '.sha' <<< "$RESPONSE" | cut -c1-7)"
-            else
-              echo "Failed to fetch commit hash for ${SOURCE_REPOSITORY}#${SOURCE_REF}"
-              echo "Response: $RESPONSE"
-              echo "Status: $STATUS"
-              exit 1
-            fi
-            # catch empty commit hash from jq extraction
-            if [ -z "$COMMIT_HASH" ]; then
-              echo "Response: $RESPONSE"
-              echo "Status: $STATUS"
-              echo "Failed to fetch commit hash for ${SOURCE_REPOSITORY}#${SOURCE_REF}"
-              exit 1
-            fi
-            if [ "$COMMIT_HASH" = "null" ]; then
-              echo "Response: $RESPONSE"
-              echo "Status: $STATUS"
-              echo "Got null commit hash for ${SOURCE_REPOSITORY}#${SOURCE_REF}"
-              exit 1
-            fi
 
-            # generate image tag
-            IMAGE_TAG=${TARGET_TAG}-${COMMIT_HASH}
-            IMAGE=${TARGET_REPOSITORY}:${IMAGE_TAG}
+          echo "Generating configuration files..."
+          while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
+              # get the image commit hash from LINE
+              COMMIT_HASH=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash')
+              IMAGE_TAG="${TARGET_TAG}-${COMMIT_HASH}"
+              IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
+              CLIENT="${TARGET_REPOSITORY#*/}"
 
-            # check if image exists
-            docker image pull $IMAGE >/dev/null 2>&1
-            docker image inspect $IMAGE >/dev/null 2>&1
-            STATUS=$?
-            
-            # if image exists, we don't need to build and push it
-            if [ $STATUS -eq 0 ]; then
-              echo "Image $IMAGE already exists"
-              continue
-            fi
+              if [ "${images[$IMAGE]}" == "false" ]; then
+                # Handle platforms and runners, ensuring output files are created even if empty
+                platforms=$(yq e ".$CLIENT[]" "$PLATFORMS_FILE")
+                platformsArr=""
 
-            if [ "$(yq -r ".[${INDEX}]" config.yaml)" = "null" ]; then
-              echo "config data at index ${INDEX} is null"
-              exit 1
-            fi
-            
-            # Extract the platforms for the specified client
-            platforms=$(yq e ".$CLIENT[]" platforms.yaml)
+                for platform in $platforms; do
+                  runner=$(yq e ".\"$platform\"" "$RUNNERS_FILE")
+                  slug=$(echo "$platform" | tr '/' '-')
+                  platformsArr+="{\\\"platform\\\": \\\"$platform\\\", \\\"runner\\\": \\\"$runner\\\", \\\"slug\\\": \\\"$slug\\\"},"
+                done
+                platformsArr="${platformsArr%,}"
+                # convert to string
+                platformsOutput="{\"platforms\": \"[$platformsArr]\"}"
 
-            platformsOutput=""
-            for platform in $platforms; do
-              slug=$(echo "$platform" | tr '/' '-')
-              runner=$(yq e ".\"$platform\"" runners.yaml)
-              CONFIGS="${CONFIGS}$(yq -r -o=json ".[${INDEX}]" config.yaml | jq --arg plat "$platform" --arg run "$runner" --arg slg "$slug" '. + {"platform": $plat, "runner": $run, "slug": $slg}'),"
-              platformsOutput+="$platform,"
-            done
-            platformsOutput="${platformsOutput%,}"
+                CONFIGS+=$(echo "$(yq -r -o=json ".[${LINE}]" "$CONFIG_FILE" | jq --argjson plat "$platformsOutput" '. + $plat'),")
+              fi
+          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
 
-            PLATFORMS="${PLATFORMS}$(yq -r -o=json ".[${INDEX}]" config.yaml | jq --arg platforms "$platformsOutput" '. + {"platforms": $platforms}'),"
-          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' config.yaml)
-
-          # check if last character is a comma and remove it
-          [[ $CONFIGS == *, ]] &&
-              CONFIGS="${CONFIGS%?}"
-          [[ $PLATFORMS == *, ]] &&
-              PLATFORMS="${PLATFORMS%?}"
-
-          # close json array
-          CONFIGS="${CONFIGS}]"
-          PLATFORMS="${PLATFORMS}]"
+          # Remove trailing commas and close JSON arrays
+          CONFIGS="${CONFIGS%,}]"
 
           echo "CONFIGS: $CONFIGS"
-          echo "PLATFORMS: $PLATFORMS"
-
           echo $CONFIGS >> $GITHUB_OUTPUT
-          echo $PLATFORMS >> $GITHUB_OUTPUT
+
   deploy:
     needs: check
     if: ${{ needs.check.outputs.configs != '[]' && needs.check.outputs.configs != '' }}
+    uses: ./.github/workflows/deploy.yml
     strategy:
       fail-fast: false
       matrix:
         config: ${{fromJson(needs.check.outputs.configs)}}
-    runs-on: ${{ matrix.config.runner }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-deps
-        with:
-          repository: ${{ matrix.config.source.repository }}
-      - uses: ./.github/actions/deploy
-        with:
-          source_repository: ${{ matrix.config.source.repository }}
-          source_ref: ${{ matrix.config.source.ref }}
-          build_script: ${{ matrix.config.build_script }}
-          target_tag: ${{ matrix.config.target.tag }}-${{ matrix.config.slug }}
-          target_repository: ${{ matrix.config.target.repository }}
-          target_dockerfile: ${{ matrix.config.target.dockerfile }}
-          platform: ${{ matrix.config.platform }}
+    name: ${{ matrix.config.source.repository }}#${{ matrix.config.source.ref }} ${{ matrix.config.target.tag }}
+    with:
+      source_repository: ${{ matrix.config.source.repository }}
+      source_ref: ${{ matrix.config.source.ref }}
+      build_script: ${{ matrix.config.build_script }}
+      target_tag: ${{ matrix.config.target.tag }}
+      target_repository: ${{ matrix.config.target.repository }}
+      target_dockerfile: ${{ matrix.config.target.dockerfile }}
+      platforms: ${{ matrix.config.platforms }}
+      DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+    secrets:
+      DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+      MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
-  manifest:
-    needs:
-      - check
-      - deploy
-    runs-on: ubuntu-latest
-    if: ${{ !cancelled() && needs.check.outputs.platforms != '[]' && needs.check.outputs.platforms != '' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        platforms: ${{fromJson(needs.check.outputs.platforms)}}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/manifest
-        with:
-          source_repository: ${{ matrix.platforms.source.repository }}
-          source_ref: ${{ matrix.platforms.source.ref }}
-          target_tag: ${{ matrix.platforms.target.tag }}
-          target_repository: ${{ matrix.platforms.target.repository }}
-          platforms: ${{ matrix.platforms.platforms }}
-
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest
     needs:
       - check
       - deploy
-      - manifest
     if: cancelled() || failure()
     steps:
       - name: Notify
