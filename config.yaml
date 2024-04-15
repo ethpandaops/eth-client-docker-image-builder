@@ -51,9 +51,9 @@
     repository: ethpandaops/geth
 - source:
     repository: gballet/go-ethereum
-    ref: transition-post-genesis
+    ref: transition-post-genesis-rebase-and-merge
   target:
-    tag: gballet-transition-post-genesis
+    tag: gballet-transition-post-genesis-rebase-and-merge
     repository: ethpandaops/geth
 - source:
     repository: gballet/go-ethereum
