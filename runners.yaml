@@ -1,2 +1,4 @@
 linux/amd64: ubuntu-latest
-linux/arm64: [self-hosted, size-m-arm64]
+linux/arm64: 
+  - self-hosted
+  - size-m-arm64
