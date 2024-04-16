@@ -12,6 +12,9 @@ runs:
   steps:
   - name: Checkout this repo
     uses: actions/checkout@v4
+  - name: Install shell git
+    shell: bash
+    run: sudo apt install git -y
   - uses: actions/setup-java@v4
     if: contains(inputs.repository, 'teku')
     with:
