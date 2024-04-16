@@ -30,10 +30,6 @@ jobs:
         uses: ./.github/actions/prepare
         with:
           client: 'geth'
-      - name: "Install shell dep"
-        shell: bash
-        run: sudo apt install git -y
-        
   deploy:
     needs:
       - prepare
