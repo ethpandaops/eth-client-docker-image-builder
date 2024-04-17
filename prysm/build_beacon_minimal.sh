@@ -8,7 +8,8 @@ if [ "${OS_NAME}" == "darwin" ]; then
   /opt/homebrew/bin/go install github.com/bazelbuild/bazelisk@latest
 else 
   sudo apt-get update
-  sudo apt install -y ca-certificates python2 golang-go
+  sudo apt-get upgrade -y
+  sudo apt install -y ca-certificates python3 golang-go
   go install github.com/bazelbuild/bazelisk@latest
 fi
 $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --define pgo_enabled=0
