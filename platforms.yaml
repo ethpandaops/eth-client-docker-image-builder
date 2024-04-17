@@ -32,8 +32,10 @@ nimbus-eth1:
   - linux/arm64
 prysm-beacon-chain:
   - linux/amd64
+  - linux/arm64
 prysm-validator:
   - linux/amd64
+  - linux/arm64
 reth:
   - linux/amd64
   - linux/arm64
