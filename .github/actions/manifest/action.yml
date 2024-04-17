@@ -65,6 +65,7 @@ runs:
       done
 
       IMAGES=${IMAGES::-1}  # Remove the trailing space
+      echo "IMAGES: $IMAGES"
       echo "images=$IMAGES" >> $GITHUB_OUTPUT
   - name: Check if there is atleast one image
     if: ${{ steps.generate_images_list.outputs.images == '[]' || steps.generate_images_list.outputs.images == '' }}
