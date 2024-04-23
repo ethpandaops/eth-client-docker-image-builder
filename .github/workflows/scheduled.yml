@@ -228,6 +228,7 @@ jobs:
       target_dockerfile: ${{ matrix.config.target.dockerfile }}
       platforms: ${{ matrix.config.platforms }}
       DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+      GOPROXY: "${{ vars.GOPROXY }}"
     secrets:
       DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
       MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
