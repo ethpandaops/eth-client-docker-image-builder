@@ -35,6 +35,10 @@ on:
         description: Docker Hub username
         type: string
         required: true
+      GOPROXY:
+        description: GOPROXY
+        type: string
+        required: false
     secrets:
       DOCKER_PASSWORD:
         required: true
