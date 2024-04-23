@@ -38,7 +38,9 @@ inputs:
     required: true
   MACOS_PASSWORD:
     required: true
-    
+  GOPROXY:
+    required: false
+
 runs:
   using: composite
   steps:
@@ -75,7 +77,9 @@ runs:
     with:
       username: ${{ inputs.DOCKER_USERNAME }}
       password: ${{ inputs.DOCKER_PASSWORD }}
-  # run the build script if it exists instead of the docker build & push
+  ########################
+  # Build script case
+  #######################
   - name: Build script
     shell: bash
     if: inputs.build_script
@@ -86,6 +90,7 @@ runs:
       target_repository: ${{ inputs.target_repository }}
       target_dockerfile: ${{ inputs.target_dockerfile || './source/Dockerfile' }}
       source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
+      GOPROXY: ${{ inputs.GOPROXY }}
     run: |
       ${{ inputs.build_script }}
   - name: Image digest & tags (build script)
@@ -98,7 +103,15 @@ runs:
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
       EOF
-  # only run the docker build & push if a build script wasn't specified
+  ########################
+  # Non build script case
+  #######################
+  - name: Inject GOPROXY into Dockerfile
+    if: ${{ inputs.build_script == '' }}
+    shell: bash
+    run: |
+      awk '/^FROM/ { print; print "ENV GOPROXY=${{ inputs.GOPROXY }}"; next }1' ${{ inputs.target_dockerfile }} > Dockerfile.new
+      mv Dockerfile.new ${{ inputs.target_dockerfile }}
   - name: Docker build & push
     if: ${{ inputs.build_script == '' }}
     id: docker_build

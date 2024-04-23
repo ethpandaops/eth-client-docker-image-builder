@@ -55,6 +55,7 @@ jobs:
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+          GOPROXY: "${{ vars.GOPROXY }}"
   deploy-validator:
     needs:
       - prepare
@@ -77,6 +78,7 @@ jobs:
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+          GOPROXY: "${{ vars.GOPROXY }}"
   manifest-beacon:
     needs:
       - prepare

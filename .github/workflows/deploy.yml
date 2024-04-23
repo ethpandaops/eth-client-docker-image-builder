@@ -67,6 +67,7 @@ jobs:
         DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
         DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
         MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+        GOPROXY: "${{ inputs.GOPROXY }}"
   mainfest:
     name: Manifest
     needs: deploy
