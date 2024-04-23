@@ -1,4 +1,4 @@
-FROM node:20-alpine as build
+FROM node:18-alpine as build
 RUN apk update && apk add --no-cache bash git g++ make python3 && rm -rf /var/cache/apk/*
 WORKDIR /usr/app
 
@@ -9,14 +9,12 @@ RUN npm i --ignore-scripts
 COPY . .
 RUN npm i
 
-FROM node:20-alpine
+FROM node:18-alpine
 WORKDIR /usr/app
-RUN apk --no-cache add dumb-init
 COPY --from=build /usr/app .
 
 # Sanity check
-#RUN node /usr/app/packages/client/dist/bin/cli.js --help
-RUN node /usr/app/node_modules/.bin/ethereumjs --help
+RUN node /usr/app/packages/client/dist/esm/bin/cli.js --help
 
 
 # NodeJS applications have a default memory limit of 2.5GB.
@@ -24,4 +22,4 @@ RUN node /usr/app/node_modules/.bin/ethereumjs --help
 # since memory may spike during certain network conditions.
 ENV NODE_OPTIONS=--max_old_space_size=6144
 
-ENTRYPOINT ["dumb-init", "node", "/usr/app/node_modules/.bin/ethereumjs"]
+ENTRYPOINT ["node", "/usr/app/packages/client/esm/bin/cli.js"]
