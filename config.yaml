@@ -26,12 +26,14 @@
   target:
     tag: master
     repository: ethpandaops/ethereumjs
+    dockerfile: ./ethereumjs/Dockerfile
 - source:
     repository: ethereumjs/ethereumjs-monorepo
     ref: stable
   target:
     tag: stable
     repository: ethpandaops/ethereumjs
+    dockerfile: ./ethereumjs/Dockerfile
 ########
 # geth #
 ########
