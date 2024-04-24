@@ -26,7 +26,7 @@ inputs:
     description: Dockerfile path in this repository to build from. Omit to use source repository Dockerfile
     type: string
     default: ./source/Dockerfile
-    required: true
+    required: false
   platform:
     description: The platform to build for
     type: string
@@ -110,8 +110,13 @@ runs:
     if: ${{ inputs.build_script == '' }}
     shell: bash
     run: |
-      awk '/^FROM/ { print; print "ENV GOPROXY=${{ inputs.GOPROXY }}"; next }1' ${{ inputs.target_dockerfile }} > Dockerfile.new
-      mv Dockerfile.new ${{ inputs.target_dockerfile }}
+      DOCKERFILE_PATH="${{ inputs.target_dockerfile }}"
+      if [[ -z "$DOCKERFILE_PATH" ]]; then
+        # Set to default value explicitly if input is empty
+        DOCKERFILE_PATH='./source/Dockerfile'
+      fi
+      awk '/^FROM/ { print; print "ENV GOPROXY=${{ inputs.GOPROXY }}"; next }1' ${DOCKERFILE_PATH} > Dockerfile.new
+      mv Dockerfile.new ${DOCKERFILE_PATH}
   - name: Docker build & push
     if: ${{ inputs.build_script == '' }}
     id: docker_build
