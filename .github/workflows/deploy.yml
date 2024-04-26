@@ -48,7 +48,7 @@ on:
 jobs:
   deploy:
     name: Deploy ${{ matrix.config.slug }} ${{ inputs.target_tag }}
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
