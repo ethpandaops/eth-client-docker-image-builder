@@ -403,3 +403,13 @@
     tag: develop-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
+
+#############
+# goteth #
+#############
+- source:
+    repository: ralexstokes/mev-rs
+    ref: main
+  target:
+    tag: main
+    repository: ethpandaops/mev-rs

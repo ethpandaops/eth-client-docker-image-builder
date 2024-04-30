@@ -72,3 +72,6 @@ goteth:
 grandine:
   - linux/amd64
   - linux/arm64
+mev-rs:
+  - linux/amd64
+  - linux/arm64
