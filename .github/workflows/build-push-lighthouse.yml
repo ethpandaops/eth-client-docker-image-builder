@@ -17,6 +17,11 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
+      build_args:
+        description: Build arguments to pass to the Docker build
+        default: ""
+        type: string
+        required: false
 
 jobs:
   prepare:
@@ -51,6 +56,7 @@ jobs:
           target_repository: ethpandaops/lighthouse
           target_dockerfile: ./lighthouse/Dockerfile
           platform: ${{ matrix.platform }}
+          build_args: ${{ inputs.build_args }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

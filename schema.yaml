@@ -13,3 +13,4 @@ target:
   tag: str()
   repository: str()
   dockerfile: str(required=False)
+  build_args: str(required=False)

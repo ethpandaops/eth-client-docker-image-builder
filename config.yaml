@@ -96,7 +96,8 @@
   target:
     tag: unstable-minimal
     repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile.minimal
+    build_args: FEATURES=spec-minimal
+    dockerfile: ./lighthouse/Dockerfile
   # Xatu Sentry builds
 - source:
     repository: sigp/lighthouse
@@ -405,7 +406,7 @@
     dockerfile: ./grandine/Dockerfile.minimal
 
 #############
-# goteth #
+#   mev-rs  #
 #############
 - source:
     repository: ralexstokes/mev-rs
@@ -413,3 +414,10 @@
   target:
     tag: main
     repository: ethpandaops/mev-rs
+- source:
+    repository: ralexstokes/mev-rs
+    ref: main
+  target:
+    tag: main-minimal
+    repository: ethpandaops/mev-rs
+    build_args: --features minimal-preset
