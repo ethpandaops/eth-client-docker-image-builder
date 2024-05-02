@@ -92,6 +92,14 @@
   # Minimal builds
 - source:
     repository: sigp/lighthouse
+    ref: stable
+  target:
+    tag: stable-minimal
+    repository: ethpandaops/lighthouse
+    build_args: FEATURES=spec-minimal
+    dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: sigp/lighthouse
     ref: unstable
   target:
     tag: unstable-minimal
