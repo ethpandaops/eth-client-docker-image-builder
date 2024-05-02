@@ -31,6 +31,11 @@ inputs:
     description: The platform to build for
     type: string
     required: true
+  build_args:
+    description: Build arguments to pass to the Docker build
+    default: ""
+    type: string
+    required: false
   # Secrets
   DOCKER_USERNAME:
     required: true
@@ -130,6 +135,7 @@ runs:
       tags: ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }},${{ inputs.target_repository }}:${{ inputs.target_tag }}
       push: true
       platforms: ${{ inputs.platform }}
+      build-args: ${{ inputs.build_args }}
       labels: |
         ethpandaops.io.repo=${{ inputs.source_repository }}
         ethpandaops.io.commitRef=${{ inputs.source_ref }}
