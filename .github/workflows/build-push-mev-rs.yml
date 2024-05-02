@@ -55,6 +55,7 @@ jobs:
           target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
           target_repository: ethpandaops/mev-rs
           platform: ${{ matrix.platform }}
+          build_args: ${{ inputs.build_args }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -74,7 +75,6 @@ jobs:
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
           target_repository: ethpandaops/mev-rs
           platforms: ${{ needs.prepare.outputs.platforms }}
-          build_args: ${{ inputs.build_args }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

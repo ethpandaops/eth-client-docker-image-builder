@@ -420,4 +420,4 @@
   target:
     tag: main-minimal
     repository: ethpandaops/mev-rs
-    build_args: --features minimal-preset
+    build_args: FEATURES=minimal-preset
