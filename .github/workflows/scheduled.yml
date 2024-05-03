@@ -223,13 +223,13 @@ jobs:
       source_repository: ${{ matrix.config.source.repository }}
       source_ref: ${{ matrix.config.source.ref }}
       build_script: ${{ matrix.config.build_script }}
+      build_args: "${{ matrix.config.build_args }}"
       target_tag: ${{ matrix.config.target.tag }}
       target_repository: ${{ matrix.config.target.repository }}
       target_dockerfile: ${{ matrix.config.target.dockerfile }}
       platforms: ${{ matrix.config.platforms }}
       DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
       GOPROXY: "${{ vars.GOPROXY }}"
-      build_args: "${{ matrix.config.target.build_args }}"
     secrets:
       DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
       MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"

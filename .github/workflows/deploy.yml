@@ -13,6 +13,10 @@ on:
         description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
         type: string
         required: false
+      build_args:
+        description: Extra arguments to pass to the build script
+        type: string
+        required: false
       target_tag:
         description: Docker hub tag to push to
         type: string
@@ -64,6 +68,7 @@ jobs:
         source_repository: ${{ inputs.source_repository }}
         source_ref: ${{ inputs.source_ref }}
         build_script: ${{ inputs.build_script }}
+        build_args: ${{ inputs.build_args }}
         target_tag: ${{ inputs.target_tag }}-${{ matrix.config.slug }}
         target_repository: ${{ inputs.target_repository }}
         target_dockerfile: ${{ inputs.target_dockerfile }}
