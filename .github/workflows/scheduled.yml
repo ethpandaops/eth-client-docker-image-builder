@@ -229,6 +229,7 @@ jobs:
       platforms: ${{ matrix.config.platforms }}
       DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
       GOPROXY: "${{ vars.GOPROXY }}"
+      build_args: "${{ matrix.config.target.build_args }}"
     secrets:
       DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
       MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
