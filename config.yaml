@@ -196,6 +196,20 @@
     tag: unstable-minimal
     repository: ethpandaops/nimbus-validator-client
     dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
+- source:
+    repository: status-im/nimbus-eth2
+    ref: stable
+  target:
+    tag: stable-minimal
+    repository: ethpandaops/nimbus-eth2
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+- source:
+    repository: status-im/nimbus-eth2
+    ref: stable
+  target:
+    tag: stable-minimal
+    repository: ethpandaops/nimbus-validator-client
+    dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
   # Stable branch
 - source:
     repository: status-im/nimbus-eth2
@@ -403,6 +417,14 @@
     tag: develop
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
+- source:
+    repository: grandinetech/grandine
+    ref: master
+  build_script: ./grandine/build.sh
+  target:
+    tag: master
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
   # Minimal builds
 - source:
     repository: grandinetech/grandine
@@ -412,7 +434,14 @@
     tag: develop-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
-
+- source:
+    repository: grandinetech/grandine
+    ref: master
+  build_script: ./grandine/build.sh
+  target:
+    tag: master-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
 #############
 #   mev-rs  #
 #############
