@@ -23,10 +23,10 @@ nethermind:
   - linux/arm64
 nimbus-eth2:
   - linux/amd64
-  - linux/arm64
+  #- linux/arm64
 nimbus-validator-client:
   - linux/amd64
-  - linux/arm64
+  #- linux/arm64
 nimbus-eth1:
   - linux/amd64
   - linux/arm64
