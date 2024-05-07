@@ -4,6 +4,7 @@ build:
   source: include('source')
   build_script: str(required=False)
   target: include('target')
+  build_args: str(required=False)
 
 source:
   repository: str()
@@ -13,4 +14,3 @@ target:
   tag: str()
   repository: str()
   dockerfile: str(required=False)
-  build_args: str(required=False)
