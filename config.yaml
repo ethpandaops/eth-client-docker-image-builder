@@ -61,6 +61,12 @@
   target:
     tag: gballet-eip-4762-rewrite
     repository: ethpandaops/geth
+- source:
+    repository: lightclient/go-ethereum
+    ref: prague-devnet-0
+  target:
+    tag: lightclient-prague-devnet-0
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
