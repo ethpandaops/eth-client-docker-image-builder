@@ -67,6 +67,12 @@
   target:
     tag: lightclient-prague-devnet-0
     repository: ethpandaops/geth
+- source:
+    repository: ethereum/go-ethereum
+    ref: multicall
+  target:
+    tag: multicall
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
