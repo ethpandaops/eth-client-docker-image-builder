@@ -12,7 +12,7 @@ else
   sudo apt install -y ca-certificates python3 golang-go
   go install github.com/bazelbuild/bazelisk@latest
 fi
-$HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false
+$HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpc://bazel-remote-cache-grpc.primary.staging.platform.ethpandaops.io:80
 # move to base dir to avoid any dockerignore/stat issues
 mv bazel-bin/cmd/validator/validator_/validator _validator
 cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
