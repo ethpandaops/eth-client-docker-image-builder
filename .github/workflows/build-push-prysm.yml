@@ -43,13 +43,12 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
-      # Build minimal preset
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          build_script: ./prysm/build_beacon_minimal.sh
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}-minimal
+          build_script: ./prysm/build_beacon.sh
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-beacon-chain
           target_dockerfile: ./prysm/Dockerfile.beacon
           platform: ${{ matrix.platform }}
@@ -58,13 +57,25 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-      # Build default preset
+  deploy-beacon-minimal:
+    needs:
+      - prepare
+    runs-on: ${{ matrix.runner }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        include: ${{fromJson(needs.prepare.outputs.platforms)}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          build_script: ./prysm/build_beacon.sh
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+          build_script: ./prysm/build_beacon_minimal.sh
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}-minimal
           target_repository: ethpandaops/prysm-beacon-chain
           target_dockerfile: ./prysm/Dockerfile.beacon
           platform: ${{ matrix.platform }}
@@ -86,13 +97,12 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
-      # Build minimal preset
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          build_script: ./prysm/build_validator_minimal.sh
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}-minimal
+          build_script: ./prysm/build_validator.sh
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-validator
           target_dockerfile: ./prysm/Dockerfile.validator
           platform: ${{ matrix.platform }}
@@ -101,13 +111,25 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-      # Build default preset
+  deploy-validator-minimal:
+    needs:
+      - prepare
+    runs-on: ${{ matrix.runner }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        include: ${{fromJson(needs.prepare.outputs.platforms)}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          build_script: ./prysm/build_validator.sh
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+          build_script: ./prysm/build_validator_minimal.sh
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}-minimal
           target_repository: ethpandaops/prysm-validator
           target_dockerfile: ./prysm/Dockerfile.validator
           platform: ${{ matrix.platform }}
@@ -123,23 +145,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Minimal preset
-      - uses: ./.github/actions/manifest
-        with:
-          source_repository: ${{ inputs.repository }}
-          source_ref: ${{ inputs.ref }}
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-minimal
-          target_repository: ethpandaops/prysm-beacon-chain
-          platforms: ${{ needs.prepare.outputs.platforms }}
-
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-      # Default preset
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/prysm-beacon-chain
+          platforms: ${{ needs.prepare.outputs.platforms }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  manifest-beacon-minimal:
+    needs:
+      - prepare
+      - deploy-beacon-minimal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/manifest
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-minimal
           target_repository: ethpandaops/prysm-beacon-chain
           platforms: ${{ needs.prepare.outputs.platforms }}
 
@@ -152,23 +179,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Minimal preset
-      - uses: ./.github/actions/manifest
-        with:
-          source_repository: ${{ inputs.repository }}
-          source_ref: ${{ inputs.ref }}
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-minimal
-          target_repository: ethpandaops/prysm-validator
-          platforms: ${{ needs.prepare.outputs.platforms }}
-
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-      # Default preset
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/prysm-validator
+          platforms: ${{ needs.prepare.outputs.platforms }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  manifest-validator-minimal:
+    needs:
+      - prepare
+      - deploy-validator-minimal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/manifest
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-minimal
           target_repository: ethpandaops/prysm-validator
           platforms: ${{ needs.prepare.outputs.platforms }}
 
@@ -180,9 +212,13 @@ jobs:
     needs:
       - prepare
       - deploy-beacon
+      - deploy-beacon-minimal
       - deploy-validator
+      - deploy-validator-minimal
       - manifest-beacon
+      - manifest-beacon-minimal
       - manifest-validator
+      - manifest-validator-minimal
     if: failure()
     steps:
       - name: Notify

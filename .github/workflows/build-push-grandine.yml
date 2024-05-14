@@ -43,7 +43,32 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
-      # Minimal preset
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          build_script: ./grandine/build.sh
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+          target_repository: ethpandaops/grandine
+          platform: ${{ matrix.platform }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+          GOPROXY: "${{ vars.GOPROXY }}"
+  deploy-minimal:
+    needs:
+      - prepare
+    runs-on: ${{ matrix.runner }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        include: ${{fromJson(needs.prepare.outputs.platforms)}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
@@ -58,20 +83,6 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-      # Default preset
-      - uses: ./.github/actions/deploy
-        with:
-          source_repository: ${{ inputs.repository }}
-          source_ref: ${{ inputs.ref }}
-          build_script: ./grandine/build.sh
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
-          target_repository: ethpandaops/grandine
-          platform: ${{ matrix.platform }}
-
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
-          GOPROXY: "${{ vars.GOPROXY }}"
   manifest:
     needs:
       - prepare
@@ -79,23 +90,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Minimal preset
-      - uses: ./.github/actions/manifest
-        with:
-          source_repository: ${{ inputs.repository }}
-          source_ref: ${{ inputs.ref }}
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-minimal
-          target_repository: ethpandaops/grandine
-          platforms: ${{ needs.prepare.outputs.platforms }}
-
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-      # Default preset
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_repository: ethpandaops/grandine
+          platforms: ${{ needs.prepare.outputs.platforms }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  manifest-minimal:
+    needs:
+      - prepare
+      - deploy-minimal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/manifest
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-minimal
           target_repository: ethpandaops/grandine
           platforms: ${{ needs.prepare.outputs.platforms }}
 
@@ -107,7 +123,9 @@ jobs:
     needs:
       - prepare
       - deploy
+      - deploy-minimal
       - manifest
+      - manifest-minimal
     if: failure()
     steps:
       - name: Notify
