@@ -3,7 +3,7 @@ name: Build grandine docker image
 on:
   workflow_dispatch:
     inputs:
-      repository: 
+      repository:
         description: The source grandine repository to build from
         default: grandinetech/grandine
         type: string
@@ -43,6 +43,22 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
+      # Minimal preset
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          build_script: ./grandine/build.sh
+          target_dockerfile: Dockerfile.minimal
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}-minimal
+          target_repository: ethpandaops/grandine
+          platform: ${{ matrix.platform }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+          GOPROXY: "${{ vars.GOPROXY }}"
+      # Default preset
       - uses: ./.github/actions/deploy
         with:
           source_repository: ${{ inputs.repository }}
@@ -63,6 +79,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Minimal preset
+      - uses: ./.github/actions/manifest
+        with:
+          source_repository: ${{ inputs.repository }}
+          source_ref: ${{ inputs.ref }}
+          target_tag: ${{ inputs.docker_tag || inputs.ref }}-minimal
+          target_repository: ethpandaops/grandine
+          platforms: ${{ needs.prepare.outputs.platforms }}
+
+          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+      # Default preset
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
