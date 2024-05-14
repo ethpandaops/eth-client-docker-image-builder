@@ -49,7 +49,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           build_script: ./grandine/build.sh
-          target_dockerfile: Dockerfile.minimal
+          target_dockerfile: ./grandine/Dockerfile.minimal
           target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}-minimal
           target_repository: ethpandaops/grandine
           platform: ${{ matrix.platform }}
