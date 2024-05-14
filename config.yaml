@@ -463,12 +463,20 @@
     # Electra
 - source:
     repository: grandinetech/grandine
-    ref: feature/electra
+    ref: electra
   build_script: ./grandine/build.sh
   target:
-    tag: feature-electra
+    tag: electra
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
+- source:
+    repository: grandinetech/grandine
+    ref: electra
+  build_script: ./grandine/build.sh
+  target:
+    tag: electra-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
 
 #############
 #   mev-rs  #
@@ -486,4 +494,3 @@
   target:
     tag: main-minimal
     repository: ethpandaops/mev-rs
-  
