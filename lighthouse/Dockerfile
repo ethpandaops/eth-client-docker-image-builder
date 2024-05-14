@@ -1,7 +1,7 @@
 FROM rust:1.76-bullseye AS builder
 RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y cmake clang libclang-dev protobuf-compiler
 COPY . lighthouse
-ARG FEATURES
+ARG FEATURES=gnosis,spec-minimal,slasher-lmdb,jemalloc
 ARG PROFILE=release
 ARG CARGO_USE_GIT_CLI=true
 ENV FEATURES $FEATURES
