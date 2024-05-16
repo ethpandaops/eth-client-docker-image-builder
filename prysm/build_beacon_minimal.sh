@@ -12,7 +12,7 @@ else
   sudo apt install -y ca-certificates python3 golang-go
   go install github.com/bazelbuild/bazelisk@latest
 fi
-$HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443
+$HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --define pgo_enabled=0 --enable_bzlmod=false
 # move to base dir to avoid any dockerignore/stat issues
 mv bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain _beacon-chain
 cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
