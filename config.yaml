@@ -13,9 +13,9 @@
 ##########
 - source:
     repository: ledgerwatch/erigon
-    ref: devel
+    ref: main
   target:
-    tag: devel
+    tag: main
     repository: ethpandaops/erigon
 ##############
 # ethereumjs #
