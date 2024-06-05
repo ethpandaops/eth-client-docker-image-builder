@@ -495,7 +495,7 @@
     tag: main-minimal
     repository: ethpandaops/mev-rs
 #############
-#   mev-rs  #
+#   op-node  #
 #############
 - source:
     repository: ethereum-optimism/op-node
