@@ -494,3 +494,14 @@
   target:
     tag: main-minimal
     repository: ethpandaops/mev-rs
+#############
+#   mev-rs  #
+#############
+- source:
+    repository: ethereum-optimism/op-node
+    ref: develop
+    dockerfile: ./op-node/Dockerfile
+  target:
+    tag: develop
+    repository: ethpandaops/op-node
+
