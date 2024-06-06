@@ -16,12 +16,12 @@ runs:
     if: contains(inputs.repository, 'teku')
     with:
       distribution: 'temurin'
-      java-version: '17'
+      java-version: '21'
   - uses: actions/setup-java@v4
     if: contains(inputs.repository, 'besu')
     with:
       distribution: 'temurin'
-      java-version: '17'
+      java-version: '21'
   - uses: actions/setup-node@v4
     if: contains(inputs.repository, 'lodestar') || contains(inputs.repository, 'ethereumjs')
     with:
