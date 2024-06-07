@@ -3,7 +3,7 @@ name: Build reth docker image
 on:
   workflow_dispatch:
     inputs:
-      repository: 
+      repository:
         description: The source reth repository to build from
         default: paradigmxyz/reth
         type: string
@@ -15,6 +15,11 @@ on:
         required: true
       docker_tag:
         description: Override target docker tag (defaults to the above source ref if left blank)
+        type: string
+        required: false
+      build_args:
+        description: Build arguments to pass to the Docker build
+        default: ""
         type: string
         required: false
 
@@ -50,6 +55,7 @@ jobs:
           target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
           target_repository: ethpandaops/reth
           platform: ${{ matrix.platform }}
+          build_args: ${{ inputs.build_args }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
