@@ -82,6 +82,14 @@
   target:
     tag: main
     repository: ethpandaops/reth
+# OP Reth
+- source:
+    repository: paradigmxyz/reth
+    ref: main
+  build_args: FEATURES=optimism
+  target:
+    tag: main
+    repository: ethpandaops/op-reth
 ##############
 # lighthouse #
 ##############
