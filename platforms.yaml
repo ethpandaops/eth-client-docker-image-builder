@@ -27,9 +27,9 @@ nimbus-eth2:
 nimbus-validator-client:
   - linux/amd64
   - linux/arm64
-# nimbus-eth1:
-#   - linux/amd64
-#   - linux/arm64
+nimbus-eth1:
+  - linux/amd64
+  - linux/arm64
 prysm-beacon-chain:
   - linux/amd64
   - linux/arm64
