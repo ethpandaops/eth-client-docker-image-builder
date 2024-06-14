@@ -25,6 +25,8 @@ jobs:
       platforms: ${{ steps.setup.outputs.platforms }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Prepare Matrix
         id: setup
         uses: ./.github/actions/prepare
