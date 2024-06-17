@@ -163,6 +163,13 @@
   target:
     tag: g11tech-verge
     repository: ethpandaops/lodestar
+- source:
+    repository: chainsafe/lodestar
+    ref: peerDAS
+  build_script: ./lodestar/build.sh
+  target:
+    tag: peerDAS
+    repository: ethpandaops/lodestar
 ##############
 # nethermind #
 ##############
@@ -321,7 +328,7 @@
     ref: peerDAS
   build_script: ./prysm/build_beacon.sh
   target:
-    tag: peerdas
+    tag: peerDAS
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 ########
