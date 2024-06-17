@@ -467,7 +467,7 @@
     tag: master-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
-    # Electra
+  # Electra
 - source:
     repository: grandinetech/grandine
     ref: electra
@@ -484,6 +484,15 @@
     tag: electra-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
+  # PeerDAS
+- source:
+    repository: grandinetech/grandine
+    ref: das
+  build_script: ./grandine/build.sh
+  target:
+    tag: das
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
 
 #############
 #   mev-rs  #
