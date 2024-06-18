@@ -197,6 +197,14 @@
     tag: unstable
     repository: ethpandaops/nimbus-validator-client
     dockerfile: ./nimbus-eth2/Dockerfile.validator
+  # Peerdas
+- source:
+    repository: status-im/nimbus-eth2
+    ref: kzgpeerdas
+  target:
+    tag: kzgpeerdas
+    repository: ethpandaops/nimbus-eth2
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
   # Minimal builds
 - source:
     repository: status-im/nimbus-eth2
@@ -341,6 +349,15 @@
   target:
     tag: master
     repository: ethpandaops/teku
+# Peerdas
+- source:
+    repository: Nashatyrev/teku
+    ref: das
+  build_script: ./teku/build.sh
+  target:
+    tag: nashatyrev-das
+    repository: ethpandaops/teku
+# Verkle
 - source:
     repository: zilm13/teku
     ref: verkle-trees
