@@ -149,13 +149,13 @@
   target:
     tag: unstable
     repository: ethpandaops/lodestar
-- source:
-    repository: chainsafe/lodestar
-    ref: electra-fork
-  build_script: ./lodestar/build.sh
-  target:
-    tag: electra-fork
-    repository: ethpandaops/lodestar
+# - source:
+#     repository: chainsafe/lodestar
+#     ref: electra-fork
+#   build_script: ./lodestar/build.sh
+#   target:
+#     tag: electra-fork
+#     repository: ethpandaops/lodestar
 - source:
     repository: chainsafe/lodestar
     ref: g11tech/verge
