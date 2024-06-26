@@ -3,7 +3,7 @@ name: Build nimbus-eth1 docker image
 on:
   workflow_dispatch:
     inputs:
-      repository: 
+      repository:
         description: The source nimbus repository to build from
         default: status-im/nimbus-eth1
         type: string
@@ -49,7 +49,6 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth1
-          target_dockerfile: ./nimbus-eth1/Dockerfile
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
