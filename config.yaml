@@ -282,7 +282,6 @@
   target:
     tag: master
     repository: ethpandaops/nimbus-eth1
-    dockerfile: ./nimbus-eth1/Dockerfile
 #########
 # prysm #
 #########
