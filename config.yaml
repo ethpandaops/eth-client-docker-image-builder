@@ -276,13 +276,13 @@
 ###############
 # nimbus-eth1 #
 ###############
-#- source:
-#    repository: status-im/nimbus-eth1
-#    ref: master
-#  target:
-#    tag: master
-#    repository: ethpandaops/nimbus-eth1
-#    dockerfile: ./nimbus-eth1/Dockerfile
+- source:
+   repository: status-im/nimbus-eth1
+   ref: master
+ target:
+   tag: master
+   repository: ethpandaops/nimbus-eth1
+   dockerfile: ./nimbus-eth1/Dockerfile
 #########
 # prysm #
 #########
