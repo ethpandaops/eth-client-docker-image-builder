@@ -63,9 +63,9 @@
     repository: ethpandaops/geth
 - source:
     repository: lightclient/go-ethereum
-    ref: prague-devnet-0
+    ref: prague-devnet-1
   target:
-    tag: lightclient-prague-devnet-0
+    tag: lightclient-prague-devnet-1
     repository: ethpandaops/geth
 - source:
     repository: ethereum/go-ethereum
