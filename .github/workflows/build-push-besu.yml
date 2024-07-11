@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       platforms: ${{ steps.setup.outputs.platforms }}
+      target_tag: ${{ steps.tag.outputs.docker_tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Prepare Matrix
@@ -30,6 +31,11 @@ jobs:
         uses: ./.github/actions/prepare
         with:
           client: 'besu'
+      - name: Generate target tag
+        id: tag
+        uses: ./.github/actions/docker-tag
+        with:
+          input: ${{ inputs.docker_tag || inputs.ref }}
   deploy:
     needs:
       - prepare
@@ -48,7 +54,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           build_script: ./besu/build.sh
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}-${{ matrix.slug }}
+          target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/besu
           platform: ${{ matrix.platform }}
 
@@ -67,7 +73,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          target_tag: ${{ inputs.docker_tag || inputs.ref }}
+          target_tag: ${{ needs.prepare.outputs.target_tag }}
           target_repository: ethpandaops/besu
           platforms: ${{ needs.prepare.outputs.platforms }}
 
