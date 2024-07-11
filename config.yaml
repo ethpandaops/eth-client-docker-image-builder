@@ -163,13 +163,13 @@
   target:
     tag: g11tech-verge
     repository: ethpandaops/lodestar
-# - source:
-#     repository: chainsafe/lodestar
-#     ref: peerDAS
-#   build_script: ./lodestar/build.sh
-#   target:
-#     tag: peerDAS
-#     repository: ethpandaops/lodestar
+- source:
+    repository: chainsafe/lodestar
+    ref: peerDAS
+  build_script: ./lodestar/build.sh
+  target:
+    tag: peerDAS
+    repository: ethpandaops/lodestar
 ##############
 # nethermind #
 ##############
