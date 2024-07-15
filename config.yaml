@@ -120,9 +120,9 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: deneb-free-blobs
+    ref: electra-devnet-1
   target:
-    tag: deneb-free-blobs
+    tag: electra-devnet-1
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 - source:
