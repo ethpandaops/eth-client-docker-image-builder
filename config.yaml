@@ -200,16 +200,9 @@
   # Peerdas
 - source:
     repository: status-im/nimbus-eth2
-    ref: kzgpeerdas
+    ref: peerdas-p2p
   target:
-    tag: kzgpeerdas
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: wip-peerdas
-  target:
-    tag: wip-peerdas
+    tag: peerdas-p2p
     repository: ethpandaops/nimbus-eth2
     dockerfile: ./nimbus-eth2/Dockerfile.beacon
   # Minimal builds
