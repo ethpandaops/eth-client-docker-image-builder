@@ -440,12 +440,12 @@
 #############
 # goteth #
 #############
-- source:
-    repository: migalabs/goteth
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/goteth
+#- source:
+#    repository: migalabs/goteth
+#    ref: master
+#  target:
+#    tag: master
+#    repository: ethpandaops/goteth
 #############
 # grandine  #
 #############
