@@ -63,9 +63,9 @@
     repository: ethpandaops/geth
 - source:
     repository: lightclient/go-ethereum
-    ref: prague-devnet-0
+    ref: prague-devnet-1
   target:
-    tag: lightclient-prague-devnet-0
+    tag: lightclient-prague-devnet-1
     repository: ethpandaops/geth
 - source:
     repository: ethereum/go-ethereum
@@ -120,9 +120,9 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: deneb-free-blobs
+    ref: electra-devnet-1
   target:
-    tag: deneb-free-blobs
+    tag: electra-devnet-1
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 - source:
@@ -134,9 +134,9 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: das
+    ref: das-devnet-2
   target:
-    tag: das
+    tag: das-devnet-2
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 ############
@@ -163,13 +163,13 @@
   target:
     tag: g11tech-verge
     repository: ethpandaops/lodestar
-# - source:
-#     repository: chainsafe/lodestar
-#     ref: peerDAS
-#   build_script: ./lodestar/build.sh
-#   target:
-#     tag: peerDAS
-#     repository: ethpandaops/lodestar
+- source:
+    repository: chainsafe/lodestar
+    ref: peerDAS
+  build_script: ./lodestar/build.sh
+  target:
+    tag: peerDAS
+    repository: ethpandaops/lodestar
 ##############
 # nethermind #
 ##############
@@ -200,16 +200,9 @@
   # Peerdas
 - source:
     repository: status-im/nimbus-eth2
-    ref: kzgpeerdas
+    ref: peerdas-p2p
   target:
-    tag: kzgpeerdas
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: wip-peerdas
-  target:
-    tag: wip-peerdas
+    tag: peerdas-p2p
     repository: ethpandaops/nimbus-eth2
     dockerfile: ./nimbus-eth2/Dockerfile.beacon
   # Minimal builds
@@ -447,12 +440,12 @@
 #############
 # goteth #
 #############
-- source:
-    repository: migalabs/goteth
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/goteth
+#- source:
+#    repository: migalabs/goteth
+#    ref: master
+#  target:
+#    tag: master
+#    repository: ethpandaops/goteth
 #############
 # grandine  #
 #############
