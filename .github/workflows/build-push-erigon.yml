@@ -5,7 +5,7 @@ on:
     inputs:
       repository: 
         description: The source erigon repository to build from
-        default: ledgerwatch/erigon
+        default: erigontech/erigon
         type: string
         required: true
       ref:
