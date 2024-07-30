@@ -12,7 +12,7 @@
 # erigon #
 ##########
 - source:
-    repository: ledgerwatch/erigon
+    repository: erigontech/erigon
     ref: main
   target:
     tag: main
