@@ -28,7 +28,8 @@ Run the *Build **tooling*** workflow;
 - [Build beacon-metrics-gazer](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-beacon-metrics-gazer.yml) [[source](https://github.com/dapplion/beacon-metrics-gazer)]
 - [Build goomy-blob](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-goomy-blob.yaml) [[source](https://github.com/ethpandaops/goomy-blob)]
 - [Build ethereum-genesis-generator](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-genesis-generator.yml) [[source](https://github.com/ethpandaops/ethereum-genesis-generator)]
-- [Build mev-rs](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-mev-rs.yml)[[source](https://github.com/ralexstokes/mev-rs)]
+- [Build mev-rs](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-mev-rs.yml) [[source](https://github.com/ralexstokes/mev-rs)]
+- [Build optimism-contract-deployer](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-op-contract-deployer.yml) [[source](https://github.com/ethereum-optimism/optimism)]
 
 ## Adding a new image to build on schedule
 
