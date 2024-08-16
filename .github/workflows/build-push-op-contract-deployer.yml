@@ -85,9 +85,7 @@ jobs:
     needs:
       - prepare
       - deploy
-      - deploy-minimal
       - manifest
-      - manifest-minimal
     if: failure()
     steps:
       - name: Notify
