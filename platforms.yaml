@@ -75,3 +75,6 @@ grandine:
 mev-rs:
   - linux/amd64
   - linux/arm64
+op-contract-deployer:
+  - linux/amd64
+  - linux/arm64

@@ -533,3 +533,14 @@
   target:
     tag: main-minimal
     repository: ethpandaops/mev-rs
+
+###########################
+#   op-contract-deployer  #
+###########################
+- source:
+    repository: ethereum-optimism/optimism
+    ref: develop
+  target:
+    tag: develop
+    repository: ethpandaops/optimism-contract-deployer
+    dockerfile: ./op-contract-deployer/Dockerfile
