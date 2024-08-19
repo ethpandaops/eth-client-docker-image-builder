@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'op-contract-deployer'
+          client: 'optimism'
       - name: Generate target tag
         id: tag
         uses: ./.github/actions/docker-tag
@@ -53,7 +53,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
-          target_dockerfile: ./op-contract-deployer/Dockerfile
+          target_dockerfile: ./optimism-contract-deployer/Dockerfile
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/optimism-contract-deployer
           platform: ${{ matrix.platform }}
