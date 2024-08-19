@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'optimism'
+          client: 'optimism-contract-deployer'
       - name: Generate target tag
         id: tag
         uses: ./.github/actions/docker-tag
