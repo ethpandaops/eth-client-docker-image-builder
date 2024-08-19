@@ -543,4 +543,4 @@
   target:
     tag: develop
     repository: ethpandaops/optimism-contract-deployer
-    dockerfile: ./op-contract-deployer/Dockerfile
+    dockerfile: ./optimism-contract-deployer/Dockerfile
