@@ -534,9 +534,9 @@
     tag: main-minimal
     repository: ethpandaops/mev-rs
 
-###########################
-#   op-contract-deployer  #
-###########################
+#################################
+#   optimism-contract-deployer  #
+#################################
 - source:
     repository: ethereum-optimism/optimism
     ref: develop
