@@ -12,9 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gcc \
     g++ \
-    python3 \
-    python3-pip \
     vim \
+    curl \
     build-essential \
     libusb-1.0-0-dev \
     libssl-dev \
@@ -22,37 +21,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+ARG TARGETPLATFORM
 
-# Install Go from the official golang image
-# Revert to golang:alpine once https://github.com/ethereum-optimism/optimism/pull/11494 is merged
-COPY --from=golang:1.22.6 /usr/local/go/ /usr/local/go/
-ENV PATH="/usr/local/go/bin:${PATH}"
 
-# Install web3 cli
-RUN curl -LSs https://raw.githubusercontent.com/gochain/web3/master/install.sh | sh
+RUN curl -sL https://go.dev/dl/go$(curl -s https://raw.githubusercontent.com/ethereum-optimism/optimism/develop/versions.json | jq -r '.go').linux-$(dpkg --print-architecture).tar.gz -o go.tar.gz && \
+    tar -C /usr/local/ -xzvf go.tar.gz && \
+    rm go.tar.gz
+ENV GOPATH=/go
+ENV PATH=/usr/local/go/bin:$GOPATH/bin:$PATH
 
-# Install Rust and Foundry
-RUN curl -L https://foundry.paradigm.xyz | bash
-ENV PATH="/root/.foundry/bin:${PATH}"
-RUN foundryup
-
-# RUN git clone --recursive https://github.com/ethereum-optimism/optimism.git && \
-#     cd optimism && \
-#     git submodule update && \
-#     git checkout develop && \
-#     git pull origin develop && \
-#     git fetch --all && \
-#     cd op-node && \
-#     make
-
-RUN git clone --recursive https://github.com/barnabasbusa/optimism.git && \
+# Clone the Optimism monorepo and build the `op-node` binary for L2 genesis generation.
+RUN git clone https://github.com/ethereum-optimism/optimism.git && \
     cd optimism && \
-    git submodule update && \
-    git checkout getting-started-update && \
-    git pull origin getting-started-update && \
-    git fetch --all && \
+    git checkout develop && \
+    git pull origin develop && \
     cd op-node && \
     make
+
+# Install foundry
+RUN curl -L https://foundry.paradigm.xyz | bash
+ENV PATH="/root/.foundry/bin:${PATH}"
+RUN FOUNDRY_VERSION=$(curl -s https://raw.githubusercontent.com/ethereum-optimism/optimism/develop/versions.json | jq -r '.foundry') && foundryup -v nightly-$FOUNDRY_VERSION
+
+# Build the Optimism contracts
+RUN cd optimism/packages/contracts-bedrock && forge build
 
 
 # Use multi-stage build to keep the final image lean
