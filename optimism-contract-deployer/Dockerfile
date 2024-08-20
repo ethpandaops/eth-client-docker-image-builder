@@ -24,13 +24,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ARG TARGETPLATFORM
 
 
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then BINARCH=amd64; \
-    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then BINARCH=arm64; \
-    else BINARCH=amd64; fi; \
-    GO_VERSION=$(curl -s https://raw.githubusercontent.com/ethereum-optimism/optimism/develop/versions.json | jq -r '.go') && \
-    curl -sL https://go.dev/dl/go$GO_VERSION.linux-$BINARCH.tar.gz -o go$GO_VERSION.linux-$BINARCH.tar.gz && \
-    tar -C /usr/local/ -xzvf go$GO_VERSION.linux-$BINARCH.tar.gz && \
-    rm go$GO_VERSION.linux-$BINARCH.tar.gz
+RUN curl -sL https://go.dev/dl/go$(curl -s https://raw.githubusercontent.com/ethereum-optimism/optimism/develop/versions.json | jq -r '.go').linux-$(dpkg --print-architecture).tar.gz -o go.tar.gz && \
+    tar -C /usr/local/ -xzvf go.tar.gz && \
+    rm go.tar.gz
 ENV GOPATH=/go
 ENV PATH=/usr/local/go/bin:$GOPATH/bin:$PATH
 
