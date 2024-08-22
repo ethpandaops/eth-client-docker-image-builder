@@ -212,6 +212,20 @@
     tag: peerdas-p2p-minimal
     repository: ethpandaops/nimbus-eth2
     dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+- source:
+    repository: status-im/nimbus-eth2
+    ref: pdsync
+  target:
+    tag: pdsync
+    repository: ethpandaops/nimbus-eth2
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+- source:
+    repository: status-im/nimbus-eth2
+    ref: pdsync
+  target:
+    tag: pdsync-minimal
+    repository: ethpandaops/nimbus-eth2
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
   # Minimal builds
 - source:
     repository: status-im/nimbus-eth2
