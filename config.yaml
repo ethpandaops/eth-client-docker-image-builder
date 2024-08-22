@@ -134,9 +134,9 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: das-devnet-2
+    ref: das
   target:
-    tag: das-devnet-2
+    tag: das
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 ############
