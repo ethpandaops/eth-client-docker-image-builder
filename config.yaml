@@ -359,6 +359,31 @@
     tag: peerDAS
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: peerDAS
+  build_script: ./prysm/build_beacon_minimal.sh
+  target:
+    tag: peerDAS-minimal
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: peerDAS
+  build_script: ./prysm/build_validator.sh
+  target:
+    tag: peerDAS
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+- source:
+    repository: prysmaticlabs/prysm
+    ref: peerDAS
+  build_script: ./prysm/build_validator_minimal.sh
+  target:
+    tag: peerDAS-minimal
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+
 ########
 # teku #
 ########
