@@ -73,6 +73,12 @@
   target:
     tag: multicall
     repository: ethpandaops/geth
+- source:
+    repository: MariusVanDerWijden/go-ethereum
+    ref: bad-block-generator
+  target:
+    tag: bad-block-generator
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
