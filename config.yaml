@@ -554,6 +554,30 @@
     tag: das
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
+- source:
+    repository: grandinetech/grandine
+    ref: das
+  build_script: ./grandine/build.sh
+  target:
+    tag: das-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
+- source:
+    repository: hangleang/grandine
+    ref: feature/das
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-feature-das
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
+- source:
+    repository: hangleang/grandine
+    ref: feature/das
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-feature-das-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
 
 #############
 #   mev-rs  #
