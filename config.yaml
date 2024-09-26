@@ -73,6 +73,12 @@
   target:
     tag: multicall
     repository: ethpandaops/geth
+- source:
+    repository: MariusVanDerWijden/go-ethereum
+    ref: bad-block-generator
+  target:
+    tag: bad-block-generator
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
@@ -130,13 +136,6 @@
     ref: verkle-trees-capella
   target:
     tag: macladson-verkle-trees-capella
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-- source:
-    repository: sigp/lighthouse
-    ref: das-devnet-2
-  target:
-    tag: das-devnet-2
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 ############
@@ -210,6 +209,20 @@
     ref: peerdas-p2p
   target:
     tag: peerdas-p2p-minimal
+    repository: ethpandaops/nimbus-eth2
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+- source:
+    repository: status-im/nimbus-eth2
+    ref: pdsync
+  target:
+    tag: pdsync
+    repository: ethpandaops/nimbus-eth2
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+- source:
+    repository: status-im/nimbus-eth2
+    ref: pdsync
+  target:
+    tag: pdsync-minimal
     repository: ethpandaops/nimbus-eth2
     dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
   # Minimal builds
@@ -345,6 +358,31 @@
     tag: peerDAS
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: peerDAS
+  build_script: ./prysm/build_beacon_minimal.sh
+  target:
+    tag: peerDAS-minimal
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: peerDAS
+  build_script: ./prysm/build_validator.sh
+  target:
+    tag: peerDAS
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+- source:
+    repository: prysmaticlabs/prysm
+    ref: peerDAS
+  build_script: ./prysm/build_validator_minimal.sh
+  target:
+    tag: peerDAS-minimal
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+
 ########
 # teku #
 ########
@@ -516,6 +554,30 @@
     tag: das
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
+- source:
+    repository: grandinetech/grandine
+    ref: das
+  build_script: ./grandine/build.sh
+  target:
+    tag: das-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
+- source:
+    repository: hangleang/grandine
+    ref: feature/das
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-feature-das
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
+- source:
+    repository: hangleang/grandine
+    ref: feature/das
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-feature-das-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
 
 #############
 #   mev-rs  #
