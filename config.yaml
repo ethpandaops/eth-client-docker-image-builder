@@ -138,6 +138,13 @@
     tag: macladson-verkle-trees-capella
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
+- source:
+    repository: sigp/lighthouse
+    ref: peerdas-devnet-2
+  target:
+    tag: peerdas-devnet-2
+    repository: ethpandaops/lighthouse
+    dockerfile: ./lighthouse/Dockerfile
 ############
 # lodestar #
 ############
