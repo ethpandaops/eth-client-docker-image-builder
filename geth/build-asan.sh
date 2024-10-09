@@ -3,6 +3,8 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
 
+# need to update dockerfile to use debian instead of alpine
+# as asan go builds doesn't seem to like alpine
 ORIGINAL_DOCKER_FILE="Dockerfile"
 NEW_DOCKER_FILE="Dockerfile.asan"
 
@@ -21,6 +23,7 @@ fi
 
 mv $NEW_DOCKER_FILE $ORIGINAL_DOCKER_FILE
 
+# need to add -asan flag to geth custom build script
 ORIGINAL_CI_FILE="build/ci.go"
 NEW_CI_FILE="build/ci.asan.go"
 

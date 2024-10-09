@@ -3,6 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
 
+# need to add -race flag to geth custom build script
 ORIGINAL_CI_FILE="build/ci.go"
 NEW_CI_FILE="build/ci.race.go"
 
