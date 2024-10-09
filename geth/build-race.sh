@@ -4,7 +4,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
 
 ORIGINAL_CI_FILE="build/ci.go"
-NEW_CI_FILE="build/ci.asan.go"
+NEW_CI_FILE="build/ci.race.go"
 
 awk '
 /^func buildFlags\(env build\.Environment, staticLinking bool, buildTags \[\]string\) \(flags \[\]string\)/ {
