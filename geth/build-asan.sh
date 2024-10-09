@@ -8,7 +8,7 @@ cd ${SCRIPT_DIR}/../source
 ORIGINAL_DOCKER_FILE="Dockerfile"
 NEW_DOCKER_FILE="Dockerfile.asan"
 
-sed -e 's|FROM golang:1\.23-alpine AS builder|FROM golang:1.23 AS builder|' \
+sed -e 's|-alpine AS builder| AS builder|' \
     -e 's|RUN apk add --no-cache gcc musl-dev linux-headers git|RUN apt-get update \&\& apt-get install -y --no-install-recommends build-essential git \&\& rm -rf /var/lib/apt/lists/*|' \
     -e 's|RUN cd /go-ethereum \&\& go run build/ci.go install -static ./cmd/geth|RUN cd /go-ethereum \&\& go run build/ci.go install ./cmd/geth|' \
     -e 's|FROM alpine:latest|FROM debian:bookworm-slim|' \
