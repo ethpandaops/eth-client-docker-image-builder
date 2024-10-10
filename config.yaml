@@ -79,6 +79,20 @@
   target:
     tag: bad-block-generator
     repository: ethpandaops/geth
+- source:
+    repository: ethereum/go-ethereum
+    ref: master
+  build_script: ./geth/build-asan.sh
+  target:
+    tag: asan
+    repository: ethpandaops/geth
+- source:
+    repository: ethereum/go-ethereum
+    ref: master
+  build_script: ./geth/build-race.sh
+  target:
+    tag: race
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
