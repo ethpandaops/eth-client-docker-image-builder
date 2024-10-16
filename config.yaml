@@ -34,6 +34,13 @@
     tag: stable
     repository: ethpandaops/ethereumjs
     dockerfile: ./ethereumjs/Dockerfile
+- source:
+    repository: ethereumjs/ethereumjs-monorepo
+    ref: 7702-devnet-4-plus-t8ntool
+  target:
+    tag: 7702-devnet-4-plus-t8ntool
+    repository: ethpandaops/ethereumjs
+    dockerfile: ./ethereumjs/Dockerfile
 ########
 # geth #
 ########
