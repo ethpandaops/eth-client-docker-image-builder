@@ -54,6 +54,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           build_script: ./grandine/build.sh
+          target_dockerfile: ./grandine/Dockerfile
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/grandine
           platform: ${{ matrix.platform }}
