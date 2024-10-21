@@ -8,6 +8,13 @@
   target:
     tag: main
     repository: ethpandaops/besu
+- source:
+    repository: hyperledger/besu
+    ref: pectra-devnet-4
+  build_script: ./besu/build.sh
+  target:
+    tag: pectra-devnet-4
+    repository: ethpandaops/besu
 ##########
 # erigon #
 ##########
