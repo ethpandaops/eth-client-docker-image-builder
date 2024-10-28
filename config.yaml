@@ -622,3 +622,12 @@
   target:
     tag: main-minimal
     repository: ethpandaops/mev-rs
+###############
+#   rbuilder  #
+###############
+- source:
+    repository: ethpandaops/rbuilder
+    ref: develop
+  target:
+    tag: develop
+    repository: ethpandaops/rbuilder

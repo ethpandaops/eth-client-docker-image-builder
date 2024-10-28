@@ -75,3 +75,6 @@ grandine:
 mev-rs:
   - linux/amd64
   - linux/arm64
+rbuilder:
+  - linux/amd64
+  - linux/arm64
