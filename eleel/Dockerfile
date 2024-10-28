@@ -1,4 +1,4 @@
-FROM rust:1.80-buster AS builder
+FROM rust:1.81-bookworm AS builder
 RUN apt-get update && apt-get -y upgrade && apt-get install -y cmake clang libclang-dev protobuf-compiler
 COPY . eleel
 RUN cd eleel && cargo build --release --bin eleel --target x86_64-unknown-linux-gnu
