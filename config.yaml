@@ -626,8 +626,9 @@
 #   rbuilder  #
 ###############
 - source:
-    repository: ethpandaops/rbuilder
+    repository: flashbots/rbuilder
     ref: develop
+  build_args: RBUILDER_BIN=reth-rbuilder
   target:
     tag: develop
     repository: ethpandaops/rbuilder
