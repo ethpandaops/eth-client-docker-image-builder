@@ -631,4 +631,4 @@
   build_args: RBUILDER_BIN=reth-rbuilder
   target:
     tag: develop
-    repository: ethpandaops/rbuilder
+    repository: ethpandaops/reth-rbuilder
