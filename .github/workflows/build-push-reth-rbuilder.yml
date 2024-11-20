@@ -35,7 +35,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'rbuilder'
+          client: 'reth-rbuilder'
       - name: Generate target tag
         id: tag
         uses: ./.github/actions/docker-tag
@@ -59,7 +59,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
-          target_repository: ethpandaops/rbuilder
+          target_repository: ethpandaops/reth-rbuilder
           platform: ${{ matrix.platform }}
           build_args: ${{ inputs.build_args }}
 
@@ -79,7 +79,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
-          target_repository: ethpandaops/rbuilder
+          target_repository: ethpandaops/reth-rbuilder
           platforms: ${{ needs.prepare.outputs.platforms }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
