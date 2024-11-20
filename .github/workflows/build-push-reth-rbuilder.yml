@@ -5,7 +5,7 @@ on:
     inputs:
       repository:
         description: The source reth-rbuilder repository to build from
-        default: flashbots/reth-rbuilder
+        default: flashbots/rbuilder
         type: string
         required: true
       ref:
