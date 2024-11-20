@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       repository:
-        description: The source rbuilder repository to build from
-        default: ethpandaops/rbuilder
+        description: The source reth-rbuilder repository to build from
+        default: flashbots/reth-rbuilder
         type: string
         required: true
       ref:
@@ -19,7 +19,7 @@ on:
         required: false
       build_args:
         description: Build arguments to pass to the Docker build
-        default: ""
+        default: "RBUILDER_BIN=reth-rbuilder"
         type: string
         required: false
 
