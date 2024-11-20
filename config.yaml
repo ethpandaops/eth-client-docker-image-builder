@@ -622,9 +622,9 @@
   target:
     tag: main-minimal
     repository: ethpandaops/mev-rs
-###############
-#   rbuilder  #
-###############
+####################
+#   reth-rbuilder  #
+####################
 - source:
     repository: flashbots/rbuilder
     ref: develop
