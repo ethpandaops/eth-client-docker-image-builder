@@ -1,4 +1,4 @@
-name: Build rbuilder docker image
+name: Build reth-rbuilder docker image
 
 on:
   workflow_dispatch:
