@@ -36,6 +36,11 @@ inputs:
     description: The platform to build for
     type: string
     required: true
+  build_method:
+    description: Build method to use (go or bazel)
+    type: string
+    default: bazel
+    required: false
   # Secrets
   DOCKER_USERNAME:
     required: true
@@ -96,6 +101,7 @@ runs:
       target_dockerfile: ${{ inputs.target_dockerfile || './source/Dockerfile' }}
       source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
       GOPROXY: ${{ inputs.GOPROXY }}
+      build_method: ${{ inputs.build_method }}
     run: |
       ${{ inputs.build_script }}
   - name: Image digest & tags (build script)
@@ -136,6 +142,7 @@ runs:
       push: true
       platforms: ${{ inputs.platform }}
       build-args: ${{ inputs.build_args }}
+      build_method: ${{ inputs.build_method }}
       labels: |
         ethpandaops.io.repo=${{ inputs.source_repository }}
         ethpandaops.io.commitRef=${{ inputs.source_ref }}

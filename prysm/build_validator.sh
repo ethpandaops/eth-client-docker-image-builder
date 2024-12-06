@@ -13,27 +13,39 @@ else
   go install github.com/bazelbuild/bazelisk@latest
 fi
 
-build_with_go() {
-  echo "Building with Go..."
-  go mod tidy
-  CGO_ENABLED=1 go build -o _validator ./cmd/validator
-}
+build_method=${build_method:-bazel}  # Default to bazel if not set
 
-build_with_bazel() {
-  echo "Building with Bazel..."
-  $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443
-  if [ $? -eq 0 ]; then
-    # move to base dir to avoid any dockerignore/stat issues
+case ${build_method} in
+  "go")
+    echo "Building with Go..."
+    go mod tidy
+    
+    # Define ldflags for version information
+    ldflags=$(cat <<-END
+        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
+        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
+        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
+        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
+END
+    )
+    
+    # Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
+    # cryptographic operations) needs specific CPU features.
+    CGO_ENABLED=1 go build \
+      -tags=blst_enabled,blst_portable \
+      -ldflags "${ldflags}" \
+      -o _validator ./cmd/validator
+    ;;
+  "bazel")
+    echo "Building with Bazel..."
+    $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443
     mv bazel-bin/cmd/validator/validator_/validator _validator
-    return 0
-  else
-    echo "Bazel build failed, falling back to go build..."
-    return 1
-  fi
-}
-
-# Try Bazel first, fall back to Go if it fails.
-build_with_bazel || build_with_go
+    ;;
+  *)
+    echo "Invalid build_method value: ${build_method}. Must be 'go' or 'bazel'"
+    exit 1
+    ;;
+esac
 
 cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
 
