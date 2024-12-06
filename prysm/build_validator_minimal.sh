@@ -32,7 +32,7 @@ END
     # Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
     # cryptographic operations) needs specific CPU features.
     CGO_ENABLED=1 go build \
-      -tags=blst_enabled,blst_portable \
+      -tags="--config=minimal,blst_enabled,blst_portable" \
       -ldflags "${ldflags}" \
       -o _validator ./cmd/validator
     ;;
@@ -49,6 +49,10 @@ esac
 
 cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
 
-docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" --build-arg ENTRY=/app/cmd/validator/validator -f "../${target_dockerfile}" .
+docker build -t "${target_repository}:${target_tag}" \
+  -t "${target_repository}:${target_tag}-${source_git_commit_hash}" \
+  --build-arg ENTRY=/app/cmd/validator/validator \
+  --build-arg MINIMAL_CONFIG=true \
+  -f "../${target_dockerfile}" .
 docker push "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
