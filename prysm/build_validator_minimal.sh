@@ -47,11 +47,11 @@ END
     ;;
 esac
 
-cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
+cp ${SCRIPT_DIR}/entrypoint_minimal.sh entrypoint.sh
 
 docker build -t "${target_repository}:${target_tag}" \
   -t "${target_repository}:${target_tag}-${source_git_commit_hash}" \
-  --build-arg ENTRY="/app/cmd/validator/validator --minimal-config" \
+  --build-arg ENTRY="/app/cmd/validator/validator" \
   -f "../${target_dockerfile}" .
 docker push "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
