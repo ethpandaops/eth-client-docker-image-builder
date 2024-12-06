@@ -80,7 +80,8 @@ The following environment variables are available to the `build_script`;
 - `target_tag` - tag to add to the docker image tag
 - `target_repository` - dockerhub target to deploy the built image
 - `target_dockerfile` - optional docker file to use, defaults to the source repository's Dockerfile
-- `source_git_commit_hash` - the source repository's commit hash
+- `source_git_commit_hash` - the source repository's short commit hash
+- `source_git_commit_hash_full` - the source repository's full commit hash
 
 Example `build_script` file;
 ```bash

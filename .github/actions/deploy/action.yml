@@ -62,12 +62,18 @@ runs:
       repository: ${{ inputs.source_repository }}
       path: source
       ref: ${{ inputs.source_ref }}
-  - name: get git commit hash
+  - name: get short git commit hash
     id: git_commit_hash
     shell: bash
     run: |
       cd source
       echo "git_commit_hash=$(echo $(git log --pretty=format:'%h' -n 1))" >> $GITHUB_OUTPUT
+  - name: get full git commit hash
+    id: git_commit_hash_full
+    shell: bash
+    run: |
+      cd source
+      echo "git_commit_hash=$(echo $(git log --pretty=format:'%H' -n 1))" >> $GITHUB_OUTPUT
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context
@@ -100,6 +106,7 @@ runs:
       target_repository: ${{ inputs.target_repository }}
       target_dockerfile: ${{ inputs.target_dockerfile || './source/Dockerfile' }}
       source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
+      source_git_commit_hash_full: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
       GOPROXY: ${{ inputs.GOPROXY }}
       build_method: ${{ inputs.build_method }}
     run: |
