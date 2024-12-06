@@ -136,6 +136,7 @@ runs:
       push: true
       platforms: ${{ inputs.platform }}
       build-args: ${{ inputs.build_args }}
+      build_method: ${{ inputs.build_method }}
       labels: |
         ethpandaops.io.repo=${{ inputs.source_repository }}
         ethpandaops.io.commitRef=${{ inputs.source_ref }}
