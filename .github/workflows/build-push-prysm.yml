@@ -46,10 +46,6 @@ jobs:
         include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.22.0'
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -77,10 +73,6 @@ jobs:
         include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.22.0'
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -108,10 +100,6 @@ jobs:
         include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.22.0'
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -139,10 +127,6 @@ jobs:
         include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.22.0'
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
