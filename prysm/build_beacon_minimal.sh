@@ -25,8 +25,7 @@ case ${build_method} in
         -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
         -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
         -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
-        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)' \
-        -X '//proto:network=minimal'
+        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
 END
     )
 
