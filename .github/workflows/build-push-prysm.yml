@@ -17,6 +17,14 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
+      build_method:
+        description: Build method to use (go or bazel)
+        type: choice
+        options:
+          - bazel
+          - go
+        default: bazel
+        required: true
 
 jobs:
   prepare:
@@ -58,7 +66,7 @@ jobs:
           target_repository: ethpandaops/prysm-beacon-chain
           target_dockerfile: ./prysm/Dockerfile.beacon
           platform: ${{ matrix.platform }}
-          prysm_build_with: go
+          build_method: ${{ inputs.build_method }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -86,6 +94,7 @@ jobs:
           target_repository: ethpandaops/prysm-beacon-chain
           target_dockerfile: ./prysm/Dockerfile.beacon
           platform: ${{ matrix.platform }}
+          build_method: ${{ inputs.build_method }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -113,6 +122,7 @@ jobs:
           target_repository: ethpandaops/prysm-validator
           target_dockerfile: ./prysm/Dockerfile.validator
           platform: ${{ matrix.platform }}
+          build_method: ${{ inputs.build_method }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -140,6 +150,7 @@ jobs:
           target_repository: ethpandaops/prysm-validator
           target_dockerfile: ./prysm/Dockerfile.validator
           platform: ${{ matrix.platform }}
+          build_method: ${{ inputs.build_method }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

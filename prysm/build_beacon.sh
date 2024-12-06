@@ -13,9 +13,9 @@ else
   go install github.com/bazelbuild/bazelisk@latest
 fi
 
-prysm_build_with=${prysm_build_with:-bazel}  # Default to bazel if not set
+build_method=${build_method:-bazel}  # Default to bazel if not set
 
-case ${prysm_build_with} in
+case ${build_method} in
   "go")
     echo "Building with Go..."
     go mod tidy
@@ -27,7 +27,7 @@ case ${prysm_build_with} in
     mv bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain _beacon-chain
     ;;
   *)
-    echo "Invalid BUILD_WITH value: ${prysm_build_with}. Must be 'go' or 'bazel'"
+    echo "Invalid build_method value: ${build_method}. Must be 'go' or 'bazel'"
     exit 1
     ;;
 esac
