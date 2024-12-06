@@ -58,6 +58,7 @@ jobs:
           target_repository: ethpandaops/prysm-beacon-chain
           target_dockerfile: ./prysm/Dockerfile.beacon
           platform: ${{ matrix.platform }}
+          prysm_build_with: go
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
