@@ -27,3 +27,7 @@ runs:
     with:
       node-version: 20
       check-latest: true
+  - uses: actions/setup-go@v4
+    if: contains(inputs.repository, 'prysm')
+    with:
+      go-version: '1.22.0'
