@@ -6,7 +6,7 @@ OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 if [ "${OS_NAME}" == "darwin" ]; then
   /opt/homebrew/bin/brew install go
   /opt/homebrew/bin/go install github.com/bazelbuild/bazelisk@latest
-else 
+else
   sudo apt-get update
   sudo apt-get upgrade -y
   sudo apt install -y ca-certificates python3
@@ -19,7 +19,7 @@ case ${build_method} in
   "go")
     echo "Building with Go..."
     go mod tidy
-    
+
     # Define ldflags for version information
     ldflags=$(cat <<-END
         -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
@@ -28,11 +28,11 @@ case ${build_method} in
         -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
 END
     )
-    
+
     # Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
     # cryptographic operations) needs specific CPU features.
     CGO_ENABLED=1 go build \
-      -tags=blst_enabled,blst_portable \
+      -tags="--config=minimal,blst_enabled,blst_portable" \
       -ldflags "${ldflags}" \
       -o _beacon-chain ./cmd/beacon-chain
     ;;
@@ -47,8 +47,11 @@ END
     ;;
 esac
 
-cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
+cp ${SCRIPT_DIR}/entrypoint_minimal.sh entrypoint.sh
 
-docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" --build-arg ENTRY=/app/cmd/beacon-chain/beacon-chain -f "../${target_dockerfile}" .
+docker build -t "${target_repository}:${target_tag}" \
+  -t "${target_repository}:${target_tag}-${source_git_commit_hash}" \
+  --build-arg ENTRY="/app/cmd/beacon-chain/beacon-chain" \
+  -f "../${target_dockerfile}" .
 docker push "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
