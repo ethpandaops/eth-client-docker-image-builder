@@ -19,7 +19,9 @@ case ${build_method} in
   "go")
     echo "Building with Go..."
     go mod tidy
-    CGO_ENABLED=1 go build -o _beacon-chain ./cmd/beacon-chain
+    # Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
+    # cryptographic operations) needs specific CPU features.
+    CGO_ENABLED=1 go build -tags=blst_enabled,blst_portable -o _beacon-chain ./cmd/beacon-chain
     ;;
   "bazel")
     echo "Building with Bazel..."
