@@ -39,7 +39,7 @@ inputs:
   build_method:
     description: Build method to use (go or bazel)
     type: string
-    default: bazel
+    default: go
     required: false
   # Secrets
   DOCKER_USERNAME:
