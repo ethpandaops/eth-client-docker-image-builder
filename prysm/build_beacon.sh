@@ -9,7 +9,7 @@ if [ "${OS_NAME}" == "darwin" ]; then
 else 
   sudo apt-get update
   sudo apt-get upgrade -y
-  sudo apt install -y ca-certificates python3 golang-go
+  sudo apt install -y ca-certificates python3
   go install github.com/bazelbuild/bazelisk@latest
 fi
 
@@ -35,7 +35,7 @@ build_with_bazel() {
 # Try Bazel first, fall back to Go if it fails.
 build_with_bazel || build_with_go
 
-cp -f ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
+cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
 
 docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" --build-arg ENTRY=/app/cmd/beacon-chain/beacon-chain -f "../${target_dockerfile}" .
 docker push "${target_repository}:${target_tag}"
