@@ -32,7 +32,7 @@ END
     # Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
     # cryptographic operations) needs specific CPU features.
     CGO_ENABLED=1 go build \
-      -tags="--config=minimal,blst_enabled,blst_portable" \
+      -tags="minimal,blst_enabled,blst_portable" \
       -ldflags "${ldflags}" \
       -o _validator ./cmd/validator
     ;;
