@@ -13,7 +13,11 @@ else
   go install github.com/bazelbuild/bazelisk@latest
 fi
 
-build_method=${build_method:-go}  # Default to go if not set
+
+# Until this upstream issue (https://github.com/prysmaticlabs/prysm/issues/14703) is resolved, we
+# need to build minimal using Bazel.
+# build_method=${build_method:-go}
+build_method=bazel 
 
 case ${build_method} in
   "go")
