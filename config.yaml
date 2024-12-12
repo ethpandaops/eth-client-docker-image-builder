@@ -551,18 +551,18 @@
   # Electra
 - source:
     repository: grandinetech/grandine
-    ref: pectra-devnet4
+    ref: mekong
   build_script: ./grandine/build.sh
   target:
-    tag: pectra-devnet4
+    tag: mekong
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
 - source:
     repository: grandinetech/grandine
-    ref: pectra-devnet4
+    ref: mekong
   build_script: ./grandine/build.sh
   target:
-    tag: pectra-devnet4-minimal
+    tag: mekong-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
   # PeerDAS
