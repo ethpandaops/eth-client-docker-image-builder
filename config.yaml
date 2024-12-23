@@ -625,3 +625,13 @@
   target:
     tag: develop
     repository: ethpandaops/reth-rbuilder
+
+###################
+# rustic-builder #
+###################
+- source:
+    repository: pawanjay176/rustic-builder
+    ref: main
+  target:
+    tag: main
+    repository: ethpandaops/rustic-builder
