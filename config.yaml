@@ -635,3 +635,23 @@
   target:
     tag: main
     repository: ethpandaops/rustic-builder
+
+#############
+# mev-boost #
+#############
+- source:
+    repository: flashbots/mev-boost
+    ref: develop
+  target:
+    tag: develop
+    repository: ethpandaops/mev-boost
+
+#################
+# mev-boost-relay #
+#################
+- source:
+    repository: flashbots/mev-boost-relay
+    ref: main
+  target:
+    tag: main
+    repository: ethpandaops/mev-boost-relay
