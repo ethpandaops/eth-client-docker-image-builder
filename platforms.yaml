@@ -81,3 +81,9 @@ reth-rbuilder:
 rustic-builder:
   - linux/amd64
   - linux/arm64
+mev-boost:
+  - linux/amd64
+  - linux/arm64
+mev-boost-relay:
+  - linux/amd64
+  - linux/arm64
