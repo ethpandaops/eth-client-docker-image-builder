@@ -66,9 +66,12 @@ jobs:
       - prepare
       - deploy
     runs-on: ubuntu-latest
+    outputs:
+      docker_images: ${{ steps.manifest.outputs.docker_images }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/manifest
+        id: manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -78,6 +81,22 @@ jobs:
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+  push-registry:
+    name: Push to private docker registry
+    if: ${{ vars.HARBOR_REGISTRY != '' }}
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+      - deploy
+      - manifest
+    steps:
+      - name: Push to Registry
+        uses: ./.github/actions/push-registry
+        with:
+          target_registry: ${{ vars.HARBOR_REGISTRY }}
+          source_images: ${{ needs.manifest.outputs.docker_images }}
+          DOCKER_USERNAME: "${{ vars.HARBOR_USERNAME }}"
+          DOCKER_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest

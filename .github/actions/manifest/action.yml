@@ -28,6 +28,11 @@ inputs:
   DOCKER_PASSWORD:
     required: true
 
+outputs:
+  docker_images:
+    description: The list of all image tags that were built and pushed
+    value: ${{ steps.generate_images_list.outputs.tags }}
+
 runs:
   using: composite
   steps:
@@ -61,12 +66,19 @@ runs:
           exists=$(curl -s $url | jq '.results | length > 0')
           if [ "$exists" == "true" ]; then
             IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
+            TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug ${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug-${{ steps.git_commit_hash.outputs.git_commit_hash }} "
           fi
       done
+
+      TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }} ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} "
 
       IMAGES=${IMAGES::-1}  # Remove the trailing space
       echo "IMAGES: $IMAGES"
       echo "images=$IMAGES" >> $GITHUB_OUTPUT
+
+      TAGS=${TAGS::-1}  # Remove the trailing space
+      echo "TAGS: $TAGS"
+      echo "tags=$TAGS" >> $GITHUB_OUTPUT
   - name: Check if there is atleast one image
     if: ${{ steps.generate_images_list.outputs.images == '[]' || steps.generate_images_list.outputs.images == '' }}
     shell: bash
