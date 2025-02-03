@@ -36,7 +36,8 @@ runs:
     run: |
       images="${{ inputs.source_images }}"
       for image in $images; do
-        docker buildx imagetools create --dry-run -t ${{ inputs.target_registry }}:$image $image
-        docker buildx imagetools create -t ${{ inputs.target_registry }}:$image $image
+        echo "copy $image to ${{ inputs.target_registry }}$image"
+        docker buildx imagetools create --dry-run -t ${{ inputs.target_registry }}$image $image
+        docker buildx imagetools create -t ${{ inputs.target_registry }}$image $image
       done
 
