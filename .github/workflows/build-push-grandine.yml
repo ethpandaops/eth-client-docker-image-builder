@@ -85,6 +85,9 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/grandine
           platform: ${{ matrix.platform }}
+          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
+          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
+          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
