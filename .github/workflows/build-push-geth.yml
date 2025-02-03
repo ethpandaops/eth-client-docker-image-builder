@@ -90,6 +90,7 @@ jobs:
       - deploy
       - manifest
     steps:
+      - uses: actions/checkout@v4
       - name: Push to Registry
         uses: ./.github/actions/push-registry
         with:
