@@ -228,10 +228,13 @@ jobs:
       target_repository: ${{ matrix.config.target.repository }}
       target_dockerfile: ${{ matrix.config.target.dockerfile }}
       platforms: ${{ matrix.config.platforms }}
+      harbor_registry: "${{ vars.HARBOR_REGISTRY }}"
+      HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
       DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
       GOPROXY: "${{ vars.GOPROXY }}"
     secrets:
       DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+      HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
       MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
 
   notify:

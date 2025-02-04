@@ -56,6 +56,9 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/ethereum-genesis-generator
           platform: ${{ matrix.platform }}
+          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
+          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
+          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

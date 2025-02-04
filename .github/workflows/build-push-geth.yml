@@ -66,15 +66,21 @@ jobs:
       - prepare
       - deploy
     runs-on: ubuntu-latest
+    outputs:
+      docker_images: ${{ steps.manifest.outputs.docker_images }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/manifest
+        id: manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
           target_repository: ethpandaops/geth
           platforms: ${{ needs.prepare.outputs.platforms }}
+          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
+          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
+          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

@@ -35,6 +35,15 @@ on:
         description: JSON list of platforms to build for
         type: string
         required: true
+      harbor_registry:
+        description: Harbor registry to push the images to
+        type: string
+        default: ''
+        required: false
+      HARBOR_USERNAME:
+        description: Harbor username
+        type: string
+        required: false
       DOCKER_USERNAME:
         description: Docker Hub username
         type: string
@@ -46,6 +55,8 @@ on:
     secrets:
       DOCKER_PASSWORD:
         required: true
+      HARBOR_PASSWORD:
+        required: false
       MACOS_PASSWORD:
         required: true
 
@@ -90,5 +101,8 @@ jobs:
         source_ref: ${{ inputs.source_ref }}
         target_tag: ${{ inputs.target_tag }}
         target_repository: ${{ inputs.target_repository }}
+        harbor_registry: ${{ inputs.harbor_registry }}
+        HARBOR_USERNAME: "${{ inputs.HARBOR_USERNAME }}"
+        HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
         DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
         DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

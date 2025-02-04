@@ -23,9 +23,17 @@ inputs:
     description: Docker hub repository to push to
     type: string
     required: true
+  harbor_registry:
+    description: Harbor registry to push the images to
+    type: string
+    default: ''
   DOCKER_USERNAME:
     required: true
   DOCKER_PASSWORD:
+    required: true
+  HARBOR_USERNAME:
+    required: true
+  HARBOR_PASSWORD:
     required: true
 
 runs:
@@ -61,12 +69,19 @@ runs:
           exists=$(curl -s $url | jq '.results | length > 0')
           if [ "$exists" == "true" ]; then
             IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
+            TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug ${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug-${{ steps.git_commit_hash.outputs.git_commit_hash }} "
           fi
       done
+
+      TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }} ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} "
 
       IMAGES=${IMAGES::-1}  # Remove the trailing space
       echo "IMAGES: $IMAGES"
       echo "images=$IMAGES" >> $GITHUB_OUTPUT
+
+      TAGS=${TAGS::-1}  # Remove the trailing space
+      echo "TAGS: $TAGS"
+      echo "tags=$TAGS" >> $GITHUB_OUTPUT
   - name: Check if there is atleast one image
     if: ${{ steps.generate_images_list.outputs.images == '[]' || steps.generate_images_list.outputs.images == '' }}
     shell: bash
@@ -90,3 +105,23 @@ runs:
     run: |
       docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
       docker buildx imagetools create -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+
+  - name: Login to harbor registry
+    if: ${{ inputs.harbor_registry != '' }}
+    uses: docker/login-action@v3
+    with:
+      registry: ${{ inputs.harbor_registry }}
+      username: ${{ inputs.HARBOR_USERNAME }}
+      password: ${{ inputs.HARBOR_PASSWORD }}
+  
+  - name: Create and push manifest images for other registry
+    if: ${{ inputs.harbor_registry != '' }}
+    shell: bash
+    run: |
+      images="${{ steps.generate_images_list.outputs.tags }}"
+      for image in $images; do
+        target_tag=$(echo "${{ inputs.harbor_registry }}$image" | sed -E 's/^\s*.*:\/\///g')
+        echo "copy $image to $target_tag"
+        docker buildx imagetools create --dry-run -t $target_tag $image
+        docker buildx imagetools create -t $target_tag $image
+      done
