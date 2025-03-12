@@ -183,6 +183,13 @@
   target:
     tag: peerDAS
     repository: ethpandaops/lodestar
+- source:
+    repository: chainsafe/lodestar
+    ref: focil
+  build_script: ./lodestar/build.sh
+  target:
+    tag: focil
+    repository: ethpandaops/lodestar
 ##############
 # nethermind #
 ##############
