@@ -591,18 +591,18 @@
     dockerfile: ./grandine/Dockerfile.minimal
 - source:
     repository: hangleang/grandine
-    ref: feature/das
+    ref: peerdas-fulu
   build_script: ./grandine/build.sh
   target:
-    tag: hangleang-feature-das
+    tag: hangleang-peerdas-fulu
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
 - source:
     repository: hangleang/grandine
-    ref: feature/das
+    ref: peerdas-fulu
   build_script: ./grandine/build.sh
   target:
-    tag: hangleang-feature-das-minimal
+    tag: hangleang-peerdas-fulu-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
 
