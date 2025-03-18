@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: schema validate
-        uses: nrkno/yaml-schema-validator-github-action@4280780c703671c96fcdf493b2e64b16e25c4941 # v4
+        uses: nrkno/yaml-schema-validator-github-action@4280780c703671c96fcdf493b2e64b16e25c4941 # 4280780
         with:
           schema: schema.yaml
           target: config.yaml
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: mikefarah/yq@dd6cf3df146f3e2c0f8c765a6ef9e35780ad8cc1 # v4.30.8
       - name: duplicate repository tag check
         run: |
@@ -39,7 +39,7 @@ jobs:
     if: failure()
     steps:
       - name: Notify
-        uses: nobrayner/discord-webhook@2f38abc8877c7e8d2b0ded0cfd9599632014279f # v1
+        uses: nobrayner/discord-webhook@2f38abc8877c7e8d2b0ded0cfd9599632014279f # 2f38abc
         with:
           github-token: ${{ secrets.github_token }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
