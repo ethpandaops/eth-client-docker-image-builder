@@ -70,7 +70,7 @@ jobs:
         config: ${{fromJson(inputs.platforms)}}
     runs-on: ${{ matrix.config.runner }}
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - uses: ./.github/actions/install-deps
       with:
         repository: ${{ inputs.source_repository }}
@@ -93,7 +93,7 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - uses: ./.github/actions/manifest
       with:
         platforms: ${{ inputs.platforms }}
