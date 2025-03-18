@@ -25,7 +25,7 @@ jobs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Prepare Matrix
         id: setup
         uses: ./.github/actions/prepare
@@ -45,7 +45,7 @@ jobs:
       matrix:
         include: ${{fromJson(needs.prepare.outputs.platforms)}}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -68,7 +68,7 @@ jobs:
       - deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
@@ -93,7 +93,7 @@ jobs:
     if: failure()
     steps:
       - name: Notify
-        uses: nobrayner/discord-webhook@2f38abc8877c7e8d2b0ded0cfd9599632014279f # v1
+        uses: nobrayner/discord-webhook@1766a33bf571acdcc0678f00da4fb83aad01ebc7 # v1
         with:
           github-token: ${{ secrets.github_token }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
