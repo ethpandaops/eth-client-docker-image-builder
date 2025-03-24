@@ -395,6 +395,38 @@
     tag: peerDAS-minimal
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
+- source:
+    repository: prysmaticlabs/prysm
+    ref: data-columns-storage
+  build_script: ./prysm/build_beacon.sh
+  target:
+    tag: data-columns-storage
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: data-columns-storage
+  build_script: ./prysm/build_beacon_minimal.sh
+  target:
+    tag: data-columns-storage-minimal
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: prysmaticlabs/prysm
+    ref: data-columns-storage
+  build_script: ./prysm/build_validator.sh
+  target:
+    tag: data-columns-storage
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+- source:
+    repository: prysmaticlabs/prysm
+    ref: data-columns-storage
+  build_script: ./prysm/build_validator_minimal.sh
+  target:
+    tag: data-columns-storage-minimal
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
 
 ########
 # teku #
