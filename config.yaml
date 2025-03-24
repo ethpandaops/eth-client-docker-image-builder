@@ -226,30 +226,16 @@
   # Peerdas
 - source:
     repository: status-im/nimbus-eth2
-    ref: peerdas-p2p
+    ref: column-syncer
   target:
-    tag: peerdas-p2p
+    tag: column-syncer
     repository: ethpandaops/nimbus-eth2
     dockerfile: ./nimbus-eth2/Dockerfile.beacon
 - source:
     repository: status-im/nimbus-eth2
-    ref: peerdas-p2p
+    ref: column-syncer
   target:
-    tag: peerdas-p2p-minimal
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
-- source:
-    repository: status-im/nimbus-eth2
-    ref: pdsync
-  target:
-    tag: pdsync
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: pdsync
-  target:
-    tag: pdsync-minimal
+    tag: column-syncer-minimal
     repository: ethpandaops/nimbus-eth2
     dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
   # Minimal builds
