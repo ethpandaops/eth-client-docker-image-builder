@@ -113,15 +113,32 @@ runs:
       registry: ${{ inputs.harbor_registry }}
       username: ${{ inputs.HARBOR_USERNAME }}
       password: ${{ inputs.HARBOR_PASSWORD }}
-  
-  - name: Create and push manifest images for other registry
-    if: ${{ inputs.harbor_registry != '' }}
-    shell: bash
-    run: |
-      images="${{ steps.generate_images_list.outputs.tags }}"
-      for image in $images; do
-        target_tag=$(echo "${{ inputs.harbor_registry }}$image" | sed -E 's/^\s*.*:\/\///g')
-        echo "copy $image to $target_tag"
-        docker buildx imagetools create --dry-run -t $target_tag $image
-        docker buildx imagetools create -t $target_tag $image
+
+- name: Create and push manifest images for other registry
+  if: ${{ inputs.harbor_registry != '' }}
+  shell: bash
+  run: |
+    images="${{ steps.generate_images_list.outputs.tags }}"
+    for image in $images; do
+      target_tag="${{ inputs.harbor_registry }}${image#*/}"
+      echo "Checking if $image is available on Docker Hub..."
+      retries=5
+      delay=30
+      until [[ $retries -le 0 ]]; do
+        if docker manifest inspect $image > /dev/null 2>&1; then
+          echo "$image is available on Docker Hub."
+          echo "Copying $image to $target_tag..."
+          docker buildx imagetools create --dry-run -t $target_tag $image
+          docker buildx imagetools create -t $target_tag $image
+          break
+        else
+          echo "$image is not yet available on Docker Hub. Retrying in $delay seconds..."
+          sleep $delay
+          ((retries--))
+        fi
       done
+      if [[ $retries -le 0 ]]; then
+        echo "Failed to find $image on Docker Hub after multiple attempts."
+        exit 1
+      fi
+    done
