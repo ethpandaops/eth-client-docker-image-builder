@@ -120,14 +120,14 @@ runs:
     run: |
       images="${{ steps.generate_images_list.outputs.tags }}"
       for image in $images; do
-        target_tag="${{ inputs.harbor_registry }}${image#*/}"
+        target_tag=$(echo "${{ inputs.harbor_registry }}$image" | sed -E 's/^\s*.*:\/\///g')
         echo "Checking if $image is available on Docker Hub..."
         retries=5
         delay=30
         until [[ $retries -le 0 ]]; do
           if docker manifest inspect $image > /dev/null 2>&1; then
             echo "$image is available on Docker Hub."
-            echo "Copying $image to $target_tag..."
+            echo "Copying $image to $target_tag"
             docker buildx imagetools create --dry-run -t $target_tag $image
             docker buildx imagetools create -t $target_tag $image
             break
