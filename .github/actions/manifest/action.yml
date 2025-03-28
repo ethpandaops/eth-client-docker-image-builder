@@ -50,9 +50,7 @@ runs:
     shell: bash
     run: |
       PLATFORMS='${{ inputs.platforms }}'
-      echo "Debug: Raw git_commit_hash input: '${{ inputs.git_commit_hash }}'"
-      echo "Debug: Length of git_commit_hash: ${#{{ inputs.git_commit_hash }}}"
-      echo "Debug: Is git_commit_hash empty? $([[ -z "${{ inputs.git_commit_hash }}" ]] && echo "yes" || echo "no")"
+      echo "Debug: Raw git_commit_hash input: '${{ needs.deploy.outputs.git_commit_hash }}'"
       # Iterate over the platforms and build the image list
       len=$(echo $PLATFORMS | jq '. | length')
       for ((i=0; i<$len; i++)); do
