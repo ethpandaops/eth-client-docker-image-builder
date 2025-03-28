@@ -50,7 +50,6 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
-        id: deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -71,19 +70,6 @@ jobs:
       docker_images: ${{ steps.manifest.outputs.docker_images }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Get source repository commit hash
-        id: get_commit_hash
-        run: |
-          git clone ${{ inputs.repository }} source
-          cd source
-          git checkout ${{ inputs.ref }}
-          echo "Debug: Repository: ${{ inputs.repository }}"
-          echo "Debug: Ref: ${{ inputs.ref }}"
-          echo "Debug: Current directory: $(pwd)"
-          echo "Debug: Git status: $(git status)"
-          echo "Debug: Git log: $(git log -1)"
-          echo "git_commit_hash=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_OUTPUT
-          echo "Debug: Output git_commit_hash: $(cat $GITHUB_OUTPUT)"
       - uses: ./.github/actions/manifest
         id: manifest
         with:
@@ -95,7 +81,7 @@ jobs:
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-          git_commit_hash: ${{ steps.get_commit_hash.outputs.git_commit_hash }}
+          git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
