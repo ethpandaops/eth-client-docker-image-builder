@@ -15,6 +15,10 @@ inputs:
     description: The branch, tag or SHA to checkout and build from
     type: string
     required: true
+  git_commit_hash:
+    description: The git commit hash that was used in the deploy action
+    type: string
+    required: true
   target_tag:
     description: Docker hub tag to push to
     type: string
@@ -41,18 +45,6 @@ runs:
   steps:
   - name: Checkout this repo
     uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-  - name: Check out source repository
-    uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-    with:
-      repository: ${{ inputs.source_repository }}
-      path: source
-      ref: ${{ inputs.source_ref }}
-  - name: get git commit hash
-    id: git_commit_hash
-    shell: bash
-    run: |
-      cd source
-      echo "git_commit_hash=$(echo $(git log --pretty=format:'%h' -n 1))" >> $GITHUB_OUTPUT
   - name: Generate images list
     id: generate_images_list
     shell: bash
@@ -69,11 +61,11 @@ runs:
           exists=$(curl -s $url | jq '.results | length > 0')
           if [ "$exists" == "true" ]; then
             IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
-            TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug ${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug-${{ steps.git_commit_hash.outputs.git_commit_hash }} "
+            TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug ${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug-${{ inputs.git_commit_hash }} "
           fi
       done
 
-      TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }} ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} "
+      TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }} ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} "
 
       IMAGES=${IMAGES::-1}  # Remove the trailing space
       echo "IMAGES: $IMAGES"
@@ -103,8 +95,8 @@ runs:
   - name: Create and push manifest images
     shell: bash
     run: |
-      docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
-      docker buildx imagetools create -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+      docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+      docker buildx imagetools create -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
 
   - name: Login to harbor registry
     if: ${{ inputs.harbor_registry != '' }}
