@@ -55,9 +55,6 @@ outputs:
   git_commit_hash:
     description: The git commit hash that was used to build the image
     value: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
-  git_commit_hash_full:
-    description: The full git commit hash that was used to build the image
-    value: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
 
 runs:
   using: composite
@@ -76,12 +73,6 @@ runs:
     run: |
       cd source
       echo "git_commit_hash=$(echo $(git log --pretty=format:'%h' -n 1))" >> $GITHUB_OUTPUT
-  - name: get full git commit hash
-    id: git_commit_hash_full
-    shell: bash
-    run: |
-      cd source
-      echo "git_commit_hash_full=$(echo $(git log --pretty=format:'%H' -n 1))" >> $GITHUB_OUTPUT
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context
