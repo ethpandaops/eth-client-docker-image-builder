@@ -105,7 +105,6 @@ runs:
       target_repository: ${{ inputs.target_repository }}
       target_dockerfile: ${{ inputs.target_dockerfile || './source/Dockerfile' }}
       source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
-      source_git_commit_hash_full: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
       GOPROXY: ${{ inputs.GOPROXY }}
       build_method: ${{ inputs.build_method }}
     run: |
