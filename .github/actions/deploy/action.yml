@@ -75,13 +75,13 @@ runs:
     shell: bash
     run: |
       cd source
-      echo "git_commit_hash=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_OUTPUT
+      echo "git_commit_hash=$(echo $(git log --pretty=format:'%h' -n 1))" >> $GITHUB_OUTPUT
   - name: get full git commit hash
     id: git_commit_hash_full
     shell: bash
     run: |
       cd source
-      echo "git_commit_hash_full=$(git log --pretty=format:'%H' -n 1)" >> $GITHUB_OUTPUT
+      echo "git_commit_hash_full=$(echo $(git log --pretty=format:'%H' -n 1))" >> $GITHUB_OUTPUT
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context
