@@ -50,7 +50,7 @@ runs:
     shell: bash
     run: |
       PLATFORMS='${{ inputs.platforms }}'
-
+      echo "input_commit_hash: ${{ inputs.git_commit_hash }}"
       # Iterate over the platforms and build the image list
       len=$(echo $PLATFORMS | jq '. | length')
       for ((i=0; i<$len; i++)); do
