@@ -203,7 +203,7 @@
     repository: nethermindeth/nethermind
     ref: feature/peerdas
   target:
-    tag: feature/peerdas
+    tag: feature-peerdas
     repository: ethpandaops/nethermind
 ###############
 # nimbus-eth2 #
