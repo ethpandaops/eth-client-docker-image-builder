@@ -201,9 +201,9 @@
     repository: ethpandaops/nethermind
 - source:
     repository: nethermindeth/nethermind
-    ref: pectra_devnet_4
+    ref: feature/peerdas
   target:
-    tag: pectra_devnet_4
+    tag: feature/peerdas
     repository: ethpandaops/nethermind
 ###############
 # nimbus-eth2 #
