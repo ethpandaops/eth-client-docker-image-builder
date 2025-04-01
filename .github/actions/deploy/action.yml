@@ -51,14 +51,6 @@ inputs:
   GOPROXY:
     required: false
 
-outputs:
-  git_commit_hash:
-    description: The git commit hash that was used to build the image
-    value: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
-  git_commit_hash_full:
-    description: The full git commit hash that was used to build the image
-    value: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
-
 runs:
   using: composite
   steps:
