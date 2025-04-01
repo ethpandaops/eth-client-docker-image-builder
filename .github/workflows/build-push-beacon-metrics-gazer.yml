@@ -62,7 +62,7 @@ jobs:
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-          git_commit_hash: ${{ steps.deploy.outputs.git_commit_hash }}
+          git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
