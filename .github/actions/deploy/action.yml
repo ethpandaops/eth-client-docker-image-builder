@@ -18,7 +18,7 @@ inputs:
     description: Build arguments to pass to the Docker build
     default: ""
     type: string
-    required: false  
+    required: false
   target_tag:
     description: Docker hub tag to push to
     type: string
@@ -51,6 +51,11 @@ inputs:
   GOPROXY:
     required: false
 
+outputs:
+  git_commit_hash:
+    description: The git commit hash of the source repository
+    value: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
+
 runs:
   using: composite
   steps:
@@ -78,7 +83,7 @@ runs:
     shell: bash
     id: buildx-context
     run: |
-      docker context use builders || docker context create builders 
+      docker context use builders || docker context create builders
   - name: Set up Docker Buildx
     uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
     with:
