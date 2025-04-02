@@ -60,6 +60,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
+        id: deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -94,6 +95,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
+        id: deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -128,6 +130,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
+        id: deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -162,6 +165,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
+        id: deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -197,6 +201,7 @@ jobs:
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
+          git_commit_hash: ${{ needs.deploy-beacon.outputs.git_commit_hash }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -217,6 +222,7 @@ jobs:
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
+          git_commit_hash: ${{ needs.deploy-beacon-minimal.outputs.git_commit_hash }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -237,6 +243,7 @@ jobs:
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
+          git_commit_hash: ${{ needs.deploy-validator.outputs.git_commit_hash }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -257,6 +264,7 @@ jobs:
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
+          git_commit_hash: ${{ needs.deploy-validator-minimal.outputs.git_commit_hash }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
