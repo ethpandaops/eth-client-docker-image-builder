@@ -67,6 +67,7 @@ runs:
       repository: ${{ inputs.source_repository }}
       path: source
       ref: ${{ inputs.source_ref }}
+      fetch-depth: 0
   - name: get short git commit hash
     id: git_commit_hash
     shell: bash
