@@ -66,7 +66,9 @@ jobs:
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
         
-      # This step captures the git commit hash from the deploy action for job output
+      # This step captures the git commit hash from the deploy action for job output, which can then be
+      # used by the manifest job. This is done to handle scenarios where there is a commit to the remote
+      # repository between the deploy and manifest action.
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
