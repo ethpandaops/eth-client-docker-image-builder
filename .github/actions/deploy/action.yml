@@ -55,6 +55,9 @@ outputs:
   git_commit_hash:
     description: The git commit hash of the source repository
     value: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
+  git_commit_hash_full:
+    description: The full git commit hash of the source repository
+    value: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
 
 runs:
   using: composite

@@ -45,7 +45,7 @@ jobs:
       matrix:
         include: ${{fromJson(needs.prepare.outputs.platforms)}}
     outputs:
-      git_commit_hash: ${{ steps.deploy.outputs.git_commit_hash }}
+      git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/install-deps
@@ -67,6 +67,12 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+          
+      # This step captures the git commit hash from the deploy action for job output
+      - name: Set job output
+        id: set_output
+        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+        shell: bash
   manifest:
     needs:
       - prepare
