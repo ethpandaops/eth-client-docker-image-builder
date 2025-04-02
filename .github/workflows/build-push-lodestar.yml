@@ -69,9 +69,11 @@ jobs:
       # This step captures the git commit hash from the deploy action for job output, which can then be
       # used by the manifest job. This is done to handle scenarios where there is a commit to the remote
       # repository between the deploy and manifest action.
+      #
+      # Note: Lodestar requires us to use the full git commit hash.
       - name: Set job output
         id: set_output
-        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash_full }}" >> $GITHUB_OUTPUT
         shell: bash
   manifest:
     needs:
