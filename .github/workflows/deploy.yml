@@ -69,12 +69,15 @@ jobs:
       matrix:
         config: ${{fromJson(inputs.platforms)}}
     runs-on: ${{ matrix.config.runner }}
+    outputs:
+      git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - uses: ./.github/actions/install-deps
       with:
         repository: ${{ inputs.source_repository }}
     - uses: ./.github/actions/deploy
+      id: deploy
       with:
         source_repository: ${{ inputs.source_repository }}
         source_ref: ${{ inputs.source_ref }}
@@ -88,6 +91,12 @@ jobs:
         DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
         MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
         GOPROXY: "${{ inputs.GOPROXY }}"
+        
+    # This step captures the git commit hash from the deploy action for job output
+    - name: Set job output
+      id: set_output
+      run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+      shell: bash
   mainfest:
     name: Manifest
     needs: deploy
@@ -106,3 +115,4 @@ jobs:
         HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
         DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
         DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+        git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
