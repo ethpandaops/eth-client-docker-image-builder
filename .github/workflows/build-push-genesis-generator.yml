@@ -57,7 +57,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
-          target_repository: ethpandaops/genesis-generator
+          target_repository: ethpandaops/ethereum-genesis-generator
           platform: ${{ matrix.platform }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
@@ -67,7 +67,7 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          
+
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
         id: set_output
@@ -85,7 +85,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
-          target_repository: ethpandaops/genesis-generator
+          target_repository: ethpandaops/ethereum-genesis-generator
           platforms: ${{ needs.prepare.outputs.platforms }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
