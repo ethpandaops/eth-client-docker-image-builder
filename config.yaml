@@ -95,6 +95,12 @@
   target:
     tag: main
     repository: ethpandaops/reth
+- source:
+    repository: paradigmxyz/reth
+    ref: rkrasiuk/peerdas
+  target:
+    tag: rkrasiuk-peerdas
+    repository: ethpandaops/reth
 ##############
 # lighthouse #
 ##############
