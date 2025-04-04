@@ -65,6 +65,10 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+      - name: Set job output
+        id: set_output
+        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+        shell: bash
   deploy-beacon-minimal:
     needs:
       - prepare
