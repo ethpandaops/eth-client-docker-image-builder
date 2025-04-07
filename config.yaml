@@ -69,10 +69,10 @@
     tag: gballet-eip-4762-rewrite
     repository: ethpandaops/geth
 - source:
-    repository: lightclient/go-ethereum
-    ref: prague-devnet-4
+    repository: MariusVanDerWijden/go-ethereum
+    ref: engine-getblobs-v2
   target:
-    tag: lightclient-prague-devnet-4
+    tag: marius-engine-getblobs-v2
     repository: ethpandaops/geth
 - source:
     repository: ethereum/go-ethereum
