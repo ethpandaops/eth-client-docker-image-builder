@@ -629,6 +629,22 @@
     tag: hangleang-peerdas-devnet-6-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
+- source:
+    repository: hangleang/grandine
+    ref: peerdas-fulu
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-peerdas-fulu
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
+- source:
+    repository: hangleang/grandine
+    ref: peerdas-fulu
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-peerdas-fulu-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
 
 #############
 #   mev-rs  #
