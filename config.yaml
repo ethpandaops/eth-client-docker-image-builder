@@ -153,9 +153,9 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: peerdas-devnet-2
+    ref: peerdas-devnet-6
   target:
-    tag: peerdas-devnet-2
+    tag: peerdas-devnet-6
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 ############
