@@ -615,18 +615,18 @@
     dockerfile: ./grandine/Dockerfile.minimal
 - source:
     repository: hangleang/grandine
-    ref: peerdas-fulu
+    ref: peerdas-devnet-6
   build_script: ./grandine/build.sh
   target:
-    tag: hangleang-peerdas-fulu
+    tag: hangleang-peerdas-devnet-6
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
 - source:
     repository: hangleang/grandine
-    ref: peerdas-fulu
+    ref: peerdas-devnet-6
   build_script: ./grandine/build.sh
   target:
-    tag: hangleang-peerdas-fulu-minimal
+    tag: hangleang-peerdas-devnet-6-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
 
