@@ -403,34 +403,34 @@
     dockerfile: ./prysm/Dockerfile.validator
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_beacon.sh
   target:
-    tag: data-columns-storage
+    tag: peerdas-devnet-6
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_beacon_minimal.sh
   target:
-    tag: data-columns-storage-minimal
+    tag: peerdas-devnet-6-minimal
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_validator.sh
   target:
-    tag: data-columns-storage
+    tag: peerdas-devnet-6
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_validator_minimal.sh
   target:
-    tag: data-columns-storage-minimal
+    tag: peerdas-devnet-6-minimal
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
 
