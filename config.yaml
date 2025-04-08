@@ -69,10 +69,10 @@
     tag: gballet-eip-4762-rewrite
     repository: ethpandaops/geth
 - source:
-    repository: lightclient/go-ethereum
-    ref: prague-devnet-4
+    repository: MariusVanDerWijden/go-ethereum
+    ref: engine-getblobs-v2
   target:
-    tag: lightclient-prague-devnet-4
+    tag: marius-engine-getblobs-v2
     repository: ethpandaops/geth
 - source:
     repository: ethereum/go-ethereum
@@ -94,6 +94,12 @@
     ref: main
   target:
     tag: main
+    repository: ethpandaops/reth
+- source:
+    repository: paradigmxyz/reth
+    ref: rkrasiuk/peerdas
+  target:
+    tag: rkrasiuk-peerdas
     repository: ethpandaops/reth
 ##############
 # lighthouse #
@@ -147,9 +153,9 @@
     dockerfile: ./lighthouse/Dockerfile
 - source:
     repository: sigp/lighthouse
-    ref: peerdas-devnet-2
+    ref: peerdas-devnet-6
   target:
-    tag: peerdas-devnet-2
+    tag: peerdas-devnet-6
     repository: ethpandaops/lighthouse
     dockerfile: ./lighthouse/Dockerfile
 ############
@@ -397,34 +403,34 @@
     dockerfile: ./prysm/Dockerfile.validator
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_beacon.sh
   target:
-    tag: data-columns-storage
+    tag: peerdas-devnet-6
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_beacon_minimal.sh
   target:
-    tag: data-columns-storage-minimal
+    tag: peerdas-devnet-6-minimal
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_validator.sh
   target:
-    tag: data-columns-storage
+    tag: peerdas-devnet-6
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
 - source:
     repository: prysmaticlabs/prysm
-    ref: data-columns-storage
+    ref: peerdas-devnet-6
   build_script: ./prysm/build_validator_minimal.sh
   target:
-    tag: data-columns-storage-minimal
+    tag: peerdas-devnet-6-minimal
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
 
@@ -605,6 +611,22 @@
   build_script: ./grandine/build.sh
   target:
     tag: das-minimal
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile.minimal
+- source:
+    repository: hangleang/grandine
+    ref: peerdas-devnet-6
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-peerdas-devnet-6
+    repository: ethpandaops/grandine
+    dockerfile: ./grandine/Dockerfile
+- source:
+    repository: hangleang/grandine
+    ref: peerdas-devnet-6
+  build_script: ./grandine/build.sh
+  target:
+    tag: hangleang-peerdas-devnet-6-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
 - source:
