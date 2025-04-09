@@ -617,6 +617,7 @@
     repository: hangleang/grandine
     ref: peerdas-devnet-6
   build_script: ./grandine/build.sh
+  build_args: RUST_MIN_STACK=5242880
   target:
     tag: hangleang-peerdas-devnet-6
     repository: ethpandaops/grandine
@@ -625,6 +626,7 @@
     repository: hangleang/grandine
     ref: peerdas-devnet-6
   build_script: ./grandine/build.sh
+  build_args: RUST_MIN_STACK=5242880
   target:
     tag: hangleang-peerdas-devnet-6-minimal
     repository: ethpandaops/grandine
@@ -633,6 +635,7 @@
     repository: hangleang/grandine
     ref: peerdas-fulu
   build_script: ./grandine/build.sh
+  build_args: RUST_MIN_STACK=5242880
   target:
     tag: hangleang-peerdas-fulu
     repository: ethpandaops/grandine
@@ -641,6 +644,7 @@
     repository: hangleang/grandine
     ref: peerdas-fulu
   build_script: ./grandine/build.sh
+  build_args: RUST_MIN_STACK=5242880
   target:
     tag: hangleang-peerdas-fulu-minimal
     repository: ethpandaops/grandine
