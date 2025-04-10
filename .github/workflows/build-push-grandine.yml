@@ -19,6 +19,7 @@ on:
         required: false
       build_args:
         description: Additional build arguments to pass to the docker build command
+        default: "RUST_MIN_STACK=5242880"
         type: string
         required: false
 
@@ -65,6 +66,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/grandine
           platform: ${{ matrix.platform }}
+          build_args: ${{ inputs.build_args }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
