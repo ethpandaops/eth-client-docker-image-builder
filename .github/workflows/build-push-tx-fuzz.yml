@@ -3,7 +3,7 @@ name: Build tx-fuzz docker image
 on:
   workflow_dispatch:
     inputs:
-      repository: 
+      repository:
         description: The source tx-fuzz repository to build from
         default: MariusVanDerWijden/tx-fuzz
         type: string
@@ -52,6 +52,7 @@ jobs:
         with:
           repository: ${{ inputs.repository }}
       - uses: ./.github/actions/deploy
+        id: deploy
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
@@ -63,7 +64,7 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          
+
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
         id: set_output
