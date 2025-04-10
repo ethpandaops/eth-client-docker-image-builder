@@ -114,7 +114,7 @@ runs:
       for image in $images; do
         target_tag=$(echo "${{ inputs.harbor_registry }}$image" | sed -E 's/^\s*.*:\/\///g')
         echo "Checking if $image is available on Docker Hub..."
-        retries=5
+        retries=10
         delay=30
         until [[ $retries -le 0 ]]; do
           if docker manifest inspect $image > /dev/null 2>&1; then
@@ -131,6 +131,7 @@ runs:
         done
         if [[ $retries -le 0 ]]; then
           echo "Failed to find $image on Docker Hub after multiple attempts."
-          exit 1
+          echo "Skipping $image"
+          continue
         fi
       done
