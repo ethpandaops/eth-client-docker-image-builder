@@ -101,6 +101,12 @@
   target:
     tag: rkrasiuk-peerdas
     repository: ethpandaops/reth
+- source:
+    repository: paradigmxyz/reth
+    ref: rakita/eof-devnet-1
+  target:
+    tag: rakita-eof-devnet-1
+    repository: ethpandaops/reth
 ##############
 # lighthouse #
 ##############
