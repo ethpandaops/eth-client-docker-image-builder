@@ -446,11 +446,11 @@
     repository: ethpandaops/teku
 # Peerdas
 - source:
-    repository: Nashatyrev/teku
+    repository: consensys/teku
     ref: das
   build_script: ./teku/build.sh
   target:
-    tag: nashatyrev-das
+    tag: das
     repository: ethpandaops/teku
 # Verkle
 - source:
