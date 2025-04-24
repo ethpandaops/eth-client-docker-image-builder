@@ -17,6 +17,10 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
+      build_args:
+        description: Build arguments to pass to the docker build command
+        type: string
+        required: false
 
 jobs:
   prepare:
@@ -59,7 +63,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/mev-boost-relay
           platform: ${{ matrix.platform }}
-
+          build_args: ${{ inputs.build_args || format('VERSION={0}-{1}', inputs.ref, steps.set_output.outputs.git_commit_hash) }}
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
