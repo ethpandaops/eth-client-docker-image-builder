@@ -654,7 +654,13 @@
   target:
     tag: main
     repository: ethpandaops/rustic-builder
-
+- source:
+    repository: pawanjay176/rustic-builder
+    ref: fulu
+  target:
+    tag: fulu
+    repository: ethpandaops/rustic-builder
+    
 #############
 # mev-boost #
 #############
