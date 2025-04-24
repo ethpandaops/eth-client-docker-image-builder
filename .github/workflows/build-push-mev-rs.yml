@@ -64,13 +64,13 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/mev-rs
           platform: ${{ matrix.platform }}
-          build_args: ${{ inputs.build_args }}
+          build_args: ${{ inputs.build_args || format('VERSION={0}-{1}', inputs.ref, steps.deploy.outputs.git_commit_hash) }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          
+
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
         id: set_output
