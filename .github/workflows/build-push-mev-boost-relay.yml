@@ -55,6 +55,11 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
+      # This step captures the git commit hash from the deploy action for job output
+      - name: Set job output
+        id: set_output
+        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+        shell: bash
       - uses: ./.github/actions/deploy
         id: deploy
         with:
@@ -69,11 +74,6 @@ jobs:
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
 
-      # This step captures the git commit hash from the deploy action for job output
-      - name: Set job output
-        id: set_output
-        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
-        shell: bash
   manifest:
     needs:
       - prepare
