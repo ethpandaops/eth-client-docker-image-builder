@@ -69,10 +69,10 @@
     tag: gballet-eip-4762-rewrite
     repository: ethpandaops/geth
 - source:
-    repository: MariusVanDerWijden/go-ethereum
-    ref: engine-getblobs-v2
+    repository: ethereum/go-ethereum
+    ref: peerdas-devnet-6
   target:
-    tag: marius-engine-getblobs-v2
+    tag: peerdas-devnet-6
     repository: ethpandaops/geth
 - source:
     repository: ethereum/go-ethereum
