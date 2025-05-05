@@ -583,20 +583,20 @@
     dockerfile: ./grandine/Dockerfile.minimal
 - source:
     repository: hangleang/grandine
-    ref: peerdas-devnet-6
+    ref: peerdas-devnet-7
   build_script: ./grandine/build.sh
   build_args: RUST_MIN_STACK=5242880
   target:
-    tag: hangleang-peerdas-devnet-6
+    tag: hangleang-peerdas-devnet-7
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
 - source:
     repository: hangleang/grandine
-    ref: peerdas-devnet-6
+    ref: peerdas-devnet-7
   build_script: ./grandine/build.sh
   build_args: RUST_MIN_STACK=5242880
   target:
-    tag: hangleang-peerdas-devnet-6-minimal
+    tag: hangleang-peerdas-devnet-7-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
 - source:
