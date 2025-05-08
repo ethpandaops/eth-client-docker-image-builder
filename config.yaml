@@ -319,7 +319,7 @@
 #########
   # Develop branch
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: develop
   build_script: ./prysm/build_beacon.sh
   target:
@@ -327,7 +327,7 @@
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: develop
   build_script: ./prysm/build_validator.sh
   target:
@@ -336,7 +336,7 @@
     dockerfile: ./prysm/Dockerfile.validator
   # Minimal builds
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: develop
   build_script: ./prysm/build_beacon_minimal.sh
   target:
@@ -344,7 +344,7 @@
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: develop
   build_script: ./prysm/build_validator_minimal.sh
   target:
@@ -353,7 +353,7 @@
     dockerfile: ./prysm/Dockerfile.validator
   # Master branch
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: master
   build_script: ./prysm/build_beacon.sh
   target:
@@ -361,7 +361,7 @@
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: master
   build_script: ./prysm/build_validator.sh
   target:
@@ -370,7 +370,7 @@
     dockerfile: ./prysm/Dockerfile.validator
   # PeerDAS
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: peerDAS
   build_script: ./prysm/build_beacon.sh
   target:
@@ -378,7 +378,7 @@
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: peerDAS
   build_script: ./prysm/build_beacon_minimal.sh
   target:
@@ -386,7 +386,7 @@
     repository: ethpandaops/prysm-beacon-chain
     dockerfile: ./prysm/Dockerfile.beacon
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: peerDAS
   build_script: ./prysm/build_validator.sh
   target:
@@ -394,7 +394,7 @@
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
 - source:
-    repository: prysmaticlabs/prysm
+    repository: offchainlabs/prysm
     ref: peerDAS
   build_script: ./prysm/build_validator_minimal.sh
   target:
