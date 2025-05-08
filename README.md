@@ -15,7 +15,7 @@ Run the *Build **client*** workflow;
 - [Build Nethermind](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nethermin.yml) [[source](https://github.com/nethermindeth/nethermind)]
 - [Build Nimbus-Eth2](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nimbus-eth2.yml) [[source](https://github.com/status-im/nimbus-eth2)]
 - [Build Nimbus-Eth1](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-nimbus-eth1.yml) [[source](https://github.com/status-im/nimbus-eth1)]
-- [Build Prysm](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-prysm.yml) [[source](https://github.com/prysmaticlabs/prysm)]
+- [Build Prysm](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-prysm.yml) [[source](https://github.com/offchainlabs/prysm)]
 - [Build Reth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-reth.yml) [[source](https://github.com/paradigmxyz/reth)]
 - [Build Teku](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-teku.yml) [[source](https://github.com/consensys/teku)]
 - [Build Grandine](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-grandine.yml) [[source](https://github.com/grandinetech/grandine)]
