@@ -70,9 +70,9 @@
     repository: ethpandaops/geth
 - source:
     repository: ethereum/go-ethereum
-    ref: peerdas-devnet-6
+    ref: peerdas-devnet-7
   target:
-    tag: peerdas-devnet-6
+    tag: peerdas-devnet-7
     repository: ethpandaops/geth
 - source:
     repository: ethereum/go-ethereum
