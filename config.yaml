@@ -86,6 +86,12 @@
   target:
     tag: bad-block-generator
     repository: ethpandaops/geth
+- source:
+    repository: ethereum/go-ethereum
+    ref: fusaka-devnet-0
+  target:
+    tag: fusaka-devnet-0
+    repository: ethpandaops/geth
 ########
 # reth #
 ########
