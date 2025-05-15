@@ -666,7 +666,7 @@
   target:
     tag: fulu
     repository: ethpandaops/rustic-builder
-    
+
 #############
 # mev-boost #
 #############
@@ -686,3 +686,13 @@
   target:
     tag: main
     repository: ethpandaops/mev-boost-relay
+
+#################
+# goevmlab #
+#################
+- source:
+    repository: holiman/goevmlab
+    ref: main
+  target:
+    tag: main
+    repository: ethpandaops/goevmlab
