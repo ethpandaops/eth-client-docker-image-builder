@@ -692,7 +692,7 @@
 #################
 - source:
     repository: holiman/goevmlab
-    ref: main
+    ref: master
   target:
-    tag: main
+    tag: master
     repository: ethpandaops/goevmlab
