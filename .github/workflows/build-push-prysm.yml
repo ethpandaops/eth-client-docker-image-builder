@@ -5,7 +5,7 @@ on:
     inputs:
       repository:
         description: The source prysm repository to build from
-        default: prysmaticlabs/prysm
+        default: offchainlabs/prysm
         type: string
         required: true
       ref:
