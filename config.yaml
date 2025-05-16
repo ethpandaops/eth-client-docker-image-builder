@@ -690,9 +690,9 @@
 #################
 # goevmlab #
 #################
-- source:
-    repository: holiman/goevmlab
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/goevmlab
+# - source:
+#     repository: holiman/goevmlab
+#     ref: master
+#   target:
+#     tag: master
+#     repository: ethpandaops/goevmlab
