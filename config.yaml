@@ -8,6 +8,13 @@
   target:
     tag: main
     repository: ethpandaops/besu
+- source:
+    repository: Gabriel-Trintinalia/besu
+    ref: peerdas-devnet-7
+  build_script: ./besu/build.sh
+  target:
+    tag: gabriel-peerdas-devnet-7
+    repository: ethpandaops/besu
 ##########
 # erigon #
 ##########
