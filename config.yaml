@@ -224,6 +224,12 @@
   target:
     tag: feature-peerdas
     repository: ethpandaops/nethermind
+- source:
+    repository: nethermindeth/nethermind
+    ref: devnet-0
+  target:
+    tag: devnet-0
+    repository: ethpandaops/nethermind
 ###############
 # nimbus-eth2 #
 ###############
@@ -412,6 +418,38 @@
   build_script: ./prysm/build_validator_minimal.sh
   target:
     tag: peerDAS-minimal
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+- source:
+    repository: offchainlabs/prysm
+    ref: blob-schedule
+  build_script: ./prysm/build_beacon.sh
+  target:
+    tag: blob-schedule
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: offchainlabs/prysm
+    ref: blob-schedule
+  build_script: ./prysm/build_beacon_minimal.sh
+  target:
+    tag: blob-schedule-minimal
+    repository: ethpandaops/prysm-beacon-chain
+    dockerfile: ./prysm/Dockerfile.beacon
+- source:
+    repository: offchainlabs/prysm
+    ref: blob-schedule
+  build_script: ./prysm/build_validator.sh
+  target:
+    tag: blob-schedule
+    repository: ethpandaops/prysm-validator
+    dockerfile: ./prysm/Dockerfile.validator
+- source:
+    repository: offchainlabs/prysm
+    ref: blob-schedule
+  build_script: ./prysm/build_validator_minimal.sh
+  target:
+    tag: blob-schedule-minimal
     repository: ethpandaops/prysm-validator
     dockerfile: ./prysm/Dockerfile.validator
 
