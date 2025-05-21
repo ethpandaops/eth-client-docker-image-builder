@@ -90,3 +90,6 @@ mev-boost-relay:
 goevmlab:
   - linux/amd64
   - linux/arm64
+ethrex:
+  - linux/amd64
+  - linux/arm64
