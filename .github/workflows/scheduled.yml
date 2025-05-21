@@ -17,6 +17,18 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: mikefarah/yq@8bf425b4d1344db7cd469a8d10a390876e0c77fd # v4.45.1
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      - name: Generate config.yaml
+        run: |
+          python generate_config.py
+          echo "Generated config.yaml for workflow use"
       - name: Login to Docker Hub
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -27,57 +39,10 @@ jobs:
           CONCURRENT_IMAGE_PULL: ${{ vars.CONCURRENT_IMAGE_PULL }}
         run: |
           # This script reads config.yaml, platforms.yaml and runners.yaml to generate a list of configurations to build and deploy
-          # It will;
+          # It will:
           #    - check the source respository for the latest commit hash
           #    - check if the built image exists in our dockerhub registry
           #    - generate a list of configurations to build and deploy
-          #
-          # Here is an example of generate output;
-          #  [{
-          #    "source": {
-          #      "repository": "hyperledger/besu",
-          #      "ref": "main"
-          #    },
-          #    "build_script": "./besu/build.sh",
-          #    "target": {
-          #      "tag": "main",
-          #      "repository": "ethpandaops/besu"
-          #    },
-          #    "platforms": [
-          #      {
-          #        "platform": "linux/amd64",
-          #        "runner": "ubuntu-latest",
-          #        "slug": "linux-amd64"
-          #      },
-          #      {
-          #        "platform": "linux/arm64",
-          #        "runner": "ARM64",
-          #        "slug": "linux-arm64"
-          #      }
-          #    ]
-          #  },{
-          #    "source": {
-          #      "repository": "sigp/lighthouse",
-          #      "ref": "unstable"
-          #    },
-          #    "target": {
-          #      "tag": "unstable",
-          #      "repository": "ethpandaops/lighthouse",
-          #      "dockerfile": "./lighthouse/Dockerfile"
-          #    },
-          #    "platforms": [
-          #      {
-          #        "platform": "linux/amd64",
-          #        "runner": "ubuntu-latest",
-          #        "slug": "linux-amd64"
-          #      },
-          #      {
-          #        "platform": "linux/arm64",
-          #        "runner": "ARM64",
-          #        "slug": "linux-arm64"
-          #      }
-          #    ]
-          #  }]
 
           CONFIG_FILE="config.yaml"
           PLATFORMS_FILE="platforms.yaml"
@@ -128,7 +93,7 @@ jobs:
               else
                 exists=false
               fi
-              
+
               echo "{\"line\": \"$LINE\", \"image\": \"$IMAGE\", \"exists\": $exists}" >> $imageOutput
           }
 
