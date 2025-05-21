@@ -598,24 +598,23 @@
     tag: master-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
-  # Electra
+# PeerDAS
 - source:
     repository: grandinetech/grandine
-    ref: mekong
+    ref: peerdas-fulu
   build_script: ./grandine/build.sh
   target:
-    tag: mekong
+    tag: peerdas-fulu
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile
 - source:
     repository: grandinetech/grandine
-    ref: mekong
+    ref: peerdas-fulu
   build_script: ./grandine/build.sh
   target:
-    tag: mekong-minimal
+    tag: peerdas-fulu-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
-  # PeerDAS
 - source:
     repository: grandinetech/grandine
     ref: das
@@ -648,24 +647,6 @@
   build_args: RUST_MIN_STACK=5242880
   target:
     tag: hangleang-peerdas-devnet-7-minimal
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile.minimal
-- source:
-    repository: hangleang/grandine
-    ref: peerdas-fulu
-  build_script: ./grandine/build.sh
-  build_args: RUST_MIN_STACK=5242880
-  target:
-    tag: hangleang-peerdas-fulu
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile
-- source:
-    repository: hangleang/grandine
-    ref: peerdas-fulu
-  build_script: ./grandine/build.sh
-  build_args: RUST_MIN_STACK=5242880
-  target:
-    tag: hangleang-peerdas-fulu-minimal
     repository: ethpandaops/grandine
     dockerfile: ./grandine/Dockerfile.minimal
 
