@@ -47,8 +47,6 @@ lighthouse:
     - unstable
     - electra-devnet-1
     - peerdas-devnet-7
-    - stable@xatu-sentry
-    - unstable@xatu-sentry-unstable
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
@@ -72,19 +70,12 @@ nimbus-eth2:
     - unstable
     - stable
     - column-syncer
-    - unstable@unstable-minimal
-    - unstable@xatu-sentry-unstable
-    - stable@stable-minimal
-    - stable@xatu-sentry
-    - column-syncer@column-syncer-minimal
 
 nimbus-validator-client:
   # Uses same repo as nimbus-eth2
   branches:
     - unstable
     - stable
-    - unstable@unstable-minimal
-    - stable@stable-minimal
 
 nimbus-eth1:
   branches:
@@ -96,9 +87,6 @@ prysm-beacon-chain:
     - master
     - peerDAS
     - blob-schedule
-    - develop@develop-minimal
-    - peerDAS@peerDAS-minimal
-    - blob-schedule@blob-schedule-minimal
 
 prysm-validator:
   # Uses same repo as prysm-beacon-chain
@@ -107,9 +95,6 @@ prysm-validator:
     - master
     - peerDAS
     - blob-schedule
-    - develop@develop-minimal
-    - peerDAS@peerDAS-minimal
-    - blob-schedule@blob-schedule-minimal
 
 teku:
   branches:
@@ -152,10 +137,6 @@ grandine:
     - master
     - peerdas-fulu
     - das
-    - develop@develop-minimal
-    - master@master-minimal
-    - peerdas-fulu@peerdas-fulu-minimal
-    - das@das-minimal
   alt_repos:
     hangleang/grandine:
       - peerdas-devnet-7
@@ -163,7 +144,6 @@ grandine:
 mev-rs:
   branches:
     - main
-    - main@main-minimal
 
 reth-rbuilder:
   branches:

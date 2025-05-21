@@ -43,6 +43,22 @@ BUILD_ARGS = {
     'reth-rbuilder/develop': 'RBUILDER_BIN=reth-rbuilder'
 }
 
+# Clients that need to have minimal builds created automatically
+MINIMAL_VARIANTS = [
+    'grandine',
+    'mev-rs',
+    'prysm-beacon-chain',
+    'prysm-validator',
+    'nimbus-eth2',
+    'nimbus-validator-client'
+]
+
+# Clients that need to have sentry builds created automatically
+SENTRY_VARIANTS = [
+    'lighthouse',
+    'nimbus-eth2'
+]
+
 def generate_config():
     # Read the simplified branches configuration
     with open('branches.yaml', 'r') as f:
@@ -71,6 +87,17 @@ def generate_config():
                     # Regular branch
                     process_branch(client_name, default_repo, branch_spec, branch_spec, config_list)
 
+                    # Auto-generate minimal builds if needed
+                    if client_name in MINIMAL_VARIANTS:
+                        process_branch(client_name, default_repo, branch_spec, f"{branch_spec}-minimal", config_list)
+
+                    # Auto-generate sentry builds if needed
+                    if client_name in SENTRY_VARIANTS:
+                        if branch_spec == 'stable':
+                            process_branch(client_name, default_repo, branch_spec, "xatu-sentry", config_list)
+                        elif branch_spec == 'unstable':
+                            process_branch(client_name, default_repo, branch_spec, "xatu-sentry-unstable", config_list)
+
         # Process alternate repositories if they exist
         if 'alt_repos' in client_config:
             for alt_repo, branches in client_config['alt_repos'].items():
@@ -89,6 +116,10 @@ def generate_config():
                         # Regular branch with prefix
                         target_tag = f"{prefix}-{branch_spec}"
                         process_branch(client_name, alt_repo, branch_spec, target_tag, config_list)
+
+                        # Auto-generate minimal builds for alt repos too
+                        if client_name in MINIMAL_VARIANTS:
+                            process_branch(client_name, alt_repo, branch_spec, f"{prefix}-{branch_spec}-minimal", config_list)
 
     # Sort configs by client name for better readability
     config_list.sort(key=lambda x: extract_client_name(x))

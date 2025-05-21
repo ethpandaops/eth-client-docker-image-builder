@@ -188,36 +188,20 @@
     tag: develop
 - build_script: ./grandine/build.sh
   source:
-    ref: master
-    repository: grandinetech/grandine
-  target:
-    dockerfile: ./grandine/Dockerfile
-    repository: ethpandaops/grandine
-    tag: master
-- build_script: ./grandine/build.sh
-  source:
-    ref: peerdas-fulu
-    repository: grandinetech/grandine
-  target:
-    dockerfile: ./grandine/Dockerfile
-    repository: ethpandaops/grandine
-    tag: peerdas-fulu
-- build_script: ./grandine/build.sh
-  source:
-    ref: das
-    repository: grandinetech/grandine
-  target:
-    dockerfile: ./grandine/Dockerfile
-    repository: ethpandaops/grandine
-    tag: das
-- build_script: ./grandine/build.sh
-  source:
     ref: develop
     repository: grandinetech/grandine
   target:
     dockerfile: ./grandine/Dockerfile.minimal
     repository: ethpandaops/grandine
     tag: develop-minimal
+- build_script: ./grandine/build.sh
+  source:
+    ref: master
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
+    tag: master
 - build_script: ./grandine/build.sh
   source:
     ref: master
@@ -231,9 +215,25 @@
     ref: peerdas-fulu
     repository: grandinetech/grandine
   target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
+    tag: peerdas-fulu
+- build_script: ./grandine/build.sh
+  source:
+    ref: peerdas-fulu
+    repository: grandinetech/grandine
+  target:
     dockerfile: ./grandine/Dockerfile.minimal
     repository: ethpandaops/grandine
     tag: peerdas-fulu-minimal
+- build_script: ./grandine/build.sh
+  source:
+    ref: das
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
+    tag: das
 - build_script: ./grandine/build.sh
   source:
     ref: das
@@ -251,6 +251,15 @@
     dockerfile: ./grandine/Dockerfile
     repository: ethpandaops/grandine
     tag: hangleang-peerdas-devnet-7
+- build_args: RUST_MIN_STACK=5242880
+  build_script: ./grandine/build.sh
+  source:
+    ref: peerdas-devnet-7
+    repository: hangleang/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile.minimal
+    repository: ethpandaops/grandine
+    tag: hangleang-peerdas-devnet-7-minimal
 
 ##################
 # lighthouse #
@@ -262,6 +271,14 @@
     dockerfile: ./lighthouse/Dockerfile
     repository: ethpandaops/lighthouse
     tag: stable
+- build_script: ./lighthouse/xatu-sentry.sh
+  source:
+    ref: stable
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: xatu-sentry
 - source:
     ref: unstable
     repository: sigp/lighthouse
@@ -269,6 +286,14 @@
     dockerfile: ./lighthouse/Dockerfile
     repository: ethpandaops/lighthouse
     tag: unstable
+- build_script: ./lighthouse/xatu-sentry.sh
+  source:
+    ref: unstable
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: xatu-sentry-unstable
 - source:
     ref: electra-devnet-1
     repository: sigp/lighthouse
@@ -283,22 +308,6 @@
     dockerfile: ./lighthouse/Dockerfile
     repository: ethpandaops/lighthouse
     tag: peerdas-devnet-7
-- build_script: ./lighthouse/xatu-sentry.sh
-  source:
-    ref: stable
-    repository: sigp/lighthouse
-  target:
-    dockerfile: ./lighthouse/Dockerfile
-    repository: ethpandaops/lighthouse
-    tag: xatu-sentry
-- build_script: ./lighthouse/xatu-sentry.sh
-  source:
-    ref: unstable
-    repository: sigp/lighthouse
-  target:
-    dockerfile: ./lighthouse/Dockerfile
-    repository: ethpandaops/lighthouse
-    tag: xatu-sentry-unstable
 - source:
     ref: verkle-trees-capella
     repository: macladson/lighthouse
@@ -426,20 +435,6 @@
     repository: ethpandaops/nimbus-eth2
     tag: unstable
 - source:
-    ref: stable
-    repository: status-im/nimbus-eth2
-  target:
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-    repository: ethpandaops/nimbus-eth2
-    tag: stable
-- source:
-    ref: column-syncer
-    repository: status-im/nimbus-eth2
-  target:
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-    repository: ethpandaops/nimbus-eth2
-    tag: column-syncer
-- source:
     ref: unstable
     repository: status-im/nimbus-eth2
   target:
@@ -454,6 +449,13 @@
     dockerfile: ./nimbus-eth2/Dockerfile.beacon
     repository: ethpandaops/nimbus-eth2
     tag: xatu-sentry-unstable
+- source:
+    ref: stable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+    repository: ethpandaops/nimbus-eth2
+    tag: stable
 - source:
     ref: stable
     repository: status-im/nimbus-eth2
@@ -473,6 +475,13 @@
     ref: column-syncer
     repository: status-im/nimbus-eth2
   target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+    repository: ethpandaops/nimbus-eth2
+    tag: column-syncer
+- source:
+    ref: column-syncer
+    repository: status-im/nimbus-eth2
+  target:
     dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
     repository: ethpandaops/nimbus-eth2
     tag: column-syncer-minimal
@@ -488,19 +497,19 @@
     repository: ethpandaops/nimbus-validator-client
     tag: unstable
 - source:
-    ref: stable
-    repository: status-im/nimbus-eth2
-  target:
-    dockerfile: ./nimbus-eth2/Dockerfile.validator
-    repository: ethpandaops/nimbus-validator-client
-    tag: stable
-- source:
     ref: unstable
     repository: status-im/nimbus-eth2
   target:
     dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
     repository: ethpandaops/nimbus-validator-client
     tag: unstable-minimal
+- source:
+    ref: stable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.validator
+    repository: ethpandaops/nimbus-validator-client
+    tag: stable
 - source:
     ref: stable
     repository: status-im/nimbus-eth2
@@ -520,30 +529,6 @@
     dockerfile: ./prysm/Dockerfile.beacon
     repository: ethpandaops/prysm-beacon-chain
     tag: develop
-- build_script: ./prysm/build_beacon.sh
-  source:
-    ref: master
-    repository: offchainlabs/prysm
-  target:
-    dockerfile: ./prysm/Dockerfile.beacon
-    repository: ethpandaops/prysm-beacon-chain
-    tag: master
-- build_script: ./prysm/build_beacon.sh
-  source:
-    ref: peerDAS
-    repository: offchainlabs/prysm
-  target:
-    dockerfile: ./prysm/Dockerfile.beacon
-    repository: ethpandaops/prysm-beacon-chain
-    tag: peerDAS
-- build_script: ./prysm/build_beacon.sh
-  source:
-    ref: blob-schedule
-    repository: offchainlabs/prysm
-  target:
-    dockerfile: ./prysm/Dockerfile.beacon
-    repository: ethpandaops/prysm-beacon-chain
-    tag: blob-schedule
 - build_script: ./prysm/build_beacon_minimal.sh
   source:
     ref: develop
@@ -552,6 +537,30 @@
     dockerfile: ./prysm/Dockerfile.beacon
     repository: ethpandaops/prysm-beacon-chain
     tag: develop-minimal
+- build_script: ./prysm/build_beacon.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: master
+- build_script: ./prysm/build_beacon_minimal.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: master-minimal
+- build_script: ./prysm/build_beacon.sh
+  source:
+    ref: peerDAS
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: peerDAS
 - build_script: ./prysm/build_beacon_minimal.sh
   source:
     ref: peerDAS
@@ -560,6 +569,14 @@
     dockerfile: ./prysm/Dockerfile.beacon
     repository: ethpandaops/prysm-beacon-chain
     tag: peerDAS-minimal
+- build_script: ./prysm/build_beacon.sh
+  source:
+    ref: blob-schedule
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: blob-schedule
 - build_script: ./prysm/build_beacon_minimal.sh
   source:
     ref: blob-schedule
@@ -580,30 +597,6 @@
     dockerfile: ./prysm/Dockerfile.validator
     repository: ethpandaops/prysm-validator
     tag: develop
-- build_script: ./prysm/build_validator.sh
-  source:
-    ref: master
-    repository: offchainlabs/prysm
-  target:
-    dockerfile: ./prysm/Dockerfile.validator
-    repository: ethpandaops/prysm-validator
-    tag: master
-- build_script: ./prysm/build_validator.sh
-  source:
-    ref: peerDAS
-    repository: offchainlabs/prysm
-  target:
-    dockerfile: ./prysm/Dockerfile.validator
-    repository: ethpandaops/prysm-validator
-    tag: peerDAS
-- build_script: ./prysm/build_validator.sh
-  source:
-    ref: blob-schedule
-    repository: offchainlabs/prysm
-  target:
-    dockerfile: ./prysm/Dockerfile.validator
-    repository: ethpandaops/prysm-validator
-    tag: blob-schedule
 - build_script: ./prysm/build_validator_minimal.sh
   source:
     ref: develop
@@ -612,6 +605,30 @@
     dockerfile: ./prysm/Dockerfile.validator
     repository: ethpandaops/prysm-validator
     tag: develop-minimal
+- build_script: ./prysm/build_validator.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: master
+- build_script: ./prysm/build_validator_minimal.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: master-minimal
+- build_script: ./prysm/build_validator.sh
+  source:
+    ref: peerDAS
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: peerDAS
 - build_script: ./prysm/build_validator_minimal.sh
   source:
     ref: peerDAS
@@ -620,6 +637,14 @@
     dockerfile: ./prysm/Dockerfile.validator
     repository: ethpandaops/prysm-validator
     tag: peerDAS-minimal
+- build_script: ./prysm/build_validator.sh
+  source:
+    ref: blob-schedule
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: blob-schedule
 - build_script: ./prysm/build_validator_minimal.sh
   source:
     ref: blob-schedule
