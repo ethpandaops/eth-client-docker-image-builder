@@ -85,11 +85,13 @@ def generate_config():
                     process_branch(client_name, default_repo, branch, special_tag, config_list)
                 else:
                     # Regular branch
-                    process_branch(client_name, default_repo, branch_spec, branch_spec, config_list)
+                    # Replace any slashes in branch name with hyphens for the tag
+                    safe_branch_name = branch_spec.replace('/', '-')
+                    process_branch(client_name, default_repo, branch_spec, safe_branch_name, config_list)
 
                     # Auto-generate minimal builds if needed
                     if client_name in MINIMAL_VARIANTS:
-                        process_branch(client_name, default_repo, branch_spec, f"{branch_spec}-minimal", config_list)
+                        process_branch(client_name, default_repo, branch_spec, f"{safe_branch_name}-minimal", config_list)
 
                     # Auto-generate sentry builds if needed
                     if client_name in SENTRY_VARIANTS:
@@ -114,12 +116,14 @@ def generate_config():
                         process_branch(client_name, alt_repo, branch, target_tag, config_list)
                     else:
                         # Regular branch with prefix
-                        target_tag = f"{prefix}-{branch_spec}"
+                        # Replace any slashes in branch name with hyphens for the tag
+                        safe_branch_name = branch_spec.replace('/', '-')
+                        target_tag = f"{prefix}-{safe_branch_name}"
                         process_branch(client_name, alt_repo, branch_spec, target_tag, config_list)
 
                         # Auto-generate minimal builds for alt repos too
                         if client_name in MINIMAL_VARIANTS:
-                            process_branch(client_name, alt_repo, branch_spec, f"{prefix}-{branch_spec}-minimal", config_list)
+                            process_branch(client_name, alt_repo, branch_spec, f"{prefix}-{safe_branch_name}-minimal", config_list)
 
     # Sort configs by client name for better readability
     config_list.sort(key=lambda x: extract_client_name(x))

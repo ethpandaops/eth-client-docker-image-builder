@@ -339,7 +339,7 @@
     repository: chainsafe/lodestar
   target:
     repository: ethpandaops/lodestar
-    tag: g11tech/verge
+    tag: g11tech-verge
 - build_script: ./lodestar/build.sh
   source:
     ref: peerDAS
@@ -406,7 +406,7 @@
     repository: nethermindeth/nethermind
   target:
     repository: ethpandaops/nethermind
-    tag: feature/peerdas
+    tag: feature-peerdas
 - source:
     ref: devnet-0
     repository: nethermindeth/nethermind
@@ -668,7 +668,7 @@
     repository: paradigmxyz/reth
   target:
     repository: ethpandaops/reth
-    tag: paradigmxyz-rkrasiuk/peerdas
+    tag: paradigmxyz-rkrasiuk-peerdas
 
 #####################
 # reth-rbuilder #
