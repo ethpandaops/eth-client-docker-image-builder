@@ -44,8 +44,8 @@ docker images --format "{{.Repository}}:{{.Tag}}"
 
 # list of tags to check for after building from gradle
 gradle_tags=(
-    "${source_repository}:$(getImageTag)"
-    "${source_repository}:$(getImageTag 7)" # legacy tag
+    "hyperledger/besu:$(getImageTag)"
+    "hyperledger/besu:$(getImageTag 7)" # legacy tag
 )
 
 echo "Listing all calculated image tags:"

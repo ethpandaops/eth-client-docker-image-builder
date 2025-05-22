@@ -1,0 +1,172 @@
+# Simple configuration for Ethereum client branches to build
+
+# Default upstream repository is assumed for each client
+# Branch names are used directly as tags unless in alt_repos
+
+besu:
+  branches:
+    - main
+    - fusaka-devnet-0
+  alt_repos:
+    Gabriel-Trintinalia/besu:
+      - peerdas-devnet-7
+
+erigon:
+  branches:
+    - main
+
+ethereumjs:
+  branches:
+    - master
+    - stable
+    - 7702-devnet-4-plus-t8ntool
+
+geth:
+  branches:
+    - master
+    - multicall
+    - peerdas-devnet-7
+    - fusaka-devnet-0
+  alt_repos:
+    gballet/go-ethereum:
+      - kaustinen-with-shapella
+      - tpgram
+      - eip-4762-rewrite
+    MariusVanDerWijden/go-ethereum:
+      - bad-block-generator
+
+reth:
+  branches:
+    - main
+  alt_repos:
+    paradigmxyz/reth:
+      - rkrasiuk/peerdas
+
+lighthouse:
+  branches:
+    - stable
+    - unstable
+    - electra-devnet-1
+    - peerdas-devnet-7
+  alt_repos:
+    macladson/lighthouse:
+      - verkle-trees-capella
+
+lodestar:
+  branches:
+    - unstable
+    - electra-fork
+    - g11tech/verge
+    - peerDAS
+    - focil
+
+nethermind:
+  branches:
+    - master
+    - feature/peerdas
+    - devnet-0
+
+nimbus-eth2:
+  branches:
+    - unstable
+    - stable
+    - column-syncer
+
+nimbus-validator-client:
+  # Uses same repo as nimbus-eth2
+  branches:
+    - unstable
+    - stable
+
+nimbus-eth1:
+  branches:
+    - master
+
+prysm-beacon-chain:
+  branches:
+    - develop
+    - master
+    - peerDAS
+    - blob-schedule
+
+prysm-validator:
+  # Uses same repo as prysm-beacon-chain
+  branches:
+    - develop
+    - master
+    - peerDAS
+    - blob-schedule
+
+teku:
+  branches:
+    - master
+    - das
+  alt_repos:
+    zilm13/teku:
+      - verkle-trees
+
+eleel:
+  branches:
+    - main
+
+flashbots-builder:
+  branches:
+    - main
+
+tx-fuzz:
+  branches:
+    - master
+
+goomy-blob:
+  branches:
+    - master
+
+ethereum-genesis-generator:
+  branches:
+    - master
+    - verkle
+    - verkle-gen
+    - bellatrix-genesis
+
+armiarma:
+  branches:
+    - master
+
+grandine:
+  branches:
+    - develop
+    - master
+    - peerdas-fulu
+    - das
+  alt_repos:
+    hangleang/grandine:
+      - peerdas-devnet-7
+
+mev-rs:
+  branches:
+    - main
+
+reth-rbuilder:
+  branches:
+    - develop
+
+rustic-builder:
+  branches:
+    - main
+    - fulu
+
+mev-boost:
+  branches:
+    - develop
+
+mev-boost-relay:
+  branches:
+    - main
+
+ethrex:
+  branches:
+    - main
+
+# Commented out in config.yaml
+# goevmlab:
+#   branches: ["master"]

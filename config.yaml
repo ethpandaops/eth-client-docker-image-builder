@@ -1,627 +1,743 @@
-########
-# besu #
-########
-- source:
-    repository: hyperledger/besu
-    ref: main
-  build_script: ./besu/build.sh
-  target:
-    tag: main
-    repository: ethpandaops/besu
-##########
-# erigon #
-##########
-- source:
-    repository: erigontech/erigon
-    ref: main
-  target:
-    tag: main
-    repository: ethpandaops/erigon
-##############
-# ethereumjs #
-##############
-- source:
-    repository: ethereumjs/ethereumjs-monorepo
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/ethereumjs
-    dockerfile: ./ethereumjs/Dockerfile
-- source:
-    repository: ethereumjs/ethereumjs-monorepo
-    ref: stable
-  target:
-    tag: stable
-    repository: ethpandaops/ethereumjs
-    dockerfile: ./ethereumjs/Dockerfile
-- source:
-    repository: ethereumjs/ethereumjs-monorepo
-    ref: 7702-devnet-4-plus-t8ntool
-  target:
-    tag: 7702-devnet-4-plus-t8ntool
-    repository: ethpandaops/ethereumjs
-    dockerfile: ./ethereumjs/Dockerfile
-########
-# geth #
-########
-- source:
-    repository: ethereum/go-ethereum
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/geth
-- source:
-    repository: gballet/go-ethereum
-    ref: kaustinen-with-shapella
-  target:
-    tag: gballet-kaustinen-with-shapella
-    repository: ethpandaops/geth
-- source:
-    repository: gballet/go-ethereum
-    ref: tpgram
-  target:
-    tag: gballet-tpgram
-    repository: ethpandaops/geth
-- source:
-    repository: gballet/go-ethereum
-    ref: eip-4762-rewrite
-  target:
-    tag: gballet-eip-4762-rewrite
-    repository: ethpandaops/geth
-- source:
-    repository: lightclient/go-ethereum
-    ref: prague-devnet-4
-  target:
-    tag: lightclient-prague-devnet-4
-    repository: ethpandaops/geth
-- source:
-    repository: ethereum/go-ethereum
-    ref: multicall
-  target:
-    tag: multicall
-    repository: ethpandaops/geth
-- source:
-    repository: MariusVanDerWijden/go-ethereum
-    ref: bad-block-generator
-  target:
-    tag: bad-block-generator
-    repository: ethpandaops/geth
-########
-# reth #
-########
-- source:
-    repository: paradigmxyz/reth
-    ref: main
-  target:
-    tag: main
-    repository: ethpandaops/reth
-##############
-# lighthouse #
-##############
-  # Stable branch
-- source:
-    repository: sigp/lighthouse
-    ref: stable
-  target:
-    tag: stable
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-  # Unstable branch
-- source:
-    repository: sigp/lighthouse
-    ref: unstable
-  target:
-    tag: unstable
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-  # Xatu Sentry builds
-- source:
-    repository: sigp/lighthouse
-    ref: stable
-  build_script: ./lighthouse/xatu-sentry.sh
-  target:
-    tag: xatu-sentry
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-- source:
-    repository: sigp/lighthouse
-    ref: unstable
-  build_script: ./lighthouse/xatu-sentry.sh
-  target:
-    tag: xatu-sentry-unstable
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-- source:
-    repository: sigp/lighthouse
-    ref: electra-devnet-1
-  target:
-    tag: electra-devnet-1
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-- source:
-    repository: macladson/lighthouse
-    ref: verkle-trees-capella
-  target:
-    tag: macladson-verkle-trees-capella
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-- source:
-    repository: sigp/lighthouse
-    ref: peerdas-devnet-2
-  target:
-    tag: peerdas-devnet-2
-    repository: ethpandaops/lighthouse
-    dockerfile: ./lighthouse/Dockerfile
-############
-# lodestar #
-############
-- source:
-    repository: chainsafe/lodestar
-    ref: unstable
-  build_script: ./lodestar/build.sh
-  target:
-    tag: unstable
-    repository: ethpandaops/lodestar
-- source:
-    repository: chainsafe/lodestar
-    ref: electra-fork
-  build_script: ./lodestar/build.sh
-  target:
-    tag: electra-fork
-    repository: ethpandaops/lodestar
-- source:
-    repository: chainsafe/lodestar
-    ref: g11tech/verge
-  build_script: ./lodestar/build.sh
-  target:
-    tag: g11tech-verge
-    repository: ethpandaops/lodestar
-- source:
-    repository: chainsafe/lodestar
-    ref: peerDAS
-  build_script: ./lodestar/build.sh
-  target:
-    tag: peerDAS
-    repository: ethpandaops/lodestar
-##############
-# nethermind #
-##############
-- source:
-    repository: nethermindeth/nethermind
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/nethermind
-- source:
-    repository: nethermindeth/nethermind
-    ref: pectra_devnet_4
-  target:
-    tag: pectra_devnet_4
-    repository: ethpandaops/nethermind
-###############
-# nimbus-eth2 #
-###############
-  # Unstable branch
-- source:
-    repository: status-im/nimbus-eth2
-    ref: unstable
-  target:
-    tag: unstable
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: unstable
-  target:
-    tag: unstable
-    repository: ethpandaops/nimbus-validator-client
-    dockerfile: ./nimbus-eth2/Dockerfile.validator
-  # Peerdas
-- source:
-    repository: status-im/nimbus-eth2
-    ref: peerdas-p2p
-  target:
-    tag: peerdas-p2p
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: peerdas-p2p
-  target:
-    tag: peerdas-p2p-minimal
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
-- source:
-    repository: status-im/nimbus-eth2
-    ref: pdsync
-  target:
-    tag: pdsync
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: pdsync
-  target:
-    tag: pdsync-minimal
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
-  # Minimal builds
-- source:
-    repository: status-im/nimbus-eth2
-    ref: unstable
-  target:
-    tag: unstable-minimal
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
-- source:
-    repository: status-im/nimbus-eth2
-    ref: unstable
-  target:
-    tag: unstable-minimal
-    repository: ethpandaops/nimbus-validator-client
-    dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
-- source:
-    repository: status-im/nimbus-eth2
-    ref: stable
-  target:
-    tag: stable-minimal
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
-- source:
-    repository: status-im/nimbus-eth2
-    ref: stable
-  target:
-    tag: stable-minimal
-    repository: ethpandaops/nimbus-validator-client
-    dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
-  # Stable branch
-- source:
-    repository: status-im/nimbus-eth2
-    ref: stable
-  target:
-    tag: stable
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: stable
-  target:
-    tag: stable
-    repository: ethpandaops/nimbus-validator-client
-    dockerfile: ./nimbus-eth2/Dockerfile.validator
-  # Xatu Sentry builds
-- source:
-    repository: status-im/nimbus-eth2
-    ref: stable
-  build_script: ./nimbus-eth2/xatu-sentry.sh
-  target:
-    tag: xatu-sentry
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-- source:
-    repository: status-im/nimbus-eth2
-    ref: unstable
-  build_script: ./nimbus-eth2/xatu-sentry.sh
-  target:
-    tag: xatu-sentry-unstable
-    repository: ethpandaops/nimbus-eth2
-    dockerfile: ./nimbus-eth2/Dockerfile.beacon
-###############
-# nimbus-eth1 #
-###############
-- source:
-    repository: status-im/nimbus-eth1
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/nimbus-eth1
-#########
-# prysm #
-#########
-  # Develop branch
-- source:
-    repository: prysmaticlabs/prysm
-    ref: develop
-  build_script: ./prysm/build_beacon.sh
-  target:
-    tag: develop
-    repository: ethpandaops/prysm-beacon-chain
-    dockerfile: ./prysm/Dockerfile.beacon
-- source:
-    repository: prysmaticlabs/prysm
-    ref: develop
-  build_script: ./prysm/build_validator.sh
-  target:
-    tag: develop
-    repository: ethpandaops/prysm-validator
-    dockerfile: ./prysm/Dockerfile.validator
-  # Minimal builds
-- source:
-    repository: prysmaticlabs/prysm
-    ref: develop
-  build_script: ./prysm/build_beacon_minimal.sh
-  target:
-    tag: develop-minimal
-    repository: ethpandaops/prysm-beacon-chain
-    dockerfile: ./prysm/Dockerfile.beacon
-- source:
-    repository: prysmaticlabs/prysm
-    ref: develop
-  build_script: ./prysm/build_validator_minimal.sh
-  target:
-    tag: develop-minimal
-    repository: ethpandaops/prysm-validator
-    dockerfile: ./prysm/Dockerfile.validator
-  # Master branch
-- source:
-    repository: prysmaticlabs/prysm
-    ref: master
-  build_script: ./prysm/build_beacon.sh
-  target:
-    tag: master
-    repository: ethpandaops/prysm-beacon-chain
-    dockerfile: ./prysm/Dockerfile.beacon
-- source:
-    repository: prysmaticlabs/prysm
-    ref: master
-  build_script: ./prysm/build_validator.sh
-  target:
-    tag: master
-    repository: ethpandaops/prysm-validator
-    dockerfile: ./prysm/Dockerfile.validator
-  # PeerDAS
-- source:
-    repository: prysmaticlabs/prysm
-    ref: peerDAS
-  build_script: ./prysm/build_beacon.sh
-  target:
-    tag: peerDAS
-    repository: ethpandaops/prysm-beacon-chain
-    dockerfile: ./prysm/Dockerfile.beacon
-- source:
-    repository: prysmaticlabs/prysm
-    ref: peerDAS
-  build_script: ./prysm/build_beacon_minimal.sh
-  target:
-    tag: peerDAS-minimal
-    repository: ethpandaops/prysm-beacon-chain
-    dockerfile: ./prysm/Dockerfile.beacon
-- source:
-    repository: prysmaticlabs/prysm
-    ref: peerDAS
-  build_script: ./prysm/build_validator.sh
-  target:
-    tag: peerDAS
-    repository: ethpandaops/prysm-validator
-    dockerfile: ./prysm/Dockerfile.validator
-- source:
-    repository: prysmaticlabs/prysm
-    ref: peerDAS
-  build_script: ./prysm/build_validator_minimal.sh
-  target:
-    tag: peerDAS-minimal
-    repository: ethpandaops/prysm-validator
-    dockerfile: ./prysm/Dockerfile.validator
+# AUTOMATICALLY GENERATED - DO NOT EDIT DIRECTLY
+# Edit branches.yaml and run generate_config.py instead
 
-########
-# teku #
-########
-- source:
-    repository: consensys/teku
-    ref: master
-  build_script: ./teku/build.sh
-  target:
-    tag: master
-    repository: ethpandaops/teku
-# Peerdas
-- source:
-    repository: Nashatyrev/teku
-    ref: das
-  build_script: ./teku/build.sh
-  target:
-    tag: nashatyrev-das
-    repository: ethpandaops/teku
-# Verkle
-- source:
-    repository: zilm13/teku
-    ref: verkle-trees
-  build_script: ./teku/build.sh
-  target:
-    tag: zilm13-verkle-trees
-    repository: ethpandaops/teku
-#########
-# eleel #
-#########
-- source:
-    repository: sigp/eleel
-    ref: main
-  target:
-    tag: main
-    repository: ethpandaops/eleel
-    dockerfile: ./eleel/Dockerfile
-#############
-# flashbots #
-#############
-- source:
-    repository: flashbots/builder
-    ref: main
-  target:
-    tag: main
-    repository: ethpandaops/flashbots-builder
-#############
-#  tx-fuzz  #
-#############
-- source:
-    repository: MariusVanDerWijden/tx-fuzz
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/tx-fuzz
-##############
-# goomy-blob #
-##############
-- source:
-    repository: ethpandaops/goomy-blob
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/goomy-blob
-##############################
-# ethereum-genesis-generator #
-##############################
-- source:
-    repository: ethpandaops/ethereum-genesis-generator
-    ref: master
-  target:
-    tag: master
-    repository: ethpandaops/ethereum-genesis-generator
-- source:
-    repository: ethpandaops/ethereum-genesis-generator
-    ref: verkle
-  target:
-    tag: verkle
-    repository: ethpandaops/ethereum-genesis-generator
-- source:
-    repository: ethpandaops/ethereum-genesis-generator
-    ref: verkle-gen
-  target:
-    tag: verkle-gen
-    repository: ethpandaops/ethereum-genesis-generator
-- source:
-    repository: ethpandaops/ethereum-genesis-generator
-    ref: bellatrix-genesis
-  target:
-    tag: bellatrix-genesis
-    repository: ethpandaops/ethereum-genesis-generator
-#############
+################
 # armiarma #
-#############
+################
 - source:
+    ref: master
     repository: migalabs/armiarma
-    ref: master
   target:
-    tag: master
     repository: ethpandaops/armiarma
-#############
-# goteth #
-#############
-#- source:
-#    repository: migalabs/goteth
-#    ref: master
-#  target:
-#    tag: master
-#    repository: ethpandaops/goteth
-#############
-# grandine  #
-#############
-  # Develop branch
-- source:
-    repository: grandinetech/grandine
-    ref: develop
-  build_script: ./grandine/build.sh
-  target:
-    tag: develop
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile
-- source:
-    repository: grandinetech/grandine
-    ref: master
-  build_script: ./grandine/build.sh
-  target:
     tag: master
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile
-  # Minimal builds
-- source:
-    repository: grandinetech/grandine
-    ref: develop
-  build_script: ./grandine/build.sh
+
+############
+# besu #
+############
+- build_script: ./besu/build.sh
+  source:
+    ref: main
+    repository: hyperledger/besu
   target:
-    tag: develop-minimal
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile.minimal
-- source:
-    repository: grandinetech/grandine
-    ref: master
-  build_script: ./grandine/build.sh
+    repository: ethpandaops/besu
+    tag: main
+- build_script: ./besu/build.sh
+  source:
+    ref: peerdas-devnet-7
+    repository: Gabriel-Trintinalia/besu
   target:
-    tag: master-minimal
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile.minimal
-  # Electra
-- source:
-    repository: grandinetech/grandine
-    ref: mekong
-  build_script: ./grandine/build.sh
-  target:
-    tag: mekong
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile
-- source:
-    repository: grandinetech/grandine
-    ref: mekong
-  build_script: ./grandine/build.sh
-  target:
-    tag: mekong-minimal
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile.minimal
-  # PeerDAS
-- source:
-    repository: grandinetech/grandine
-    ref: das
-  build_script: ./grandine/build.sh
-  target:
-    tag: das
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile
-- source:
-    repository: grandinetech/grandine
-    ref: das
-  build_script: ./grandine/build.sh
-  target:
-    tag: das-minimal
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile.minimal
-- source:
-    repository: hangleang/grandine
-    ref: feature/das
-  build_script: ./grandine/build.sh
-  target:
-    tag: hangleang-feature-das
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile
-- source:
-    repository: hangleang/grandine
-    ref: feature/das
-  build_script: ./grandine/build.sh
-  target:
-    tag: hangleang-feature-das-minimal
-    repository: ethpandaops/grandine
-    dockerfile: ./grandine/Dockerfile.minimal
+    repository: ethpandaops/besu
+    tag: gabriel-trintinalia-peerdas-devnet-7
 
 #############
-#   mev-rs  #
+# eleel #
 #############
 - source:
-    repository: ralexstokes/mev-rs
     ref: main
+    repository: sigp/eleel
   target:
+    dockerfile: ./eleel/Dockerfile
+    repository: ethpandaops/eleel
     tag: main
-    repository: ethpandaops/mev-rs
+
+##############
+# erigon #
+##############
 - source:
-    repository: ralexstokes/mev-rs
     ref: main
-  build_args: FEATURES=minimal-preset
+    repository: erigontech/erigon
   target:
-    tag: main-minimal
-    repository: ethpandaops/mev-rs
-####################
-#   reth-rbuilder  #
-####################
+    repository: ethpandaops/erigon
+    tag: main
+
+##################################
+# ethereum-genesis-generator #
+##################################
 - source:
-    repository: flashbots/rbuilder
-    ref: develop
-  build_args: RBUILDER_BIN=reth-rbuilder
+    ref: master
+    repository: ethpandaops/ethereum-genesis-generator
   target:
+    repository: ethpandaops/ethereum-genesis-generator
+    tag: master
+- source:
+    ref: verkle
+    repository: ethpandaops/ethereum-genesis-generator
+  target:
+    repository: ethpandaops/ethereum-genesis-generator
+    tag: verkle
+- source:
+    ref: verkle-gen
+    repository: ethpandaops/ethereum-genesis-generator
+  target:
+    repository: ethpandaops/ethereum-genesis-generator
+    tag: verkle-gen
+- source:
+    ref: bellatrix-genesis
+    repository: ethpandaops/ethereum-genesis-generator
+  target:
+    repository: ethpandaops/ethereum-genesis-generator
+    tag: bellatrix-genesis
+
+##################
+# ethereumjs #
+##################
+- source:
+    ref: master
+    repository: ethereumjs/ethereumjs-monorepo
+  target:
+    dockerfile: ./ethereumjs/Dockerfile
+    repository: ethpandaops/ethereumjs
+    tag: master
+- source:
+    ref: stable
+    repository: ethereumjs/ethereumjs-monorepo
+  target:
+    dockerfile: ./ethereumjs/Dockerfile
+    repository: ethpandaops/ethereumjs
+    tag: stable
+- source:
+    ref: 7702-devnet-4-plus-t8ntool
+    repository: ethereumjs/ethereumjs-monorepo
+  target:
+    dockerfile: ./ethereumjs/Dockerfile
+    repository: ethpandaops/ethereumjs
+    tag: 7702-devnet-4-plus-t8ntool
+
+##############
+# ethrex #
+##############
+- source:
+    ref: main
+    repository: lambdaclass/ethrex
+  target:
+    repository: ethpandaops/ethrex
+    tag: main
+
+#########################
+# flashbots-builder #
+#########################
+- source:
+    ref: main
+    repository: flashbots/builder
+  target:
+    repository: ethpandaops/flashbots-builder
+    tag: main
+
+############
+# geth #
+############
+- source:
+    ref: master
+    repository: ethereum/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: master
+- source:
+    ref: multicall
+    repository: ethereum/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: multicall
+- source:
+    ref: peerdas-devnet-7
+    repository: ethereum/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: peerdas-devnet-7
+- source:
+    ref: fusaka-devnet-0
+    repository: ethereum/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: fusaka-devnet-0
+- source:
+    ref: kaustinen-with-shapella
+    repository: gballet/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: gballet-kaustinen-with-shapella
+- source:
+    ref: tpgram
+    repository: gballet/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: gballet-tpgram
+- source:
+    ref: eip-4762-rewrite
+    repository: gballet/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: gballet-eip-4762-rewrite
+- source:
+    ref: bad-block-generator
+    repository: MariusVanDerWijden/go-ethereum
+  target:
+    repository: ethpandaops/geth
+    tag: mariusvanderwijden-bad-block-generator
+
+##################
+# goomy-blob #
+##################
+- source:
+    ref: master
+    repository: ethpandaops/goomy-blob
+  target:
+    repository: ethpandaops/goomy-blob
+    tag: master
+
+################
+# grandine #
+################
+- build_script: ./grandine/build.sh
+  source:
+    ref: develop
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
     tag: develop
+- build_script: ./grandine/build.sh
+  source:
+    ref: develop
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile.minimal
+    repository: ethpandaops/grandine
+    tag: develop-minimal
+- build_script: ./grandine/build.sh
+  source:
+    ref: master
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
+    tag: master
+- build_script: ./grandine/build.sh
+  source:
+    ref: master
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile.minimal
+    repository: ethpandaops/grandine
+    tag: master-minimal
+- build_script: ./grandine/build.sh
+  source:
+    ref: peerdas-fulu
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
+    tag: peerdas-fulu
+- build_script: ./grandine/build.sh
+  source:
+    ref: peerdas-fulu
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile.minimal
+    repository: ethpandaops/grandine
+    tag: peerdas-fulu-minimal
+- build_script: ./grandine/build.sh
+  source:
+    ref: das
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
+    tag: das
+- build_script: ./grandine/build.sh
+  source:
+    ref: das
+    repository: grandinetech/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile.minimal
+    repository: ethpandaops/grandine
+    tag: das-minimal
+- build_args: RUST_MIN_STACK=5242880
+  build_script: ./grandine/build.sh
+  source:
+    ref: peerdas-devnet-7
+    repository: hangleang/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile
+    repository: ethpandaops/grandine
+    tag: hangleang-peerdas-devnet-7
+- build_args: RUST_MIN_STACK=5242880
+  build_script: ./grandine/build.sh
+  source:
+    ref: peerdas-devnet-7
+    repository: hangleang/grandine
+  target:
+    dockerfile: ./grandine/Dockerfile.minimal
+    repository: ethpandaops/grandine
+    tag: hangleang-peerdas-devnet-7-minimal
+
+##################
+# lighthouse #
+##################
+- source:
+    ref: stable
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: stable
+- build_script: ./lighthouse/xatu-sentry.sh
+  source:
+    ref: stable
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: xatu-sentry
+- source:
+    ref: unstable
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: unstable
+- build_script: ./lighthouse/xatu-sentry.sh
+  source:
+    ref: unstable
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: xatu-sentry-unstable
+- source:
+    ref: electra-devnet-1
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: electra-devnet-1
+- source:
+    ref: peerdas-devnet-7
+    repository: sigp/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: peerdas-devnet-7
+- source:
+    ref: verkle-trees-capella
+    repository: macladson/lighthouse
+  target:
+    dockerfile: ./lighthouse/Dockerfile
+    repository: ethpandaops/lighthouse
+    tag: macladson-verkle-trees-capella
+
+################
+# lodestar #
+################
+- build_script: ./lodestar/build.sh
+  source:
+    ref: unstable
+    repository: chainsafe/lodestar
+  target:
+    repository: ethpandaops/lodestar
+    tag: unstable
+- build_script: ./lodestar/build.sh
+  source:
+    ref: electra-fork
+    repository: chainsafe/lodestar
+  target:
+    repository: ethpandaops/lodestar
+    tag: electra-fork
+- build_script: ./lodestar/build.sh
+  source:
+    ref: g11tech/verge
+    repository: chainsafe/lodestar
+  target:
+    repository: ethpandaops/lodestar
+    tag: g11tech-verge
+- build_script: ./lodestar/build.sh
+  source:
+    ref: peerDAS
+    repository: chainsafe/lodestar
+  target:
+    repository: ethpandaops/lodestar
+    tag: peerDAS
+- build_script: ./lodestar/build.sh
+  source:
+    ref: focil
+    repository: chainsafe/lodestar
+  target:
+    repository: ethpandaops/lodestar
+    tag: focil
+
+#################
+# mev-boost #
+#################
+- source:
+    ref: develop
+    repository: flashbots/mev-boost
+  target:
+    repository: ethpandaops/mev-boost
+    tag: develop
+
+#######################
+# mev-boost-relay #
+#######################
+- source:
+    ref: main
+    repository: flashbots/mev-boost-relay
+  target:
+    repository: ethpandaops/mev-boost-relay
+    tag: main
+
+##############
+# mev-rs #
+##############
+- source:
+    ref: main
+    repository: ralexstokes/mev-rs
+  target:
+    repository: ethpandaops/mev-rs
+    tag: main
+- build_args: FEATURES=minimal-preset
+  source:
+    ref: main
+    repository: ralexstokes/mev-rs
+  target:
+    repository: ethpandaops/mev-rs
+    tag: main-minimal
+
+##################
+# nethermind #
+##################
+- source:
+    ref: master
+    repository: nethermindeth/nethermind
+  target:
+    repository: ethpandaops/nethermind
+    tag: master
+- source:
+    ref: feature/peerdas
+    repository: nethermindeth/nethermind
+  target:
+    repository: ethpandaops/nethermind
+    tag: feature-peerdas
+- source:
+    ref: devnet-0
+    repository: nethermindeth/nethermind
+  target:
+    repository: ethpandaops/nethermind
+    tag: devnet-0
+
+###################
+# nimbus-eth1 #
+###################
+- source:
+    ref: master
+    repository: status-im/nimbus-eth1
+  target:
+    repository: ethpandaops/nimbus-eth1
+    tag: master
+
+###################
+# nimbus-eth2 #
+###################
+- source:
+    ref: unstable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+    repository: ethpandaops/nimbus-eth2
+    tag: unstable
+- source:
+    ref: unstable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+    repository: ethpandaops/nimbus-eth2
+    tag: unstable-minimal
+- build_script: ./nimbus-eth2/xatu-sentry.sh
+  source:
+    ref: unstable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+    repository: ethpandaops/nimbus-eth2
+    tag: xatu-sentry-unstable
+- source:
+    ref: stable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+    repository: ethpandaops/nimbus-eth2
+    tag: stable
+- source:
+    ref: stable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+    repository: ethpandaops/nimbus-eth2
+    tag: stable-minimal
+- build_script: ./nimbus-eth2/xatu-sentry.sh
+  source:
+    ref: stable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+    repository: ethpandaops/nimbus-eth2
+    tag: xatu-sentry
+- source:
+    ref: column-syncer
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon
+    repository: ethpandaops/nimbus-eth2
+    tag: column-syncer
+- source:
+    ref: column-syncer
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+    repository: ethpandaops/nimbus-eth2
+    tag: column-syncer-minimal
+
+###############################
+# nimbus-validator-client #
+###############################
+- source:
+    ref: unstable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.validator
+    repository: ethpandaops/nimbus-validator-client
+    tag: unstable
+- source:
+    ref: unstable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
+    repository: ethpandaops/nimbus-validator-client
+    tag: unstable-minimal
+- source:
+    ref: stable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.validator
+    repository: ethpandaops/nimbus-validator-client
+    tag: stable
+- source:
+    ref: stable
+    repository: status-im/nimbus-eth2
+  target:
+    dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
+    repository: ethpandaops/nimbus-validator-client
+    tag: stable-minimal
+
+##########################
+# prysm-beacon-chain #
+##########################
+- build_script: ./prysm/build_beacon.sh
+  source:
+    ref: develop
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: develop
+- build_script: ./prysm/build_beacon_minimal.sh
+  source:
+    ref: develop
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: develop-minimal
+- build_script: ./prysm/build_beacon.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: master
+- build_script: ./prysm/build_beacon_minimal.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: master-minimal
+- build_script: ./prysm/build_beacon.sh
+  source:
+    ref: peerDAS
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: peerDAS
+- build_script: ./prysm/build_beacon_minimal.sh
+  source:
+    ref: peerDAS
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: peerDAS-minimal
+- build_script: ./prysm/build_beacon.sh
+  source:
+    ref: blob-schedule
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: blob-schedule
+- build_script: ./prysm/build_beacon_minimal.sh
+  source:
+    ref: blob-schedule
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.beacon
+    repository: ethpandaops/prysm-beacon-chain
+    tag: blob-schedule-minimal
+
+#######################
+# prysm-validator #
+#######################
+- build_script: ./prysm/build_validator.sh
+  source:
+    ref: develop
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: develop
+- build_script: ./prysm/build_validator_minimal.sh
+  source:
+    ref: develop
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: develop-minimal
+- build_script: ./prysm/build_validator.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: master
+- build_script: ./prysm/build_validator_minimal.sh
+  source:
+    ref: master
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: master-minimal
+- build_script: ./prysm/build_validator.sh
+  source:
+    ref: peerDAS
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: peerDAS
+- build_script: ./prysm/build_validator_minimal.sh
+  source:
+    ref: peerDAS
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: peerDAS-minimal
+- build_script: ./prysm/build_validator.sh
+  source:
+    ref: blob-schedule
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: blob-schedule
+- build_script: ./prysm/build_validator_minimal.sh
+  source:
+    ref: blob-schedule
+    repository: offchainlabs/prysm
+  target:
+    dockerfile: ./prysm/Dockerfile.validator
+    repository: ethpandaops/prysm-validator
+    tag: blob-schedule-minimal
+
+############
+# reth #
+############
+- source:
+    ref: main
+    repository: paradigmxyz/reth
+  target:
+    repository: ethpandaops/reth
+    tag: main
+- source:
+    ref: rkrasiuk/peerdas
+    repository: paradigmxyz/reth
+  target:
+    repository: ethpandaops/reth
+    tag: paradigmxyz-rkrasiuk-peerdas
+
+#####################
+# reth-rbuilder #
+#####################
+- build_args: RBUILDER_BIN=reth-rbuilder
+  source:
+    ref: develop
+    repository: flashbots/rbuilder
+  target:
     repository: ethpandaops/reth-rbuilder
+    tag: develop
+
+######################
+# rustic-builder #
+######################
+- source:
+    ref: main
+    repository: pawanjay176/rustic-builder
+  target:
+    repository: ethpandaops/rustic-builder
+    tag: main
+- source:
+    ref: fulu
+    repository: pawanjay176/rustic-builder
+  target:
+    repository: ethpandaops/rustic-builder
+    tag: fulu
+
+############
+# teku #
+############
+- build_script: ./teku/build.sh
+  source:
+    ref: master
+    repository: consensys/teku
+  target:
+    repository: ethpandaops/teku
+    tag: master
+- build_script: ./teku/build.sh
+  source:
+    ref: das
+    repository: consensys/teku
+  target:
+    repository: ethpandaops/teku
+    tag: das
+- build_script: ./teku/build.sh
+  source:
+    ref: verkle-trees
+    repository: zilm13/teku
+  target:
+    repository: ethpandaops/teku
+    tag: zilm13-verkle-trees
+
+###############
+# tx-fuzz #
+###############
+- source:
+    ref: master
+    repository: MariusVanDerWijden/tx-fuzz
+  target:
+    repository: ethpandaops/tx-fuzz
+    tag: master
