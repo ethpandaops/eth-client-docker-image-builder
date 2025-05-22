@@ -1,11 +1,11 @@
-name: Build goomy-blob docker image
+name: Build goevmlab docker image
 
 on:
   workflow_dispatch:
     inputs:
       repository:
-        description: The source goomy-blob repository to build from
-        default: ethpandaops/goomy-blob
+        description: The source goevmlab repository to build from
+        default: holiman/goevmlab
         type: string
         required: true
       ref:
@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'goomy-blob'
+          client: 'goevmlab'
       - name: Generate target tag
         id: tag
         uses: ./.github/actions/docker-tag
@@ -57,7 +57,8 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
-          target_repository: ethpandaops/goomy-blob
+          target_repository: ethpandaops/goevmlab
+          target_dockerfile: ./goevmlab/Dockerfile
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
@@ -82,12 +83,13 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
-          target_repository: ethpandaops/goomy-blob
+          target_repository: ethpandaops/goevmlab
           platforms: ${{ needs.prepare.outputs.platforms }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
+
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
   notify:
