@@ -1,11 +1,11 @@
-name: Build nethermind docker image
+name: Build goevmlab docker image
 
 on:
   workflow_dispatch:
     inputs:
       repository:
-        description: The source nethermind repository to build from
-        default: nethermindeth/nethermind
+        description: The source goevmlab repository to build from
+        default: holiman/goevmlab
         type: string
         required: true
       ref:
@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'nethermind'
+          client: 'goevmlab'
       - name: Generate target tag
         id: tag
         uses: ./.github/actions/docker-tag
@@ -57,14 +57,15 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
-          target_repository: ethpandaops/nethermind
+          target_repository: ethpandaops/goevmlab
+          target_dockerfile: ./goevmlab/Dockerfile
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          
+
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
         id: set_output
@@ -82,7 +83,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
-          target_repository: ethpandaops/nethermind
+          target_repository: ethpandaops/goevmlab
           platforms: ${{ needs.prepare.outputs.platforms }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"

@@ -22,10 +22,10 @@ case ${build_method} in
 
     # Define ldflags for version information
     ldflags=$(cat <<-END
-        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
-        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
-        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
-        -X 'github.com/prysmaticlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
+        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
+        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
+        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
+        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
 END
     )
 
