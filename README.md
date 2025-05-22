@@ -9,6 +9,7 @@ Run the *Build **client*** workflow;
 - [Build Eleel](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-eleel.yml) [[source](https://github.com/sigp/eleel)]
 - [Build Erigon](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-erigon.yml) [[source](https://github.com/ledgerwatch/erigon)]
 - [Build EthereumJS](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ethereumjs.yml) [[source](https://github.com/ethereumjs/ethereumjs-monorepo)]
+- [Build Ethrex](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ethrex.yml) [[source](https://github.com/lambdaclass/ethrex)]
 - [Build Geth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-geth.yml) [[source](https://github.com/ethereum/go-ethereum)]
 - [Build Lighthouse](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-lighthouse.yml) [[source](https://github.com/sigp/lighthouse)]
 - [Build Lodestar](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-lodestar.yml) [[source](https://github.com/chainsafe/lodestar)]

@@ -103,6 +103,16 @@
     repository: ethpandaops/ethereumjs
     tag: 7702-devnet-4-plus-t8ntool
 
+##############
+# ethrex #
+##############
+- source:
+    ref: main
+    repository: lambdaclass/ethrex
+  target:
+    repository: ethpandaops/ethrex
+    tag: main
+
 #########################
 # flashbots-builder #
 #########################

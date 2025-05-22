@@ -162,6 +162,10 @@ mev-boost-relay:
   branches:
     - main
 
+ethrex:
+  branches:
+    - main
+
 # Commented out in config.yaml
 # goevmlab:
 #   branches: ["master"]

@@ -9,6 +9,7 @@ DEFAULT_REPOS = {
     'besu': 'hyperledger/besu',
     'erigon': 'erigontech/erigon',
     'ethereumjs': 'ethereumjs/ethereumjs-monorepo',
+    'ethrex': 'lambdaclass/ethrex',
     'geth': 'ethereum/go-ethereum',
     'lighthouse': 'sigp/lighthouse',
     'nimbus-eth2': 'status-im/nimbus-eth2',
