@@ -46,7 +46,6 @@ lighthouse:
   branches:
     - stable
     - unstable
-    - electra-devnet-1
     - peerdas-devnet-7
   alt_repos:
     macladson/lighthouse:
@@ -55,8 +54,6 @@ lighthouse:
 lodestar:
   branches:
     - unstable
-    - electra-fork
-    - g11tech/verge
     - peerDAS
     - focil
 
