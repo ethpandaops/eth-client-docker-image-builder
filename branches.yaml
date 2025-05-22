@@ -6,6 +6,7 @@
 besu:
   branches:
     - main
+    - fusaka-devnet-0
   alt_repos:
     Gabriel-Trintinalia/besu:
       - peerdas-devnet-7
