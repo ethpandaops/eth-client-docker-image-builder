@@ -138,6 +138,7 @@ grandine:
   alt_repos:
     hangleang/grandine:
       - peerdas-devnet-7
+      - peerdas-fulu
 
 mev-rs:
   branches:
