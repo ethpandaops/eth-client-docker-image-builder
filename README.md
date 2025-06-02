@@ -19,10 +19,10 @@ Run the *Build **client*** workflow;
 - [Build Prysm](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-prysm.yml) [[source](https://github.com/offchainlabs/prysm)]
 - [Build Reth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-reth.yml) [[source](https://github.com/paradigmxyz/reth)]
 - [Build Teku](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-teku.yml) [[source](https://github.com/consensys/teku)]
-- [Build Grandine](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-grandine.yml) [[source](https://github.com/grandinetech/grandine)]
-- [Build Eth-DAS-Guardian](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-eth-das-guardian.yml) [[source](https://github.com/probe-lab/eth-das-guardian)]
+- [Build Grandine](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-grandine.yml) [[source](https://github.com/grandinetech/grandine)
 
 Run the *Build **tooling*** workflow;
+- [Build Eth-DAS-Guardian](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-eth-das-guardian.yml) [[source](https://github.com/probe-lab/eth-das-guardian)]
 - [Build Flashbots Builder](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-flashbots-builder.yml) [[source](https://github.com/flashbots/builder)]
 - [Build tx-fuzz](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-tx-fuzz.yaml) [[source](https://github.com/MariusVanDerWijden/tx-fuzz)]
 - [Build consesnus-monitor](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/build-push-consensus-monitor.yml) [[source](https://github.com/ralexstokes/ethereum_consensus_monitor)]
