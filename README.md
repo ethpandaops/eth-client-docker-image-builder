@@ -19,7 +19,7 @@ Run the *Build **client*** workflow;
 - [Build Prysm](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-prysm.yml) [[source](https://github.com/offchainlabs/prysm)]
 - [Build Reth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-reth.yml) [[source](https://github.com/paradigmxyz/reth)]
 - [Build Teku](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-teku.yml) [[source](https://github.com/consensys/teku)]
-- [Build Grandine](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-grandine.yml) [[source](https://github.com/grandinetech/grandine)
+- [Build Grandine](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-grandine.yml) [[source](https://github.com/grandinetech/grandine)]
 
 Run the *Build **tooling*** workflow;
 - [Build Eth-DAS-Guardian](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-eth-das-guardian.yml) [[source](https://github.com/probe-lab/eth-das-guardian)]
