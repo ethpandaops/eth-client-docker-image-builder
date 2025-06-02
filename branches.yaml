@@ -166,6 +166,10 @@ ethrex:
   branches:
     - main
 
+eth-das-guardian:
+  branches:
+    - main
+
 # Commented out in config.yaml
 # goevmlab:
 #   branches: ["master"]
