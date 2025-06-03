@@ -63,6 +63,7 @@ nethermind:
     - master
     - feature/peerdas
     - devnet-0
+    - fusaka
 
 nimbus-eth2:
   branches:
