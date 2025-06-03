@@ -7,6 +7,7 @@ besu:
   branches:
     - main
     - fusaka-devnet-0
+    - performance
   alt_repos:
     Gabriel-Trintinalia/besu:
       - peerdas-devnet-7
@@ -28,6 +29,7 @@ geth:
     - multicall
     - peerdas-devnet-7
     - fusaka-devnet-0
+    - performance
   alt_repos:
     gballet/go-ethereum:
       - kaustinen-with-shapella
@@ -39,6 +41,7 @@ geth:
 reth:
   branches:
     - main
+    - performance
   alt_repos:
     paradigmxyz/reth:
       - rkrasiuk/peerdas
@@ -64,6 +67,7 @@ nethermind:
     - feature/peerdas
     - devnet-0
     - fusaka
+    - performance
 
 nimbus-eth2:
   branches:
