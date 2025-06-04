@@ -44,6 +44,7 @@ reth:
   branches:
     - main
     - performance
+    - fusaka/devnet1
   alt_repos:
     paradigmxyz/reth:
       - rkrasiuk/peerdas
