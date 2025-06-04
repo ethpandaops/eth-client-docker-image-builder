@@ -86,6 +86,7 @@ nimbus-validator-client:
 nimbus-eth1:
   branches:
     - master
+    - fusaka-devnet-1
 
 prysm-beacon-chain:
   branches:
