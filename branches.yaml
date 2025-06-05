@@ -9,9 +9,6 @@ besu:
     - fusaka-devnet-0
     - fusaka-devnet-1
     - performance
-  alt_repos:
-    Gabriel-Trintinalia/besu:
-      - peerdas-devnet-7
 
 erigon:
   branches:
