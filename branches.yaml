@@ -50,7 +50,7 @@ lighthouse:
   branches:
     - stable
     - unstable
-    - peerdas-devnet-7
+    - fusaka-devnet-1
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
