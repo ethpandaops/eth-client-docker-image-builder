@@ -92,7 +92,8 @@ runs:
     with:
       username: ${{ inputs.DOCKER_USERNAME }}
       password: ${{ inputs.DOCKER_PASSWORD }}
-  - name: Create and push manifest images
+
+  - name: Create and push manifest images to dockerhub
     shell: bash
     run: |
       docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
@@ -106,32 +107,50 @@ runs:
       username: ${{ inputs.HARBOR_USERNAME }}
       password: ${{ inputs.HARBOR_PASSWORD }}
 
-  - name: Create and push manifest images for other registry
+  - name: Prefix Images with Harbor registry
+    if: ${{ inputs.harbor_registry != '' }}
+    shell: bash
+    id: harbor_prefix
+    run: |
+      #!/bin/bash
+
+      # Get the original images list (assuming it's passed as an argument or environment variable)
+      ORIGINAL_IMAGES="${{ steps.generate_images_list.outputs.images }}"
+      SECOND_REGISTRY="${{ inputs.harbor_registry }}"
+
+      # Initialize the new images list
+      NEW_IMAGES=""
+
+      # Split the original images by space and add the second registry prefix
+      for image in $ORIGINAL_IMAGES; do
+          # Extract the repository and tag parts
+          REPO_TAG=${image#*/}  # Remove everything before the first '/'
+          
+          # Add to the new images list with the second registry prefix
+          NEW_IMAGES+="$SECOND_REGISTRY/$REPO_TAG "
+      done
+
+      # Remove the trailing space
+      NEW_IMAGES=${NEW_IMAGES::-1}
+
+      echo "ORIGINAL_IMAGES: $ORIGINAL_IMAGES"
+      echo "PREFIXED_IMAGES: $NEW_IMAGES"
+      echo "prefixed_images=$NEW_IMAGES" >> $GITHUB_OUTPUT
+
+
+  - name: Create and push manifest images to Harbor
     if: ${{ inputs.harbor_registry != '' }}
     shell: bash
     run: |
-      images="${{ steps.generate_images_list.outputs.tags }}"
-      for image in $images; do
-        target_tag=$(echo "${{ inputs.harbor_registry }}$image" | sed -E 's/^\s*.*:\/\///g')
-        echo "Checking if $image is available on Docker Hub..."
-        retries=10
-        delay=30
-        until [[ $retries -le 0 ]]; do
-          if docker manifest inspect $image > /dev/null 2>&1; then
-            echo "$image is available on Docker Hub."
-            echo "Copying $image to $target_tag"
-            docker buildx imagetools create --dry-run -t $target_tag $image
-            docker buildx imagetools create -t $target_tag $image
-            break
-          else
-            echo "$image is not yet available on Docker Hub. Retrying in $delay seconds..."
-            sleep $delay
-            ((retries--))
-          fi
-        done
-        if [[ $retries -le 0 ]]; then
-          echo "Failed to find $image on Docker Hub after multiple attempts."
-          echo "Skipping $image"
-          continue
-        fi
-      done
+      # Dry run first
+      docker buildx imagetools create --dry-run \
+        ${{ format('-t {0}/{1}:{2}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag) || '' }} \
+        ${{ format('-t {0}/{1}:{2}-{3}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag, inputs.git_commit_hash) || '' }} \
+        ${{ steps.harbor_prefix.outputs.prefixed_images }}
+      
+      # Actual creation
+      docker buildx imagetools create \
+        ${{ format('-t {0}/{1}:{2}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag) || '' }} \
+        ${{ format('-t {0}/{1}:{2}-{3}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag, inputs.git_commit_hash) || '' }} \
+        ${{ steps.harbor_prefix.outputs.prefixed_images }}
+

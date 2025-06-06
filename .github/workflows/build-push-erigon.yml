@@ -59,11 +59,14 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/erigon
           platform: ${{ matrix.platform }}
+          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
+          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
@@ -91,17 +94,17 @@ jobs:
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-  notify:
-    name: Discord Notification
-    runs-on: ubuntu-latest
-    needs:
-      - prepare
-      - deploy
-      - manifest
-    if: failure()
-    steps:
-      - name: Notify
-        uses: nobrayner/discord-webhook@1766a33bf571acdcc0678f00da4fb83aad01ebc7 # v1
-        with:
-          github-token: ${{ secrets.github_token }}
-          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
+  #notify:
+  #  name: Discord Notification
+  #  runs-on: ubuntu-latest
+  #  needs:
+  #    - prepare
+  #    - deploy
+  #    - manifest
+  #  if: failure()
+  #  steps:
+  #    - name: Notify
+  #      uses: nobrayner/discord-webhook@1766a33bf571acdcc0678f00da4fb83aad01ebc7 # v1
+  #      with:
+  #        github-token: ${{ secrets.github_token }}
+  #        discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
