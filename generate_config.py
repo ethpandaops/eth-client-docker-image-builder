@@ -33,7 +33,8 @@ DEFAULT_REPOS = {
     'rustic-builder': 'pawanjay176/rustic-builder',
     'mev-boost': 'flashbots/mev-boost',
     'mev-boost-relay': 'flashbots/mev-boost-relay',
-    'goevmlab': 'holiman/goevmlab'
+    'goevmlab': 'holiman/goevmlab',
+    'eth-das-guardian': 'probe-lab/eth-das-guardian'
     # Add more defaults as needed
 }
 
