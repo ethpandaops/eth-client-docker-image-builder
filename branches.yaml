@@ -26,9 +26,9 @@ geth:
   branches:
     - master
     - multicall
-    - peerdas-devnet-7
     - fusaka-devnet-0
     - performance
+    - fusaka-devnet-1
   alt_repos:
     gballet/go-ethereum:
       - kaustinen-with-shapella
