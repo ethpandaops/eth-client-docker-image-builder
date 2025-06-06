@@ -124,10 +124,9 @@ runs:
       # Split the original images by space and add the second registry prefix
       for image in $ORIGINAL_IMAGES; do
           # Extract the repository and tag parts
-          REPO_TAG=${image#*/}  # Remove everything before the first '/'
           
           # Add to the new images list with the second registry prefix
-          NEW_IMAGES+="$SECOND_REGISTRY/$REPO_TAG "
+          NEW_IMAGES+="$SECOND_REGISTRY/$image "
       done
 
       # Remove the trailing space
