@@ -172,8 +172,8 @@ runs:
       tags: |
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}
-        ${{ inputs.harbor_registry != '' && format('{0}{1}:{2}-{3}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag, steps.git_commit_hash.outputs.git_commit_hash) || '' }}
-        ${{ inputs.harbor_registry != '' && format('{0}{1}:{2}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag) || '' }}
+        ${{ inputs.harbor_registry != '' && format('{0}/{1}:{2}-{3}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag, steps.git_commit_hash.outputs.git_commit_hash) || '' }}
+        ${{ inputs.harbor_registry != '' && format('{0}/{1}:{2}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag) || '' }}
       push: true
       platforms: ${{ inputs.platform }}
       build-args: ${{ inputs.build_args }}
