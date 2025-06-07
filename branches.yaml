@@ -15,6 +15,7 @@ erigon:
     - main
     - fusaka-devnet-0
     - performance
+    - fusaka-devnet-1
 
 ethereumjs:
   branches:
