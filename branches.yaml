@@ -152,9 +152,9 @@ mev-rs:
   branches:
     - main
 
-reth-rbuilder:
-  branches:
-    - develop
+#reth-rbuilder:
+#  branches:
+#   - develop
 
 rustic-builder:
   branches:
