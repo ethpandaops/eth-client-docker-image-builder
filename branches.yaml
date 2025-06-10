@@ -43,9 +43,7 @@ reth:
     - main
     - performance
     - fusaka/devnet1
-  alt_repos:
-    paradigmxyz/reth:
-      - rkrasiuk/peerdas
+    - fusaka/devnet2
 
 lighthouse:
   branches:
