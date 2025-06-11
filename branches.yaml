@@ -17,6 +17,7 @@ erigon:
     - fusaka-devnet-0
     - performance
     - fusaka-devnet-1
+    - berlinterop-devnet-2
 
 ethereumjs:
   branches:
@@ -51,6 +52,7 @@ lighthouse:
     - stable
     - unstable
     - fusaka-devnet-1
+    - peerdas-rangesync
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
