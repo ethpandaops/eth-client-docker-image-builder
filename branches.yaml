@@ -9,6 +9,7 @@ besu:
     - fusaka-devnet-0
     - fusaka-devnet-1
     - performance
+    - berlinterop-devnet-2
 
 erigon:
   branches:
