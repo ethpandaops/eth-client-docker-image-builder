@@ -32,6 +32,7 @@ geth:
     - fusaka-devnet-0
     - performance
     - fusaka-devnet-1
+    - fusaka-devnet-berlin
   alt_repos:
     gballet/go-ethereum:
       - kaustinen-with-shapella
