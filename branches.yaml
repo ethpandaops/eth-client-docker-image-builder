@@ -93,7 +93,7 @@ prysm-beacon-chain:
     - develop
     - master
     - peerDAS
-    - fusaka-devnet-1
+    - fusaka-devnet-2
 
 prysm-validator:
   # Uses same repo as prysm-beacon-chain
@@ -101,7 +101,7 @@ prysm-validator:
     - develop
     - master
     - peerDAS
-    - fusaka-devnet-1
+    - fusaka-devnet-2
 
 teku:
   branches:
