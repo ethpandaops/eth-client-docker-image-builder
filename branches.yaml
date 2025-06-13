@@ -144,7 +144,8 @@ grandine:
     - develop
     - master
     - peerdas-fulu
-    - das
+    - fusaka-devnet-2
+    - berlinterop-devnet-2
   alt_repos:
     hangleang/grandine:
       - peerdas-devnet-7
