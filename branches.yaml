@@ -28,11 +28,9 @@ ethereumjs:
 geth:
   branches:
     - master
-    - multicall
-    - fusaka-devnet-0
     - performance
+    - fusaka-devnet-0
     - fusaka-devnet-1
-    - fusaka-devnet-berlin
     - berlinterop-devnet-2
   alt_repos:
     gballet/go-ethereum:
