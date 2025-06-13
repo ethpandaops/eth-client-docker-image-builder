@@ -109,10 +109,8 @@ prysm-validator:
 teku:
   branches:
     - master
-    - das
-  alt_repos:
-    zilm13/teku:
-      - verkle-trees
+    - fusaka-devnet-1
+    - berlinterop-devnet-2
 
 eleel:
   branches:
