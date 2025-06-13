@@ -111,6 +111,7 @@ teku:
     - master
     - fusaka-devnet-1
     - berlinterop-devnet-2
+    - berlininterop-devnet-2
 
 eleel:
   branches:
