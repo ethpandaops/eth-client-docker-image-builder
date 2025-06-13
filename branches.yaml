@@ -47,6 +47,7 @@ reth:
     - performance
     - fusaka/devnet1
     - fusaka/devnet2
+    - berlinterop-devnet-2
 
 lighthouse:
   branches:
