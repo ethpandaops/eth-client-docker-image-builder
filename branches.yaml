@@ -8,6 +8,7 @@ besu:
     - main
     - fusaka-devnet-0
     - fusaka-devnet-1
+    - fusaka-devnet-2
     - performance
     - berlinterop-devnet-2
 
