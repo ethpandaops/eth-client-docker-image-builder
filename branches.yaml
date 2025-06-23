@@ -6,20 +6,15 @@
 besu:
   branches:
     - main
-    - fusaka-devnet-0
-    - fusaka-devnet-1
     - fusaka-devnet-2
     - performance
-    - berlinterop-devnet-2
 
 erigon:
   branches:
     - main
-    - fusaka-devnet-0
     - performance
-    - fusaka-devnet-1
     - berlinterop-devnet-2
-
+    - fusaka-devnet-2
 ethereumjs:
   branches:
     - master
@@ -30,8 +25,6 @@ geth:
   branches:
     - master
     - performance
-    - fusaka-devnet-0
-    - fusaka-devnet-1
     - berlinterop-devnet-2
     - fusaka-devnet-2
   alt_repos:
@@ -46,9 +39,7 @@ reth:
   branches:
     - main
     - performance
-    - fusaka/devnet1
-    - fusaka/devnet2
-    - berlinterop-devnet-2
+    - fusaka-devnet-2
 
 lighthouse:
   branches:
@@ -93,8 +84,7 @@ nimbus-validator-client:
 nimbus-eth1:
   branches:
     - master
-    - fusaka-devnet-1
-    - berlinterop-devnet-2
+    - fusaka-devnet-2
 
 prysm-beacon-chain:
   branches:
