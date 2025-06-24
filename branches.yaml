@@ -64,11 +64,10 @@ lodestar:
 nethermind:
   branches:
     - master
-    - feature/peerdas
-    - devnet-0
-    - fusaka
+    - fusaka-devnet-2
     - performance
     - berlinterop-devnet-2
+    
 nimbus-eth2:
   branches:
     - unstable
