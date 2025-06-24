@@ -23,7 +23,7 @@ on:
         options:
           - bazel
           - go
-        default: bazel
+        default: go
         required: true
 
 jobs:
