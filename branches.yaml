@@ -45,7 +45,7 @@ lighthouse:
   branches:
     - stable
     - unstable
-    - fusaka-devnet-1
+    - fusaka-devnet-2
     - peerdas-rangesync
     - berlinterop-devnet-2
   alt_repos:
