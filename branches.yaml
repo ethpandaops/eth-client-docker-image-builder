@@ -108,8 +108,7 @@ prysm-validator:
 teku:
   branches:
     - master
-    - fusaka-devnet-1
-    - berlinterop-devnet-2
+    - fusaka-devnet-2
 
 eleel:
   branches:
