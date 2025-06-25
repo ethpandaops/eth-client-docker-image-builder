@@ -73,7 +73,7 @@ nethermind:
     - devnet-0
     - fusaka
     - performance
-    - performance-repriced
+    - performance-modexp
 
 nimbus-eth2:
   branches:
