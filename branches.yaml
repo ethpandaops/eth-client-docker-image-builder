@@ -8,6 +8,7 @@ besu:
     - main
     - fusaka-devnet-2
     - performance
+    - performance-modexp
 
 erigon:
   branches:
@@ -15,6 +16,8 @@ erigon:
     - performance
     - berlinterop-devnet-2
     - fusaka-devnet-2
+    - performance-modexp
+    
 ethereumjs:
   branches:
     - master
@@ -27,6 +30,8 @@ geth:
     - performance
     - berlinterop-devnet-2
     - fusaka-devnet-2
+    - performance-modexp
+    
   alt_repos:
     gballet/go-ethereum:
       - kaustinen-with-shapella
@@ -40,6 +45,7 @@ reth:
     - main
     - performance
     - fusaka-devnet-2
+    - performance-modexp
 
 lighthouse:
   branches:
@@ -67,6 +73,7 @@ nethermind:
     - fusaka-devnet-2
     - performance
     - berlinterop-devnet-2
+    - performance-modexp
     
 nimbus-eth2:
   branches:
