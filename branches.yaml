@@ -6,15 +6,20 @@
 besu:
   branches:
     - main
-    - fusaka-devnet-2
+    - fusaka-devnet-0
     - performance
+    - performance-modexp
+  alt_repos:
+    Gabriel-Trintinalia/besu:
+      - peerdas-devnet-7
 
 erigon:
   branches:
     - main
+    - fusaka-devnet-0
     - performance
-    - berlinterop-devnet-2
-    - fusaka-devnet-2
+    - performance-modexp
+
 ethereumjs:
   branches:
     - master
@@ -24,9 +29,11 @@ ethereumjs:
 geth:
   branches:
     - master
+    - multicall
+    - peerdas-devnet-7
+    - fusaka-devnet-0
     - performance
-    - berlinterop-devnet-2
-    - fusaka-devnet-2
+    - performance-modexp
   alt_repos:
     gballet/go-ethereum:
       - kaustinen-with-shapella
@@ -39,61 +46,57 @@ reth:
   branches:
     - main
     - performance
-    - fusaka-devnet-2
+    - performance-modexp
+  alt_repos:
+    paradigmxyz/reth:
+      - rkrasiuk/peerdas
 
 lighthouse:
   branches:
     - stable
     - unstable
-    - fusaka-devnet-2
-    - peerdas-rangesync
-    - berlinterop-devnet-2
+    - peerdas-devnet-7
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
-    ethdreamer/lighthouse:
-      - fusaka-devnet-2
 
 lodestar:
   branches:
     - unstable
     - peerDAS
     - focil
-    - fusaka-devnet-2
-    - berlinterop-devnet-2
+
 nethermind:
   branches:
     - master
-    - fusaka-devnet-2
+    - feature/peerdas
+    - devnet-0
+    - fusaka
     - performance
-    - berlinterop-devnet-2
-    
+    - performance-repriced
+
 nimbus-eth2:
   branches:
     - unstable
     - stable
     - column-syncer
-    - berlinterop-devnet-2
-    
+
 nimbus-validator-client:
   # Uses same repo as nimbus-eth2
   branches:
     - unstable
     - stable
-    - berlinterop-devnet-2
-    
+
 nimbus-eth1:
   branches:
     - master
-    - fusaka-devnet-2
 
 prysm-beacon-chain:
   branches:
     - develop
     - master
     - peerDAS
-    - berlinterop-devnet-2
-    - fusaka-devnet-2
+    - blob-schedule
 
 prysm-validator:
   # Uses same repo as prysm-beacon-chain
@@ -101,13 +104,15 @@ prysm-validator:
     - develop
     - master
     - peerDAS
-    - berlinterop-devnet-2
-    - fusaka-devnet-2
+    - blob-schedule
 
 teku:
   branches:
     - master
-    - fusaka-devnet-2
+    - das
+  alt_repos:
+    zilm13/teku:
+      - verkle-trees
 
 eleel:
   branches:
@@ -141,8 +146,7 @@ grandine:
     - develop
     - master
     - peerdas-fulu
-    - fusaka-devnet-2
-    - berlinterop-devnet-2
+    - das
   alt_repos:
     hangleang/grandine:
       - peerdas-devnet-7
@@ -154,7 +158,7 @@ mev-rs:
 
 reth-rbuilder:
   branches:
-   - develop
+    - develop
 
 rustic-builder:
   branches:
