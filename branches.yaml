@@ -81,6 +81,7 @@ nimbus-eth2:
     - stable
     - column-syncer
     - berlinterop-devnet-2
+    - fusaka-devnet-2
     
 nimbus-validator-client:
   # Uses same repo as nimbus-eth2
