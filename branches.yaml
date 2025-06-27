@@ -168,6 +168,9 @@ rustic-builder:
 mev-boost:
   branches:
     - develop
+  alt_repos:
+    jtraglia/mev-boost:
+      - fulu
 
 mev-boost-relay:
   branches:
