@@ -17,6 +17,10 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
+      build_args:
+        description: Build arguments to pass to the docker build command
+        type: string
+        required: false
 
 jobs:
   prepare:
@@ -51,6 +55,21 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
+      # Check out source repository to get commit hash
+      - name: Check out source repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ${{ inputs.repository }}
+          path: source
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+      # Get the git commit hash before using it
+      - name: Get git commit hash
+        id: get_commit_hash
+        run: |
+          cd source
+          echo "git_commit_hash=$(git log --pretty=format:'%h' -n 1 --abbrev=7)" >> $GITHUB_OUTPUT
+        shell: bash
       - uses: ./.github/actions/deploy
         id: deploy
         with:
@@ -59,17 +78,20 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/mev-boost-relay
           platform: ${{ matrix.platform }}
-
+          build_args: ${{ inputs.build_args || format('VERSION={0}-{1}', inputs.ref, steps.get_commit_hash.outputs.git_commit_hash) }}
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-
-      # This step captures the git commit hash from the deploy action for job output
+          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
+          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
+          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
+      # This step captures the git commit hash for job output
       - name: Set job output
         id: set_output
-        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+        run: echo "git_commit_hash=${{ steps.get_commit_hash.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
         shell: bash
+
   manifest:
     needs:
       - prepare

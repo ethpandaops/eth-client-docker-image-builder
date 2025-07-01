@@ -6,15 +6,18 @@
 besu:
   branches:
     - main
-    - fusaka-devnet-0
-  alt_repos:
-    Gabriel-Trintinalia/besu:
-      - peerdas-devnet-7
+    - fusaka-devnet-2
+    - performance
+    - performance-modexp
 
 erigon:
   branches:
     - main
-
+    - performance
+    - berlinterop-devnet-2
+    - fusaka-devnet-2
+    - performance-modexp
+    
 ethereumjs:
   branches:
     - master
@@ -24,9 +27,11 @@ ethereumjs:
 geth:
   branches:
     - master
-    - multicall
-    - peerdas-devnet-7
-    - fusaka-devnet-0
+    - performance
+    - berlinterop-devnet-2
+    - fusaka-devnet-2
+    - performance-modexp
+    
   alt_repos:
     gballet/go-ethereum:
       - kaustinen-with-shapella
@@ -38,56 +43,65 @@ geth:
 reth:
   branches:
     - main
-  alt_repos:
-    paradigmxyz/reth:
-      - rkrasiuk/peerdas
+    - performance
+    - fusaka-devnet-2
+    - performance-modexp
 
 lighthouse:
   branches:
     - stable
     - unstable
-    - electra-devnet-1
-    - peerdas-devnet-7
+    - fusaka-devnet-2
+    - peerdas-rangesync
+    - berlinterop-devnet-2
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
+    ethdreamer/lighthouse:
+      - fusaka-devnet-2
 
 lodestar:
   branches:
     - unstable
-    - electra-fork
-    - g11tech/verge
     - peerDAS
     - focil
-
+    - fusaka-devnet-2
+    - berlinterop-devnet-2
 nethermind:
   branches:
     - master
-    - feature/peerdas
-    - devnet-0
-
+    - fusaka-devnet-2
+    - performance
+    - berlinterop-devnet-2
+    - performance-modexp
+    
 nimbus-eth2:
   branches:
     - unstable
     - stable
     - column-syncer
-
+    - berlinterop-devnet-2
+    - fusaka-devnet-2
+    
 nimbus-validator-client:
   # Uses same repo as nimbus-eth2
   branches:
     - unstable
     - stable
-
+    - fusaka-devnet-2
+    
 nimbus-eth1:
   branches:
     - master
+    - fusaka-devnet-2
 
 prysm-beacon-chain:
   branches:
     - develop
     - master
     - peerDAS
-    - blob-schedule
+    - berlinterop-devnet-2
+    - fusaka-devnet-2
 
 prysm-validator:
   # Uses same repo as prysm-beacon-chain
@@ -95,15 +109,13 @@ prysm-validator:
     - develop
     - master
     - peerDAS
-    - blob-schedule
+    - berlinterop-devnet-2
+    - fusaka-devnet-2
 
 teku:
   branches:
     - master
-    - das
-  alt_repos:
-    zilm13/teku:
-      - verkle-trees
+    - fusaka-devnet-2
 
 eleel:
   branches:
@@ -137,10 +149,8 @@ grandine:
     - develop
     - master
     - peerdas-fulu
-    - das
-  alt_repos:
-    hangleang/grandine:
-      - peerdas-devnet-7
+    - fusaka-devnet-2
+    - berlinterop-devnet-2
 
 mev-rs:
   branches:
@@ -148,7 +158,7 @@ mev-rs:
 
 reth-rbuilder:
   branches:
-    - develop
+   - develop
 
 rustic-builder:
   branches:
@@ -158,12 +168,21 @@ rustic-builder:
 mev-boost:
   branches:
     - develop
+  alt_repos:
+    jtraglia/mev-boost:
+      - fulu
 
 mev-boost-relay:
   branches:
     - main
-
+  alt_repos:
+    bharath-123/mev-boost-relay:
+      - fulu
 ethrex:
+  branches:
+    - main
+
+eth-das-guardian:
   branches:
     - main
 

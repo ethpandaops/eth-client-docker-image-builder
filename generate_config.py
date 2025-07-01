@@ -33,13 +33,13 @@ DEFAULT_REPOS = {
     'rustic-builder': 'pawanjay176/rustic-builder',
     'mev-boost': 'flashbots/mev-boost',
     'mev-boost-relay': 'flashbots/mev-boost-relay',
-    'goevmlab': 'holiman/goevmlab'
+    'goevmlab': 'holiman/goevmlab',
+    'eth-das-guardian': 'probe-lab/eth-das-guardian'
     # Add more defaults as needed
 }
 
 # Build argument defaults for special cases
 BUILD_ARGS = {
-    'hangleang/grandine/peerdas-devnet-7': 'RUST_MIN_STACK=5242880',
     'mev-rs/main-minimal': 'FEATURES=minimal-preset',
     'reth-rbuilder/develop': 'RBUILDER_BIN=reth-rbuilder'
 }
@@ -244,9 +244,7 @@ def get_build_args(client_name, source_repo, branch, target_tag):
         return BUILD_ARGS[key_client_tag]
 
     # Special cases
-    if 'hangleang/grandine' in source_repo:
-        return 'RUST_MIN_STACK=5242880'
-    elif client_name == 'mev-rs' and 'minimal' in target_tag:
+    if client_name == 'mev-rs' and 'minimal' in target_tag:
         return 'FEATURES=minimal-preset'
     elif client_name == 'reth-rbuilder':
         return 'RBUILDER_BIN=reth-rbuilder'

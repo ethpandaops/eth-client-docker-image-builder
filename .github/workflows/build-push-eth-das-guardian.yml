@@ -1,16 +1,16 @@
-name: Build tx-fuzz docker image
+name: Build eth-das-guardian docker image
 
 on:
   workflow_dispatch:
     inputs:
       repository:
-        description: The source tx-fuzz repository to build from
-        default: MariusVanDerWijden/tx-fuzz
+        description: The source eth-das-guardian repository to build from
+        default: probe-lab/eth-das-guardian
         type: string
         required: true
       ref:
         description: The branch, tag or SHA to checkout and build from
-        default: master
+        default: main
         type: string
         required: true
       docker_tag:
@@ -30,7 +30,7 @@ jobs:
         id: setup
         uses: ./.github/actions/prepare
         with:
-          client: 'tx-fuzz'
+          client: 'eth-das-guardian'
       - name: Generate target tag
         id: tag
         uses: ./.github/actions/docker-tag
@@ -57,7 +57,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
-          target_repository: ethpandaops/tx-fuzz
+          target_repository: ethpandaops/eth-das-guardian
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
@@ -85,7 +85,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
-          target_repository: ethpandaops/tx-fuzz
+          target_repository: ethpandaops/eth-das-guardian
           platforms: ${{ needs.prepare.outputs.platforms }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"

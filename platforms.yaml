@@ -93,3 +93,6 @@ goevmlab:
 ethrex:
   - linux/amd64
   - linux/arm64
+eth-das-guardian:
+  - linux/amd64
+  - linux/arm64

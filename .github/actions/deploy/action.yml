@@ -41,6 +41,10 @@ inputs:
     type: string
     default: go
     required: false
+  harbor_registry:
+    description: Harbor registry to push the images to
+    type: string
+    default: ''
   # Secrets
   DOCKER_USERNAME:
     required: true
@@ -50,6 +54,10 @@ inputs:
     required: true
   GOPROXY:
     required: false
+  HARBOR_USERNAME:
+    required: true
+  HARBOR_PASSWORD:
+    required: true
 
 outputs:
   git_commit_hash:
@@ -102,6 +110,13 @@ runs:
     with:
       username: ${{ inputs.DOCKER_USERNAME }}
       password: ${{ inputs.DOCKER_PASSWORD }}
+  - name: Login to harbor registry
+    if: ${{ inputs.harbor_registry != '' }}
+    uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+    with:
+      registry: ${{ inputs.harbor_registry }}
+      username: ${{ inputs.HARBOR_USERNAME }}
+      password: ${{ inputs.HARBOR_PASSWORD }}
   ########################
   # Build script case
   #######################
@@ -154,7 +169,11 @@ runs:
       # two tags;
       #   - $target_tag
       #   - $target_tag-commit
-      tags: ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }},${{ inputs.target_repository }}:${{ inputs.target_tag }}
+      tags: |
+        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
+        ${{ inputs.target_repository }}:${{ inputs.target_tag }}
+        ${{ inputs.harbor_registry != '' && format('{0}/{1}:{2}-{3}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag, steps.git_commit_hash.outputs.git_commit_hash) || '' }}
+        ${{ inputs.harbor_registry != '' && format('{0}/{1}:{2}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag) || '' }}
       push: true
       platforms: ${{ inputs.platform }}
       build-args: ${{ inputs.build_args }}
