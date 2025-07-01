@@ -55,10 +55,12 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
-      # This step captures the git commit hash from the deploy action for job output
+      # Get the git commit hash before using it
       - name: Set job output
         id: set_output
-        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+        run: |
+          cd $GITHUB_WORKSPACE/source
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         shell: bash
       - uses: ./.github/actions/deploy
         id: deploy
