@@ -19,7 +19,6 @@ on:
         required: false
       build_args:
         description: Additional build arguments to pass to the docker build command
-        default: "RUST_MIN_STACK=5242880"
         type: string
         required: false
 
@@ -72,6 +71,9 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
+          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
+          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
 
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
