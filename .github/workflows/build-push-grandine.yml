@@ -19,7 +19,6 @@ on:
         required: false
       build_args:
         description: Additional build arguments to pass to the docker build command
-        default: "RUST_MIN_STACK=5242880"
         type: string
         required: false
 
