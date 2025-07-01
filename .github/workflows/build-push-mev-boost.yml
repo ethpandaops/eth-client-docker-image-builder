@@ -56,13 +56,6 @@ jobs:
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
-      # Get the git commit hash before using it
-      - name: Set job output
-        id: set_output
-        run: |
-          cd $GITHUB_WORKSPACE/source
-          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-        shell: bash
       - uses: ./.github/actions/deploy
         id: deploy
         with:
@@ -71,7 +64,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/mev-boost
           platform: ${{ matrix.platform }}
-          build_args: ${{ inputs.build_args || format('VERSION={0}-{1}', inputs.ref, steps.set_output.outputs.git_commit_hash) }}
+          build_args: ${{ inputs.build_args || format('VERSION={0}-{1}', inputs.ref, steps.deploy.outputs.git_commit_hash) }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
@@ -80,6 +73,11 @@ jobs:
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
+      # This step captures the git commit hash from the deploy action for job output
+      - name: Set job output
+        id: set_output
+        run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
+        shell: bash
   manifest:
     needs:
       - prepare
