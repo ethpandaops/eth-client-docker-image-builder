@@ -59,6 +59,8 @@ lighthouse:
       - verkle-trees-capella
     ethdreamer/lighthouse:
       - fusaka-devnet-2
+    pawanjay176/lighthouse:
+      - frankenstein
 
 lodestar:
   branches:
