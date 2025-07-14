@@ -179,7 +179,7 @@ mev-boost-relay:
     - main
   alt_repos:
     bharath-123/mev-boost-relay:
-      - fulu
+      - bharath/fulu
 ethrex:
   branches:
     - main
