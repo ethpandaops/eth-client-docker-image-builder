@@ -161,6 +161,9 @@ mev-rs:
 reth-rbuilder:
   branches:
    - develop
+  alt_repos:
+    bharath-123/rbuilder:
+      - fulu
 
 rustic-builder:
   branches:
@@ -171,8 +174,8 @@ mev-boost:
   branches:
     - develop
   alt_repos:
-    jtraglia/mev-boost:
-      - fulu
+    bharath-123/mev-boost:
+      - bharath/fulu
 
 mev-boost-relay:
   branches:
