@@ -28,8 +28,8 @@ geth:
   branches:
     - master
     - performance
-    - berlinterop-devnet-2
     - fusaka-devnet-2
+    - fusaka-devnet-3
     - performance-modexp
     
   alt_repos:
