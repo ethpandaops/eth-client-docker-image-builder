@@ -171,7 +171,7 @@ reth-rbuilder:
    - develop
   alt_repos:
     bharath-123/rbuilder:
-      - fulu
+      - fusaka-devnet-3
 
 rustic-builder:
   branches:
