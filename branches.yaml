@@ -183,14 +183,14 @@ mev-boost:
     - develop
   alt_repos:
     bharath-123/mev-boost:
-      - bharath/fulu
+      - fusaka-devnet-3
 
 mev-boost-relay:
   branches:
     - main
   alt_repos:
     bharath-123/mev-boost-relay:
-      - bharath/fulu
+      - fusaka-devnet-3
 ethrex:
   branches:
     - main
