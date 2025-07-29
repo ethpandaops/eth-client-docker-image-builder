@@ -4,6 +4,9 @@ on:
   schedule:
     - cron:  '45 * * * *'
   workflow_dispatch:
+  create:
+    tags:
+      - '*'
 
 concurrency:
   group: "scheduled"
