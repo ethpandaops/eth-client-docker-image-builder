@@ -16,7 +16,7 @@ jobs:
       configs: ${{ steps.repo_check.outputs.configs }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: mikefarah/yq@b534aa9ee5d38001fba3cd8fe254a037e4847b37 # v4.45.4
+      - uses: mikefarah/yq@f03c9dc599c37bfcaf533427211d05e51e6fee64 # v4.47.1
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
