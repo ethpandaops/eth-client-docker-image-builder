@@ -6,6 +6,8 @@ cd ${SCRIPT_DIR}/..
 git clone https://github.com/ethpandaops/dimhouse.git
 
 cd dimhouse
+git pull
+echo "dimhouse commit hash: $(git rev-parse HEAD)"
 ./apply-dimhouse-patch.sh ${source_repository} ${source_ref} ../source
 
 cd ../source
