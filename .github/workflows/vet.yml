@@ -37,7 +37,7 @@ jobs:
         run: pip install PyYAML
       - name: Generate config.yaml
         run: python3 generate_config.py
-      - uses: mikefarah/yq@b534aa9ee5d38001fba3cd8fe254a037e4847b37 # v4.45.4
+      - uses: mikefarah/yq@f03c9dc599c37bfcaf533427211d05e51e6fee64 # v4.47.1
       - name: duplicate repository tag check
         run: |
           OUTPUT=$(yq 'group_by(.target.repository + ":" + .target.tag) | map(select(length>1))' config.yaml)

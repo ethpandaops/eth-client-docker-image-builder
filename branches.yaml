@@ -9,13 +9,14 @@ besu:
     - fusaka-devnet-2
     - performance
     - performance-modexp
+    - fusaka-devnet-3
 
 erigon:
   branches:
     - main
     - performance
-    - berlinterop-devnet-2
     - fusaka-devnet-2
+    - fusaka-devnet-3
     - performance-modexp
     
 ethereumjs:
@@ -28,8 +29,8 @@ geth:
   branches:
     - master
     - performance
-    - berlinterop-devnet-2
     - fusaka-devnet-2
+    - fusaka-devnet-3
     - performance-modexp
     
   alt_repos:
@@ -45,6 +46,7 @@ reth:
     - main
     - performance
     - fusaka-devnet-2
+    - fusaka-devnet-3
     - performance-modexp
 
 lighthouse:
@@ -52,13 +54,15 @@ lighthouse:
     - stable
     - unstable
     - fusaka-devnet-2
+    - fusaka-devnet-3
     - peerdas-rangesync
-    - berlinterop-devnet-2
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
     ethdreamer/lighthouse:
       - fusaka-devnet-2
+    pawanjay176/lighthouse:
+      - frankenstein
 
 lodestar:
   branches:
@@ -66,13 +70,13 @@ lodestar:
     - peerDAS
     - focil
     - fusaka-devnet-2
-    - berlinterop-devnet-2
+    - fusaka-devnet-3
 nethermind:
   branches:
     - master
     - fusaka-devnet-2
     - performance
-    - berlinterop-devnet-2
+    - fusaka-devnet-3
     - performance-modexp
     
 nimbus-eth2:
@@ -80,7 +84,7 @@ nimbus-eth2:
     - unstable
     - stable
     - column-syncer
-    - berlinterop-devnet-2
+    - fusaka-devnet-3
     - fusaka-devnet-2
     
 nimbus-validator-client:
@@ -89,19 +93,22 @@ nimbus-validator-client:
     - unstable
     - stable
     - fusaka-devnet-2
+    - fusaka-devnet-3
     
 nimbus-eth1:
   branches:
     - master
     - fusaka-devnet-2
+    - fusaka-devnet-3
 
 prysm-beacon-chain:
   branches:
     - develop
     - master
     - peerDAS
-    - berlinterop-devnet-2
     - fusaka-devnet-2
+    - fusaka-devnet-3
+    - fusaka-devnet-3-bpo
 
 prysm-validator:
   # Uses same repo as prysm-beacon-chain
@@ -111,11 +118,14 @@ prysm-validator:
     - peerDAS
     - berlinterop-devnet-2
     - fusaka-devnet-2
+    - fusaka-devnet-3
+    - fusaka-devnet-3-bpo
 
 teku:
   branches:
     - master
     - fusaka-devnet-2
+    - fusaka-devnet-3
 
 eleel:
   branches:
@@ -150,7 +160,7 @@ grandine:
     - master
     - peerdas-fulu
     - fusaka-devnet-2
-    - berlinterop-devnet-2
+    - fusaka-devnet-3
 
 mev-rs:
   branches:
@@ -159,6 +169,9 @@ mev-rs:
 reth-rbuilder:
   branches:
    - develop
+  alt_repos:
+    bharath-123/rbuilder:
+      - fusaka-devnet-3
 
 rustic-builder:
   branches:
@@ -169,15 +182,15 @@ mev-boost:
   branches:
     - develop
   alt_repos:
-    jtraglia/mev-boost:
-      - fulu
+    bharath-123/mev-boost:
+      - fusaka-devnet-3
 
 mev-boost-relay:
   branches:
     - main
   alt_repos:
     bharath-123/mev-boost-relay:
-      - fulu
+      - fusaka-devnet-3
 ethrex:
   branches:
     - main
@@ -189,3 +202,7 @@ eth-das-guardian:
 # Commented out in config.yaml
 # goevmlab:
 #   branches: ["master"]
+
+syncoor:
+  branches:
+    - master

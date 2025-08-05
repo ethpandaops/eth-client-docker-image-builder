@@ -96,3 +96,6 @@ ethrex:
 eth-das-guardian:
   - linux/amd64
   - linux/arm64
+syncoor:
+  - linux/amd64
+  - linux/arm64
