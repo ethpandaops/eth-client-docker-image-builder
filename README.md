@@ -32,6 +32,7 @@ Run the *Build **tooling*** workflow;
 - [Build ethereum-genesis-generator](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-genesis-generator.yml) [[source](https://github.com/ethpandaops/ethereum-genesis-generator)]
 - [Build mev-rs](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-mev-rs.yml) [[source](https://github.com/ralexstokes/mev-rs)]
 - [Build reth-rbuilder](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-reth-rbuilder.yml) [[source](https://github.com/flashbots/rbuilder)]
+- [Build Syncoor](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-syncoor.yml) [[source](https://github.com/ethpandaops/syncoor)]
 
 ## Adding a new image to build on schedule
 
