@@ -111,6 +111,9 @@ def generate_config():
                     if client_name in SIDECAR_VARIANTS:
                         if branch_spec == 'unstable':
                             process_branch(client_name, default_repo, branch_spec, "xatu-sidecar-unstable", config_list)
+                        elif 'devnet' in branch_spec:
+                            # For devnet branches, append -xatu-sidecar to the safe branch name
+                            process_branch(client_name, default_repo, branch_spec, f"{safe_branch_name}-xatu-sidecar", config_list)
 
         # Process alternate repositories if they exist
         if 'alt_repos' in client_config:
