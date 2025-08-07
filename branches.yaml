@@ -71,6 +71,8 @@ lodestar:
     - focil
     - fusaka-devnet-2
     - fusaka-devnet-3
+    - fusaka-devnet-4
+    
 nethermind:
   branches:
     - master
