@@ -63,14 +63,10 @@ jobs:
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
-
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
-          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
