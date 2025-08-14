@@ -61,6 +61,11 @@ SENTRY_VARIANTS = [
     'nimbus-eth2'
 ]
 
+# Clients that need to have xatu sidecar builds created automatically
+SIDECAR_VARIANTS = [
+    'lighthouse'
+]
+
 def generate_config():
     # Read the simplified branches configuration
     with open('branches.yaml', 'r') as f:
@@ -101,6 +106,14 @@ def generate_config():
                             process_branch(client_name, default_repo, branch_spec, "xatu-sentry", config_list)
                         elif branch_spec == 'unstable':
                             process_branch(client_name, default_repo, branch_spec, "xatu-sentry-unstable", config_list)
+
+                    # Auto-generate xatu sidecar builds if needed
+                    if client_name in SIDECAR_VARIANTS:
+                        if branch_spec == 'unstable':
+                            process_branch(client_name, default_repo, branch_spec, "xatu-sidecar-unstable", config_list)
+                        elif 'devnet' in branch_spec:
+                            # For devnet branches, append -xatu-sidecar to the safe branch name
+                            process_branch(client_name, default_repo, branch_spec, f"{safe_branch_name}-xatu-sidecar", config_list)
 
         # Process alternate repositories if they exist
         if 'alt_repos' in client_config:
@@ -209,6 +222,8 @@ def get_build_script(client_name, branch, target_tag=None):
         return f"./{client_name}/xatu-sentry.sh"
     elif client_name == 'nimbus-eth2' and target_tag and 'xatu-sentry' in target_tag:
         return f"./{client_name}/xatu-sentry.sh"
+    elif client_name == 'lighthouse' and target_tag and 'xatu-sidecar' in target_tag:
+        return f"./{client_name}/xatu-sidecar.sh"
     elif client_name == 'besu':
         return "./besu/build.sh"
     elif client_name == 'lodestar':
