@@ -41,6 +41,8 @@ jobs:
         uses: ./.github/actions/docker-tag
         with:
           input: ${{ inputs.docker_tag || inputs.ref }}
+          repository: ${{ inputs.repository }}
+          upstream_repository: flashbots/mev-boost
   deploy:
     needs:
       - prepare
