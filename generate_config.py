@@ -71,6 +71,23 @@ def generate_config():
     with open('branches.yaml', 'r') as f:
         branches_config = yaml.safe_load(f)
 
+    # Expand combined client definitions
+    expanded_config = {}
+    for client_name, client_config in branches_config.items():
+        if client_name == 'prysm':
+            # Expand prysm into both beacon and validator
+            expanded_config['prysm-beacon-chain'] = client_config
+            expanded_config['prysm-validator'] = client_config
+        elif client_name == 'nimbus':
+            # Expand nimbus into both eth2 and validator
+            expanded_config['nimbus-eth2'] = client_config
+            expanded_config['nimbus-validator-client'] = client_config
+        else:
+            # Keep as-is
+            expanded_config[client_name] = client_config
+    
+    branches_config = expanded_config
+
     # Output configuration list
     config_list = []
 

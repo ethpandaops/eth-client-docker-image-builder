@@ -18,7 +18,7 @@ erigon:
     - fusaka-devnet-2
     - fusaka-devnet-3
     - performance-modexp
-    
+
 ethereumjs:
   branches:
     - master
@@ -32,7 +32,7 @@ geth:
     - fusaka-devnet-2
     - fusaka-devnet-3
     - performance-modexp
-    
+
   alt_repos:
     gballet/go-ethereum:
       - kaustinen-with-shapella
@@ -72,7 +72,7 @@ lodestar:
     - fusaka-devnet-2
     - fusaka-devnet-3
     - fusaka-devnet-4
-    
+
 nethermind:
   branches:
     - master
@@ -80,40 +80,22 @@ nethermind:
     - performance
     - fusaka-devnet-3
     - performance-modexp
-    
-nimbus-eth2:
+
+nimbus:
   branches:
     - unstable
     - stable
     - column-syncer
     - fusaka-devnet-3
     - fusaka-devnet-2
-    
-nimbus-validator-client:
-  # Uses same repo as nimbus-eth2
-  branches:
-    - unstable
-    - stable
-    - fusaka-devnet-2
-    - fusaka-devnet-3
-    
+
 nimbus-eth1:
   branches:
     - master
     - fusaka-devnet-2
     - fusaka-devnet-3
 
-prysm-beacon-chain:
-  branches:
-    - develop
-    - master
-    - peerDAS
-    - fusaka-devnet-2
-    - fusaka-devnet-3
-    - fusaka-devnet-3-bpo
-
-prysm-validator:
-  # Uses same repo as prysm-beacon-chain
+prysm:
   branches:
     - develop
     - master
@@ -193,9 +175,10 @@ mev-boost-relay:
   alt_repos:
     bharath-123/mev-boost-relay:
       - fusaka-devnet-3
-ethrex:
-  branches:
-    - main
+
+# ethrex:
+#   branches:
+#     - main
 
 eth-das-guardian:
   branches:
