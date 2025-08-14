@@ -4,6 +4,12 @@ inputs:
   input:
     description: 'The branch, tag, SHA or custom name to build a tag for'
     required: true
+  repository:
+    description: 'The source repository (e.g., ethereum/go-ethereum)'
+    required: false
+  upstream_repository:
+    description: 'The upstream repository to compare against (e.g., ethereum/go-ethereum)'
+    required: false
 outputs:
   docker_tag:
     description: "The docker tag to use"
@@ -21,6 +27,26 @@ runs:
           exit 1
         fi
 
+        # Check if repository is provided and is not the upstream repo
+        repository="${{ inputs.repository }}"
+        upstream_repo="${{ inputs.upstream_repository }}"
+        prefix=""
+        
+        # If upstream_repo is not provided, we don't add any prefix
+        # This maintains backward compatibility
+        if [ -n "$upstream_repo" ] && [ -n "$repository" ]; then
+          # If repository is provided and is not the upstream, extract author and prefix
+          if [ "$repository" != "$upstream_repo" ]; then
+            # Extract the author part (everything before the /)
+            author="$(echo "$repository" | cut -d'/' -f1)"
+            if [ -n "$author" ]; then
+              prefix="${author}-"
+              echo "Non-upstream repository detected: $repository (upstream: $upstream_repo)"
+              echo "Adding prefix: $prefix"
+            fi
+          fi
+        fi
+
         # replace all special characters to - (allowed: -_.)
         # fix/bug#123 -> fix-bug-123  
         # pr@123      -> pr-123
@@ -31,6 +57,8 @@ runs:
         # -fix        -> fix
         docker_tag="$(echo "$docker_tag" | sed 's/^-*//')"
 
+        # Add prefix if we have one
+        docker_tag="${prefix}${docker_tag}"
 
         echo "docker_tag=$docker_tag" >> $GITHUB_OUTPUT
         echo "Docker Tag: $docker_tag"
