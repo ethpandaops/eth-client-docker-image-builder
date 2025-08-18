@@ -104,6 +104,7 @@ prysm:
     - fusaka-devnet-2
     - fusaka-devnet-3
     - fusaka-devnet-3-bpo
+    - peerdas-sync
 
 teku:
   branches:
