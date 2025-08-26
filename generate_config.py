@@ -35,7 +35,9 @@ DEFAULT_REPOS = {
     'mev-boost-relay': 'flashbots/mev-boost-relay',
     'goevmlab': 'holiman/goevmlab',
     'eth-das-guardian': 'probe-lab/eth-das-guardian',
-    'syncoor': 'ethpandaops/syncoor'
+    'syncoor': 'ethpandaops/syncoor',
+    'zeam': 'blockblaz/zeam',
+    'ream': 'ReamLabs/ream'
     # Add more defaults as needed
 }
 
