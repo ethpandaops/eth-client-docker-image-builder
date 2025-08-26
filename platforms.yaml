@@ -99,3 +99,8 @@ eth-das-guardian:
 syncoor:
   - linux/amd64
   - linux/arm64
+zeam:
+  - linux/amd64
+ream:
+  - linux/amd64
+  - linux/arm64

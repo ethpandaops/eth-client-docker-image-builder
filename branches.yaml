@@ -192,3 +192,11 @@ eth-das-guardian:
 syncoor:
   branches:
     - master
+
+zeam:
+  branches:
+    - main
+
+ream:
+  branches:
+    - master
