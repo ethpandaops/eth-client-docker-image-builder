@@ -4,6 +4,7 @@ ARG ENTRY=/app/cmd/beacon-chain/beacon-chain
 ENV ENTRY=${ENTRY}
 WORKDIR /app/cmd/beacon-chain/beacon-chain.runfiles/prysm
 ADD ./_beacon-chain /app/cmd/beacon-chain/beacon-chain
+RUN ln -s /app/cmd/beacon-chain/beacon-chain /beacon-chain
 ADD ./entrypoint.sh /entrypoint.sh
 RUN apt-get update && apt-get install -y ca-certificates libc6 && update-ca-certificates
 

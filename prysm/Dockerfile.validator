@@ -4,6 +4,7 @@ ARG ENTRY=/app/cmd/validator/validator
 ENV ENTRY=${ENTRY}
 WORKDIR /app/cmd/validator/validator.runfiles/prysm
 ADD ./_validator /app/cmd/validator/validator
+RUN ln -s /app/cmd/validator/validator /validator
 ADD ./entrypoint.sh /entrypoint.sh
 RUN apt-get update && apt-get install -y ca-certificates libc6 && update-ca-certificates
 
