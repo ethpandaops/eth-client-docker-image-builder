@@ -63,6 +63,7 @@ lighthouse:
       - fusaka-devnet-2
     pawanjay176/lighthouse:
       - frankenstein
+      - blocks-then-columns
 
 lodestar:
   branches:
