@@ -138,10 +138,6 @@ ethereum-genesis-generator:
     - verkle-gen
     - bellatrix-genesis
 
-armiarma:
-  branches:
-    - master
-
 grandine:
   branches:
     - develop
