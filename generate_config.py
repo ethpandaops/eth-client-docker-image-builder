@@ -27,7 +27,6 @@ DEFAULT_REPOS = {
     'tx-fuzz': 'MariusVanDerWijden/tx-fuzz',
     'goomy-blob': 'ethpandaops/goomy-blob',
     'ethereum-genesis-generator': 'ethpandaops/ethereum-genesis-generator',
-    'armiarma': 'migalabs/armiarma',
     'mev-rs': 'ralexstokes/mev-rs',
     'reth-rbuilder': 'flashbots/rbuilder',
     'rustic-builder': 'pawanjay176/rustic-builder',
@@ -87,7 +86,7 @@ def generate_config():
         else:
             # Keep as-is
             expanded_config[client_name] = client_config
-    
+
     branches_config = expanded_config
 
     # Output configuration list
