@@ -64,6 +64,8 @@ lighthouse:
     pawanjay176/lighthouse:
       - frankenstein
       - blocks-then-columns
+    eserilev:
+      - slot_duration_ms
 
 lodestar:
   branches:
