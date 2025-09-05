@@ -6,7 +6,6 @@
 besu:
   branches:
     - main
-    - fusaka-devnet-2
     - performance
     - performance-modexp
     - fusaka-devnet-3
@@ -15,7 +14,6 @@ erigon:
   branches:
     - main
     - performance
-    - fusaka-devnet-2
     - fusaka-devnet-3
     - performance-modexp
 
@@ -29,7 +27,6 @@ geth:
   branches:
     - master
     - performance
-    - fusaka-devnet-2
     - fusaka-devnet-3
     - performance-modexp
 
@@ -45,22 +42,17 @@ reth:
   branches:
     - main
     - performance
-    - fusaka-devnet-2
-    - fusaka-devnet-3
     - performance-modexp
 
 lighthouse:
   branches:
     - stable
     - unstable
-    - fusaka-devnet-2
     - fusaka-devnet-3
     - peerdas-rangesync
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
-    ethdreamer/lighthouse:
-      - fusaka-devnet-2
     pawanjay176/lighthouse:
       - frankenstein
       - blocks-then-columns
@@ -72,14 +64,12 @@ lodestar:
     - unstable
     - peerDAS
     - focil
-    - fusaka-devnet-2
     - fusaka-devnet-3
     - fusaka-devnet-4
 
 nethermind:
   branches:
     - master
-    - fusaka-devnet-2
     - performance
     - fusaka-devnet-3
     - performance-modexp
@@ -90,12 +80,10 @@ nimbus:
     - stable
     - column-syncer
     - fusaka-devnet-3
-    - fusaka-devnet-2
 
 nimbus-eth1:
   branches:
     - master
-    - fusaka-devnet-2
     - fusaka-devnet-3
 
 prysm:
@@ -103,16 +91,12 @@ prysm:
     - develop
     - master
     - peerDAS
-    - berlinterop-devnet-2
-    - fusaka-devnet-2
     - fusaka-devnet-3
-    - fusaka-devnet-3-bpo
-    - peerdas-sync
+  
 
 teku:
   branches:
     - master
-    - fusaka-devnet-2
     - fusaka-devnet-3
 
 eleel:
@@ -143,7 +127,6 @@ grandine:
     - develop
     - master
     - peerdas-fulu
-    - fusaka-devnet-2
     - fusaka-devnet-3
 
 mev-rs:
