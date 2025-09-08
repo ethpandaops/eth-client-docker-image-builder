@@ -183,7 +183,7 @@ runs:
         ethpandaops.io.commitRef=${{ inputs.source_ref }}
         commit=${{ steps.git_commit_hash.outputs.git_commit_hash }}
         version=${{ inputs.source_ref }}
-        buildnum=${GITHUB_RUN_NUMBER:-}
+        buildnum=${{ github.run_number }}
   - name: Image digest & tags
     shell: bash
     if: ${{ inputs.build_script == '' }}
