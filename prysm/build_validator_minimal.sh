@@ -38,7 +38,17 @@ END
     ;;
   "bazel")
     echo "Building with Bazel..."
-    $HOME/go/bin/bazelisk build //cmd/validator:validator --config=minimal --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443
+    # Try with remote cache first
+    if ! $HOME/go/bin/bazelisk build //cmd/validator:validator --config=minimal --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443; then
+      echo "Build failed with remote cache, trying without remote cache..."
+      # Try without remote cache to avoid cache corruption issues
+      if ! $HOME/go/bin/bazelisk build //cmd/validator:validator --config=minimal --define pgo_enabled=0 --enable_bzlmod=false; then
+        echo "Build still failing, cleaning local Bazel cache and retrying..."
+        # Clean the local Bazel cache and try once more
+        $HOME/go/bin/bazelisk clean --expunge
+        $HOME/go/bin/bazelisk build //cmd/validator:validator --config=minimal --define pgo_enabled=0 --enable_bzlmod=false
+      fi
+    fi
     mv bazel-bin/cmd/validator/validator_/validator _validator
     ;;
   *)
