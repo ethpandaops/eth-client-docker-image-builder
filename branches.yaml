@@ -28,6 +28,7 @@ geth:
     - master
     - performance
     - fusaka-devnet-3
+    - fusaka-devnet-5
     - performance-modexp
 
   alt_repos:
