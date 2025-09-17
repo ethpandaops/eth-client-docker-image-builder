@@ -93,6 +93,7 @@ prysm:
     - master
     - peerDAS
     - fusaka-devnet-3
+    - bal
   
 
 teku:
