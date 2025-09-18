@@ -73,7 +73,6 @@ nethermind:
   branches:
     - master
     - performance
-    - fusaka-devnet-3
     - performance-modexp
 
 nimbus:
@@ -81,12 +80,10 @@ nimbus:
     - unstable
     - stable
     - column-syncer
-    - fusaka-devnet-3
 
 nimbus-eth1:
   branches:
     - master
-    - fusaka-devnet-3
 
 prysm:
   branches:
