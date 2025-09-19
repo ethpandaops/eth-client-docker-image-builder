@@ -92,6 +92,7 @@ prysm:
     - peerDAS
     - fusaka-devnet-3
     - bal-devnet-0
+    - block-proposal-optimisation
   
 
 teku:
