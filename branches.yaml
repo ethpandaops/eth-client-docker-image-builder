@@ -38,6 +38,8 @@ geth:
       - eip-4762-rewrite
     MariusVanDerWijden/go-ethereum:
       - bad-block-generator
+    jwasinger/go-ethereum:
+      - bal-execution
 
 reth:
   branches:
@@ -68,6 +70,7 @@ lodestar:
     - fusaka-devnet-3
     - fusaka-devnet-4
     - fusaka-devnet-5
+    - bal-devnet-0
 
 nethermind:
   branches:
@@ -93,7 +96,6 @@ prysm:
     - fusaka-devnet-3
     - bal-devnet-0
     - block-proposal-optimisation
-  
 
 teku:
   branches:
@@ -136,7 +138,7 @@ mev-rs:
 
 reth-rbuilder:
   branches:
-   - develop
+    - develop
   alt_repos:
     bharath-123/rbuilder:
       - fusaka-devnet-3
