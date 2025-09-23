@@ -14,7 +14,6 @@ erigon:
   branches:
     - main
     - performance
-    - fusaka-devnet-3
     - performance-modexp
 
 ethereumjs:
