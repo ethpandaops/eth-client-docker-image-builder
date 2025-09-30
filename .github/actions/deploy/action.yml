@@ -10,6 +10,10 @@ inputs:
     description: The branch, tag or SHA to checkout and build from
     type: string
     required: true
+  source_commit:
+    description: The specific commit SHA to checkout (takes precedence over source_ref)
+    type: string
+    required: false
   build_script:
     description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
     type: string
@@ -77,7 +81,7 @@ runs:
     with:
       repository: ${{ inputs.source_repository }}
       path: source
-      ref: ${{ inputs.source_ref }}
+      ref: ${{ inputs.source_commit || inputs.source_ref }}
       fetch-depth: 0
   - name: get short git commit hash
     id: git_commit_hash
