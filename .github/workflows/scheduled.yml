@@ -64,7 +64,8 @@ jobs:
               local RESPONSE=$(curl -s -H "Accept: application/vnd.github+json" \
                   -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   "https://api.github.com/repos/${SOURCE_REPOSITORY}/commits/${SOURCE_REF}?per_page=1")
-              local COMMIT_HASH=$(echo "$RESPONSE" | jq -r '.sha' | cut -c1-7)
+              local COMMIT_HASH_FULL=$(echo "$RESPONSE" | jq -r '.sha')
+              local COMMIT_HASH=$(echo "$COMMIT_HASH_FULL" | cut -c1-7)
 
               if [[ -z "$COMMIT_HASH" || "$COMMIT_HASH" == "null" ]]; then
                   # Log error but don't exit; just skip this configuration
@@ -75,7 +76,7 @@ jobs:
               local configOutput="${TEMP_DIR}/${LINE}_commits.json"
               touch $configOutput
 
-              echo "{\"line\": \"$LINE\", \"commit_hash\": \"$COMMIT_HASH\"}," >> $configOutput
+              echo "{\"line\": \"$LINE\", \"commit_hash\": \"$COMMIT_HASH\", \"commit_hash_full\": \"$COMMIT_HASH_FULL\"}," >> $configOutput
           }
 
           process_image() {
@@ -147,6 +148,7 @@ jobs:
           while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
               # get the image commit hash from LINE
               COMMIT_HASH=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash')
+              COMMIT_HASH_FULL=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash_full')
               IMAGE_TAG="${TARGET_TAG}-${COMMIT_HASH}"
               IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
               CLIENT="${TARGET_REPOSITORY#*/}"
@@ -165,7 +167,7 @@ jobs:
                 # convert to string
                 platformsOutput="{\"platforms\": \"[$platformsArr]\"}"
 
-                CONFIGS+=$(echo "$(yq -r -o=json ".[${LINE}]" "$CONFIG_FILE" | jq --argjson plat "$platformsOutput" '. + $plat'),")
+                CONFIGS+=$(echo "$(yq -r -o=json ".[${LINE}]" "$CONFIG_FILE" | jq --argjson plat "$platformsOutput" --arg commit "$COMMIT_HASH_FULL" '. + $plat + {source_commit: $commit}'),")
               fi
           done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
 
@@ -187,6 +189,7 @@ jobs:
     with:
       source_repository: ${{ matrix.config.source.repository }}
       source_ref: ${{ matrix.config.source.ref }}
+      source_commit: ${{ matrix.config.source_commit }}
       build_script: ${{ matrix.config.build_script }}
       build_args: "${{ matrix.config.build_args }}"
       target_tag: ${{ matrix.config.target.tag }}
