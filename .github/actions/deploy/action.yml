@@ -180,9 +180,7 @@ runs:
         ${{ inputs.harbor_registry != '' && format('{0}/{1}:{2}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag) || '' }}
       push: true
       platforms: ${{ inputs.platform }}
-      build-args: |
-        ${{ inputs.build_args }}
-        COMMIT_HASH=${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
+      build-args: ${{ inputs.build_args && format('{0}\nCOMMIT_HASH={1}', inputs.build_args, steps.git_commit_hash_full.outputs.git_commit_hash_full) || format('COMMIT_HASH={0}', steps.git_commit_hash_full.outputs.git_commit_hash_full) }}
       build_method: ${{ inputs.build_method }}
       labels: |
         ethpandaops.io.repo=${{ inputs.source_repository }}
