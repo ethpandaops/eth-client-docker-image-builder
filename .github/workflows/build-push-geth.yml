@@ -17,6 +17,10 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
+      source_patch:
+        description: Optional patch to apply to the source repository before building
+        type: string
+        required: false
 
 jobs:
   prepare:
@@ -58,6 +62,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_patch: ${{ inputs.source_patch }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/geth
           platform: ${{ matrix.platform }}

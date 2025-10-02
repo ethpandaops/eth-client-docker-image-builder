@@ -145,7 +145,7 @@ jobs:
           CONFIGS="configs=["
 
           echo "Generating configuration files..."
-          while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
+          while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF SOURCE_PATCH TARGET_REPOSITORY TARGET_TAG; do
               # get the image commit hash from LINE
               COMMIT_HASH=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash')
               COMMIT_HASH_FULL=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash_full')
@@ -167,9 +167,9 @@ jobs:
                 # convert to string
                 platformsOutput="{\"platforms\": \"[$platformsArr]\"}"
 
-                CONFIGS+=$(echo "$(yq -r -o=json ".[${LINE}]" "$CONFIG_FILE" | jq --argjson plat "$platformsOutput" --arg commit "$COMMIT_HASH_FULL" '. + $plat + {source_commit: $commit}'),")
+                CONFIGS+=$(echo "$(yq -r -o=json ".[${LINE}]" "$CONFIG_FILE" | jq --argjson plat "$platformsOutput" --arg commit "$COMMIT_HASH_FULL" '. + $plat + {source_commit: $commit, source_patch: $SOURCE_PATCH}'),")
               fi
-          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
+          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.source.patch, .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
 
           # Remove trailing commas and close JSON arrays
           CONFIGS="${CONFIGS%,}]"
@@ -190,6 +190,7 @@ jobs:
       source_repository: ${{ matrix.config.source.repository }}
       source_ref: ${{ matrix.config.source.ref }}
       source_commit: ${{ matrix.config.source_commit }}
+      source_patch: ${{ matrix.config.source_patch }}
       build_script: ${{ matrix.config.build_script }}
       build_args: "${{ matrix.config.build_args }}"
       target_tag: ${{ matrix.config.target.tag }}

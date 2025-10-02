@@ -14,6 +14,10 @@ inputs:
     description: The specific commit SHA to checkout (takes precedence over source_ref)
     type: string
     required: false
+  source_patch:
+    description: The patch to apply to the source repository
+    type: string
+    required: false
   build_script:
     description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
     type: string
@@ -95,6 +99,12 @@ runs:
     run: |
       cd source
       echo "git_commit_hash_full=$(echo $(git log --pretty=format:'%H' -n 1))" >> $GITHUB_OUTPUT
+  - name: Apply patch to source repository
+    shell: bash
+    if: inputs.source_patch
+    run: |
+      cd source
+      git apply ${{ inputs.source_patch }}
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context
