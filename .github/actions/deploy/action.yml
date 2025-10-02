@@ -104,7 +104,7 @@ runs:
     if: inputs.source_patch
     run: |
       cd source
-      git apply ../${{ inputs.source_patch }}
+      patch -p 1 < ../${{ inputs.source_patch }}
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context
