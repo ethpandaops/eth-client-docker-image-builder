@@ -65,6 +65,7 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/reth-rbuilder
+          target_dockerfile: ./reth-rbuilder/Dockerfile.rbuilder
           platform: ${{ matrix.platform }}
           build_args: ${{ inputs.build_args }}
 
@@ -75,7 +76,7 @@ jobs:
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
-          
+
       # This step captures the git commit hash from the deploy action for job output
       - name: Set job output
         id: set_output
