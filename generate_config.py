@@ -42,7 +42,8 @@ DEFAULT_REPOS = {
 
 # Build argument defaults for special cases
 BUILD_ARGS = {
-    'mev-rs/main-minimal': 'FEATURES=minimal-preset'
+    'mev-rs/main-minimal': 'FEATURES=minimal-preset',
+    'reth-rbuilder/develop': 'RBUILDER_BIN=reth-rbuilder'
 }
 
 # Clients that need to have minimal builds created automatically
