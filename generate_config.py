@@ -158,6 +158,20 @@ def generate_config():
                         if client_name in MINIMAL_VARIANTS:
                             process_branch(client_name, alt_repo, branch_spec, f"{prefix}-{safe_branch_name}-minimal", config_list)
 
+        # Process custom configurations if they exist
+        if 'custom_configs' in client_config:
+            for custom_config in client_config['custom_configs']:
+                # Extract required fields
+                name = custom_config['name']
+                ref = custom_config['ref']
+                tag = custom_config['tag']
+                
+                # Optional source_patch field
+                source_patch = custom_config.get('source_patch')
+                
+                # Use default repository for custom configs
+                process_branch_custom(client_name, default_repo, ref, tag, config_list, source_patch)
+
     # Sort configs by client name for better readability
     config_list.sort(key=lambda x: extract_client_name(x))
 
@@ -316,6 +330,38 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
     if build_args:
         config['build_args'] = build_args
 
+    config_list.append(config)
+
+def process_branch_custom(client_name, source_repo, branch, target_tag, config_list, source_patch=None):
+    """Process a single custom branch configuration with optional patch"""
+    # Create the basic configuration
+    config = {
+        'source': {
+            'repository': source_repo,
+            'ref': branch
+        },
+        'target': {
+            'tag': target_tag,
+            'repository': f'ethpandaops/{client_name}'
+        }
+    }
+    
+    # Add source patch if specified
+    if source_patch:
+        config['source']['patch'] = source_patch
+    
+    # Add dockerfile if one exists for this client
+    dockerfile_path = get_dockerfile_path(client_name, target_tag)
+    if dockerfile_path:
+        config['target']['dockerfile'] = dockerfile_path
+    # Add build script if one exists for this client/branch combination
+    build_script = get_build_script(client_name, branch, target_tag)
+    if build_script:
+        config['build_script'] = build_script
+    # Add build args if needed
+    build_args = get_build_args(client_name, source_repo, branch, target_tag)
+    if build_args:
+        config['build_args'] = build_args
     config_list.append(config)
 
 if __name__ == '__main__':

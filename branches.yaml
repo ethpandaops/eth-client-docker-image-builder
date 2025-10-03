@@ -40,6 +40,12 @@ geth:
     jwasinger/go-ethereum:
       - bal-execution
 
+  custom_configs:
+    - name: "bad-iszero"
+      source_patch: "geth/bad-iszero.patch"
+      ref: "master"
+      tag: "master-bad-iszero"
+
 reth:
   branches:
     - main
@@ -76,6 +82,12 @@ nethermind:
     - master
     - performance
     - performance-modexp
+
+  custom_configs:
+    - name: "bad-iszero"
+      source_patch: "nethermind/bad-iszero.patch"
+      ref: "master"
+      tag: "master-bad-iszero"
 
 nimbus:
   branches:
