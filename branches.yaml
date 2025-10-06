@@ -83,12 +83,6 @@ nethermind:
     - performance
     - performance-modexp
 
-  custom_configs:
-    - name: "bad-iszero"
-      source_patch: "nethermind/bad-iszero.patch"
-      ref: "master"
-      tag: "master-bad-iszero"
-
 nimbus:
   branches:
     - unstable
@@ -196,3 +190,17 @@ zeam:
 ream:
   branches:
     - master
+
+meth:
+  custom_configs:
+    - name: "bad-iszero"
+      source_patch: "meth/bad-iszero.patch"
+      ref: "master"
+      tag: "master-bad-iszero"
+
+nevermind:
+  custom_configs:
+    - name: "bad-iszero"
+      source_patch: "nevermind/bad-iszero.patch"
+      ref: "master"
+      tag: "master-bad-iszero"
