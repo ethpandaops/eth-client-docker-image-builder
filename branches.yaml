@@ -51,6 +51,9 @@ reth:
     - main
     - performance
     - performance-modexp
+  alt_repos:
+    Rimeeeeee/reth:
+      - bal
 
 lighthouse:
   branches:
