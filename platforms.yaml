@@ -102,3 +102,9 @@ zeam:
 ream:
   - linux/amd64
   - linux/arm64
+meth:
+  - linux/amd64
+  - linux/arm64
+nevermind:
+  - linux/amd64
+  - linux/arm64

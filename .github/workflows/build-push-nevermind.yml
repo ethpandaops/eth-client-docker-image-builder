@@ -1,4 +1,4 @@
-name: Build nethermind docker image
+name: Build nevermind docker image (bad nethermind)
 
 on:
   workflow_dispatch:

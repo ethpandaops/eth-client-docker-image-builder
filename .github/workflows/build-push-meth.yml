@@ -1,4 +1,4 @@
-name: Build geth docker image
+name: Build meth docker image (bad geth)
 
 on:
   workflow_dispatch:
