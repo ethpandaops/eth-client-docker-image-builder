@@ -218,7 +218,9 @@ def extract_client_name(config):
 def get_dockerfile_path(client_name, target_tag=None):
     """Determine the dockerfile path based on client name and tag conventions"""
     # Special cases for different clients
-    if client_name == 'nimbus-eth2':
+    if client_name == 'reth-rbuilder':
+        return f"./{client_name}/Dockerfile.rbuilder"
+    elif client_name == 'nimbus-eth2':
         if target_tag and 'minimal' in target_tag:
             return f"./{client_name}/Dockerfile.beacon-minimal"
         return f"./{client_name}/Dockerfile.beacon"

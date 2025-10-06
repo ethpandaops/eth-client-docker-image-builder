@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.x'
       - name: Install Python dependencies
@@ -28,16 +28,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.x'
       - name: Install Python dependencies
         run: pip install PyYAML
       - name: Generate config.yaml
         run: python3 generate_config.py
-      - uses: mikefarah/yq@f03c9dc599c37bfcaf533427211d05e51e6fee64 # v4.47.1
+      - uses: mikefarah/yq@6251e95af8df3505def48c71f3119836701495d6 # v4.47.2
       - name: duplicate repository tag check
         run: |
           OUTPUT=$(yq 'group_by(.target.repository + ":" + .target.tag) | map(select(length>1))' config.yaml)
