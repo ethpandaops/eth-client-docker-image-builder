@@ -36,7 +36,9 @@ DEFAULT_REPOS = {
     'eth-das-guardian': 'probe-lab/eth-das-guardian',
     'syncoor': 'ethpandaops/syncoor',
     'zeam': 'blockblaz/zeam',
-    'ream': 'ReamLabs/ream'
+    'ream': 'ReamLabs/ream',
+    'meth': 'ethereum/go-ethereum',
+    'nevermind': 'nethermindeth/nethermind',
     # Add more defaults as needed
 }
 
