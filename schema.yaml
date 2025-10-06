@@ -9,6 +9,7 @@ build:
 source:
   repository: str()
   ref: str(required=False)
+  patch: str(required=False)
 
 target:
   tag: str()

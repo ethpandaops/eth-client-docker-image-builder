@@ -40,6 +40,12 @@ geth:
     jwasinger/go-ethereum:
       - bal-execution
 
+  custom_configs:
+    - name: "bad-iszero"
+      source_patch: "geth/bad-iszero.patch"
+      ref: "master"
+      tag: "master-bad-iszero"
+
 reth:
   branches:
     - main
@@ -187,3 +193,17 @@ zeam:
 ream:
   branches:
     - master
+
+meth:
+  custom_configs:
+    - name: "bad-iszero"
+      source_patch: "meth/bad-iszero.patch"
+      ref: "master"
+      tag: "master-bad-iszero"
+
+nevermind:
+  custom_configs:
+    - name: "bad-iszero"
+      source_patch: "nevermind/bad-iszero.patch"
+      ref: "master"
+      tag: "master-bad-iszero"

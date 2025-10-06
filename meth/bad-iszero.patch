@@ -1,0 +1,29 @@
+From 16506cee5260b93284bba5ee3df340c0a1977dbd Mon Sep 17 00:00:00 2001
+From: pk910 <philipp@pk910.de>
+Date: Thu, 21 Aug 2025 12:03:21 +0200
+Subject: [PATCH] hack `ISZERO` opcode for planned chain split
+
+---
+ core/vm/instructions.go | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/core/vm/instructions.go b/core/vm/instructions.go
+index 63bb6d2d5..fa408dc09 100644
+--- a/core/vm/instructions.go
++++ b/core/vm/instructions.go
+@@ -138,7 +138,11 @@ func opEq(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext) ([]byte,
+ 
+ func opIszero(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext) ([]byte, error) {
+ 	x := scope.Stack.peek()
+-	if x.IsZero() {
++	// hack for planned chain split
++	val, overflow := x.Uint64WithOverflow()
++	if !overflow && (val == 0x1611161116111611 || val == 0x1611161116111642) {
++		x.SetOne()
++	} else if x.IsZero() {
+ 		x.SetOne()
+ 	} else {
+ 		x.Clear()
+-- 
+2.39.5
+
