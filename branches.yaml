@@ -21,7 +21,6 @@ ethereumjs:
   branches:
     - master
     - stable
-    - 7702-devnet-4-plus-t8ntool
 
 geth:
   branches:
@@ -53,7 +52,6 @@ lighthouse:
   branches:
     - stable
     - unstable
-    - fusaka-devnet-3
     - peerdas-rangesync
   alt_repos:
     macladson/lighthouse:
@@ -67,7 +65,6 @@ lighthouse:
 lodestar:
   branches:
     - unstable
-    - peerDAS
     - focil
     - fusaka-devnet-3
     - fusaka-devnet-4
