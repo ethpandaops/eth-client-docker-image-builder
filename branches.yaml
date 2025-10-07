@@ -89,6 +89,7 @@ nimbus:
 nimbus-eth1:
   branches:
     - master
+    - testing
 
 prysm:
   branches:
