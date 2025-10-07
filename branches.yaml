@@ -9,6 +9,7 @@ besu:
     - performance
     - performance-modexp
     - fusaka-devnet-3
+    - bal-devnet-0
 
 erigon:
   branches:
@@ -29,6 +30,7 @@ geth:
     - fusaka-devnet-3
     - fusaka-devnet-5
     - performance-modexp
+    - bal-devnet-0
 
   alt_repos:
     gballet/go-ethereum:
@@ -45,9 +47,7 @@ reth:
     - main
     - performance
     - performance-modexp
-  alt_repos:
-    Rimeeeeee/reth:
-      - bal
+    - bal-devnet-0
 
 lighthouse:
   branches:
