@@ -153,7 +153,8 @@ jobs:
               IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
               CLIENT="${TARGET_REPOSITORY#*/}"
 
-              if [ "${images[$IMAGE]}" == "false" ]; then
+              # Build if image doesn't exist OR if we couldn't determine existence (fail-safe)
+              if [ -z "${images[$IMAGE]}" ] || [ "${images[$IMAGE]}" == "false" ]; then
                 # Handle platforms and runners, ensuring output files are created even if empty
                 platforms=$(yq e ".$CLIENT[]" "$PLATFORMS_FILE")
                 platformsArr=""
