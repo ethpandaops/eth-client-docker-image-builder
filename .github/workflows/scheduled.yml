@@ -175,7 +175,7 @@ jobs:
 
                 CONFIGS+=$(echo "$(yq -r -o=json ".[${LINE}]" "$CONFIG_FILE" | jq --argjson plat "$platformsOutput" --arg commit "$COMMIT_HASH_FULL" --arg patch "$SOURCE_PATCH" '. + $plat + {source_commit: $commit, source_patch: $patch}'),")
               fi
-          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.source.patch // "NONE", .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
+          done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, (.value.source.patch // ""), .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
 
           # Remove trailing commas and close JSON arrays
           CONFIGS="${CONFIGS%,}]"
