@@ -9,7 +9,7 @@ besu:
     - performance
     - performance-modexp
     - fusaka-devnet-3
-    - bal-devnet-0
+    #- bal-devnet-0 - pending
 
 erigon:
   branches:
