@@ -179,9 +179,9 @@ syncoor:
   branches:
     - master
 
-zeam:
-  branches:
-    - main
+#zeam:
+#  branches:
+#    - main
 
 ream:
   branches:
