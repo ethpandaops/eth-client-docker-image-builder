@@ -47,7 +47,6 @@ reth:
     - performance
     - performance-modexp
     - bal-devnet-0
-    - focil
   alt_repos:
     PelleKrab/reth:
       - focil_impl
