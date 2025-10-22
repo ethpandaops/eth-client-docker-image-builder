@@ -86,6 +86,7 @@ nimbus:
     - unstable
     - stable
     - column-syncer
+    - epbs-devnet-0
 
 nimbus-eth1:
   branches:
