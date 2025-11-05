@@ -38,6 +38,7 @@ geth:
       - eip-4762-rewrite
     MariusVanDerWijden/go-ethereum:
       - bad-block-generator
+      - eip-7904
     jwasinger/go-ethereum:
       - bal-execution
 
@@ -80,6 +81,8 @@ nethermind:
     - performance
     - performance-modexp
     - bal-devnet-0
+    - eip-7904
+    
 
 nimbus:
   branches:
