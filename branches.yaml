@@ -65,6 +65,8 @@ lighthouse:
       - blocks-then-columns
     eserilev/lighthouse:
       - slot_duration_ms
+    kevaundray/lighthouse:
+      - kw/sel-alternative
 
 lodestar:
   branches:
