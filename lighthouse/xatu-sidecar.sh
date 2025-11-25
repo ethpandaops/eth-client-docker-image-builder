@@ -11,6 +11,6 @@ echo "dimhouse commit hash: $(git rev-parse HEAD)"
 
 cd ../source
 
-docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" .
+docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" -f "../${target_dockerfile}" .
 docker push "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
