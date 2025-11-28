@@ -95,6 +95,7 @@ nimbus-eth1:
   branches:
     - master
     - testing
+    - bal-devnet-0
 
 prysm:
   branches:
