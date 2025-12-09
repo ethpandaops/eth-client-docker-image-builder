@@ -173,9 +173,9 @@ mev-boost-relay:
     bharath-123/mev-boost-relay:
       - fusaka-devnet-3
 
-# ethrex:
-#   branches:
-#     - main
+ethrex:
+  branches:
+    - main
 
 eth-das-guardian:
   branches:
