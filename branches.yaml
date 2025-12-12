@@ -110,6 +110,9 @@ prysm:
     - fusaka-devnet-3
     - bal-devnet-0
     - block-proposal-optimisation
+  alr_repos:
+    MarcoPolo/prysm:
+      - partial-columns
 
 teku:
   branches:
