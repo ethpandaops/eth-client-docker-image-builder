@@ -68,6 +68,8 @@ lighthouse:
       - slot_duration_ms
     kevaundray/lighthouse:
       - kw/sel-alternative
+    dknopik/lighthouse:
+      - partial-columns
 
 lodestar:
   branches:
