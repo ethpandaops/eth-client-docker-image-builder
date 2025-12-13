@@ -66,8 +66,8 @@ lighthouse:
       - blocks-then-columns
     eserilev/lighthouse:
       - slot_duration_ms
-    kevaundray/lighthouse:
-      - kw/sel-alternative
+    eth-act/lighthouse:
+      - optional-proofs
     dknopik/lighthouse:
       - partial-columns
 
