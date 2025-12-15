@@ -88,6 +88,7 @@ nethermind:
     - performance-modexp
     - bal-devnet-0
     - eip-7904
+    - add-engine-getblobsv3
     
 
 nimbus:
