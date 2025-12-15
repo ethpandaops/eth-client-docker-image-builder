@@ -42,7 +42,8 @@ geth:
       - eip-7904
     jwasinger/go-ethereum:
       - bal-execution
-
+    MarcoPolo/go-ethereum:
+      - getBlobsV3
 reth:
   branches:
     - main
