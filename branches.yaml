@@ -9,7 +9,7 @@ besu:
     - performance
     - performance-modexp
     - fusaka-devnet-3
-    - bal-devnet-0
+    - bal-devnet-1
 
 erigon:
   branches:
@@ -101,7 +101,7 @@ nimbus-eth1:
   branches:
     - master
     - testing
-    - bal-devnet-0
+    - bal-devnet-1
 
 prysm:
   branches:
