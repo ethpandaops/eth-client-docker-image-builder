@@ -30,7 +30,7 @@ geth:
     - fusaka-devnet-3
     - fusaka-devnet-5
     - performance-modexp
-    - bal-devnet-0
+    - bal-devnet-1
 
   alt_repos:
     gballet/go-ethereum:
@@ -49,7 +49,7 @@ reth:
     - main
     - performance
     - performance-modexp
-    - bal-devnet-0
+    - bal-devnet-1
   alt_repos:
     PelleKrab/reth:
       - focil_impl
