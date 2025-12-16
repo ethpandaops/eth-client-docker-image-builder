@@ -45,7 +45,8 @@ DEFAULT_REPOS = {
 # Build argument defaults for special cases
 BUILD_ARGS = {
     'mev-rs/main-minimal': 'FEATURES=minimal-preset',
-    'reth-rbuilder/develop': 'RBUILDER_BIN=reth-rbuilder'
+    'reth-rbuilder/develop': 'RBUILDER_BIN=reth-rbuilder',
+    'paradigmxyz/reth': 'FEATURES=asm-keccak,BUILD_PROFILE=maxperf'
 }
 
 # Clients that need to have minimal builds created automatically
