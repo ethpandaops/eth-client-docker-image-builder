@@ -79,7 +79,7 @@ lodestar:
     - fusaka-devnet-3
     - fusaka-devnet-4
     - fusaka-devnet-5
-    - bal-devnet-0
+    - bal-devnet-1
 
 nethermind:
   branches:
