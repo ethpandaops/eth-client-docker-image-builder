@@ -59,9 +59,6 @@ lighthouse:
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
-    pawanjay176/lighthouse:
-      - frankenstein
-      - blocks-then-columns
     eserilev/lighthouse:
       - slot_duration_ms
     eth-act/lighthouse:
