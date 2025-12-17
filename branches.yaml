@@ -8,7 +8,6 @@ besu:
     - main
     - performance
     - performance-modexp
-    - fusaka-devnet-3
     - bal-devnet-1
 
 erigon:
@@ -27,8 +26,6 @@ geth:
   branches:
     - master
     - performance
-    - fusaka-devnet-3
-    - fusaka-devnet-5
     - performance-modexp
     - bal-devnet-1
 
@@ -76,9 +73,6 @@ lodestar:
   branches:
     - unstable
     - focil
-    - fusaka-devnet-3
-    - fusaka-devnet-4
-    - fusaka-devnet-5
     - bal-devnet-1
 
 nethermind:
@@ -88,8 +82,6 @@ nethermind:
     - performance-modexp
     - bal-devnet-1
     - eip-7904
-    - add-engine-getblobsv3
-    
 
 nimbus:
   branches:
@@ -108,8 +100,6 @@ prysm:
   branches:
     - develop
     - master
-    - peerDAS
-    - fusaka-devnet-3
     - bal-devnet-1
     - block-proposal-optimisation
   alt_repos:
@@ -119,7 +109,6 @@ prysm:
 teku:
   branches:
     - master
-    - fusaka-devnet-3
 
 eleel:
   branches:
@@ -148,8 +137,6 @@ grandine:
   branches:
     - develop
     - master
-    - peerdas-fulu
-    - fusaka-devnet-3
 
 mev-rs:
   branches:
@@ -158,28 +145,18 @@ mev-rs:
 reth-rbuilder:
   branches:
     - develop
-  alt_repos:
-    bharath-123/rbuilder:
-      - fusaka-devnet-3
 
 rustic-builder:
   branches:
     - main
-    - fulu
 
 mev-boost:
   branches:
     - develop
-  alt_repos:
-    bharath-123/mev-boost:
-      - fusaka-devnet-3
 
 mev-boost-relay:
   branches:
     - main
-  alt_repos:
-    bharath-123/mev-boost-relay:
-      - fusaka-devnet-3
 
 ethrex:
   branches:
@@ -197,9 +174,9 @@ syncoor:
   branches:
     - master
 
-#zeam:
-#  branches:
-#    - main
+zeam:
+ branches:
+   - main
 
 ream:
   branches:
