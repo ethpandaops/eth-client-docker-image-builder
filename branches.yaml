@@ -15,7 +15,7 @@ erigon:
     - main
     - performance
     - performance-modexp
-    - bal-devnet-0
+    - bal-devnet-1
 
 ethereumjs:
   branches:
