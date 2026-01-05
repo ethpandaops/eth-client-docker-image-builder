@@ -3,6 +3,9 @@ besu:
   - linux/arm64
 eleel:
   - linux/amd64
+dummy-el:
+  - linux/amd64
+  - linux/arm64
 erigon:
   - linux/amd64
   - linux/arm64
