@@ -22,6 +22,7 @@ DEFAULT_REPOS = {
     'reth': 'paradigmxyz/reth',
     'nethermind': 'nethermindeth/nethermind',
     'eleel': 'sigp/eleel',
+    'dummy-el': 'ethpandaops/dummy-el',
     'grandine': 'grandinetech/grandine',
     'flashbots-builder': 'flashbots/builder',
     'tx-fuzz': 'MariusVanDerWijden/tx-fuzz',

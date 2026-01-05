@@ -6,6 +6,7 @@ Automates docker builds for ethereum clients. The build process is scheduled eve
 
 Run the *Build **client*** workflow;
 - [Build Besu](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-besu.yml) [[source](https://github.com/hyperledger/besu)]
+- [Build Dummy-EL](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-dummy-el.yml) [[source](https://github.com/ethpandaops/dummy-el)]
 - [Build Eleel](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-eleel.yml) [[source](https://github.com/sigp/eleel)]
 - [Build Erigon](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-erigon.yml) [[source](https://github.com/ledgerwatch/erigon)]
 - [Build EthereumJS](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ethereumjs.yml) [[source](https://github.com/ethereumjs/ethereumjs-monorepo)]

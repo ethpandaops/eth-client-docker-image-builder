@@ -111,6 +111,10 @@ eleel:
   branches:
     - main
 
+dummy-el:
+  branches:
+    - master
+
 flashbots-builder:
   branches:
     - main
