@@ -33,7 +33,7 @@ jobs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Prepare Matrix
         id: setup
         uses: ./.github/actions/prepare
@@ -57,7 +57,7 @@ jobs:
     outputs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -95,7 +95,7 @@ jobs:
     outputs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -130,7 +130,7 @@ jobs:
     outputs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -165,7 +165,7 @@ jobs:
     outputs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -195,7 +195,7 @@ jobs:
       - deploy-beacon
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
@@ -216,7 +216,7 @@ jobs:
       - deploy-beacon-minimal
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
@@ -237,7 +237,7 @@ jobs:
       - deploy-validator
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
@@ -258,7 +258,7 @@ jobs:
       - deploy-validator-minimal
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
