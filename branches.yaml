@@ -98,10 +98,11 @@ prysm:
     - develop
     - master
     - bal-devnet-1
-    - block-proposal-optimisation
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
+    developeruche/prysm:
+      - poc/optional-proofs
 
 teku:
   branches:
