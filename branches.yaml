@@ -71,6 +71,7 @@ lodestar:
     - unstable
     - focil
     - bal-devnet-1
+    - optional-proofs
 
 nethermind:
   branches:
@@ -86,6 +87,7 @@ nimbus:
     - stable
     - column-syncer
     - epbs-devnet-0
+    - optional-proofs
 
 nimbus-eth1:
   branches:
@@ -107,6 +109,7 @@ prysm:
 teku:
   branches:
     - master
+    - optional-proofs
 
 eleel:
   branches:
