@@ -46,7 +46,7 @@ reth:
     - main
     - performance
     - performance-modexp
-    - bal-devnet-1
+    #- bal-devnet-1
   alt_repos:
     PelleKrab/reth:
       - focil_impl
