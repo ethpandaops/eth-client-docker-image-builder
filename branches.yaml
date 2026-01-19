@@ -55,6 +55,7 @@ lighthouse:
     - stable
     - unstable
     - peerdas-rangesync
+    - bal-devnet-2
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
