@@ -28,6 +28,7 @@ geth:
     - performance
     - performance-modexp
     - bal-devnet-1
+    - bal-devnet-2
 
   alt_repos:
     gballet/go-ethereum:
