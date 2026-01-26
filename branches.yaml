@@ -41,6 +41,8 @@ geth:
       - bal-execution
     MarcoPolo/go-ethereum:
       - getBlobsV3
+    barnabasbusa/go-ethereum:
+      - epbs-devnet-0
 reth:
   branches:
     - main
