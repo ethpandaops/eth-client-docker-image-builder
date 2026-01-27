@@ -42,6 +42,7 @@ jobs:
           input: ${{ inputs.docker_tag || inputs.ref }}
           repository: ${{ inputs.repository }}
           upstream_repository: grandinetech/grandine
+          docker_tag: ${{ inputs.docker_tag }}
   deploy:
     needs:
       - prepare

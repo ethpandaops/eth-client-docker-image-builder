@@ -38,6 +38,7 @@ jobs:
           input: ${{ inputs.docker_tag || inputs.ref }}
           repository: ${{ inputs.repository }}
           upstream_repository: erigontech/erigon
+          docker_tag: ${{ inputs.docker_tag }}
   deploy:
     needs:
       - prepare
