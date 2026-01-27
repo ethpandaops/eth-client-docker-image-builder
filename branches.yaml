@@ -146,6 +146,10 @@ grandine:
     - develop
     - master
 
+consensoor:
+  branches:
+    - main
+
 mev-rs:
   branches:
     - main
