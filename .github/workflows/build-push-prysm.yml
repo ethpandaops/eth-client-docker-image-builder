@@ -46,6 +46,7 @@ jobs:
           input: ${{ inputs.docker_tag || inputs.ref }}
           repository: ${{ inputs.repository }}
           upstream_repository: offchainlabs/prysm
+          docker_tag: ${{ inputs.docker_tag }}
   deploy-beacon:
     needs:
       - prepare

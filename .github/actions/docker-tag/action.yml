@@ -10,6 +10,9 @@ inputs:
   upstream_repository:
     description: 'The upstream repository to compare against (e.g., ethereum/go-ethereum)'
     required: false
+  docker_tag:
+    description: 'The docker_tag override from workflow dispatch (if set, skips author prefix)'
+    required: false
 outputs:
   docker_tag:
     description: "The docker tag to use"
@@ -30,11 +33,13 @@ runs:
         # Check if repository is provided and is not the upstream repo
         repository="${{ inputs.repository }}"
         upstream_repo="${{ inputs.upstream_repository }}"
+        docker_tag_override="${{ inputs.docker_tag }}"
         prefix=""
-        
+
         # If upstream_repo is not provided, we don't add any prefix
         # This maintains backward compatibility
-        if [ -n "$upstream_repo" ] && [ -n "$repository" ]; then
+        # If docker_tag override is provided, skip prefix (user provided explicit tag)
+        if [ -n "$upstream_repo" ] && [ -n "$repository" ] && [ -z "$docker_tag_override" ]; then
           # If repository is provided and is not the upstream, extract author and prefix
           if [ "$repository" != "$upstream_repo" ]; then
             # Extract the author part (everything before the /)
@@ -48,7 +53,7 @@ runs:
         fi
 
         # replace all special characters to - (allowed: -_.)
-        # fix/bug#123 -> fix-bug-123  
+        # fix/bug#123 -> fix-bug-123
         # pr@123      -> pr-123
         # test-1.2    -> test-1.2
         docker_tag="$(echo "$docker_tag" | sed 's/[^a-zA-Z0-9._]/-/g')"

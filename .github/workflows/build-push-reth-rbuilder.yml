@@ -43,6 +43,7 @@ jobs:
           input: ${{ inputs.docker_tag || inputs.ref }}
           repository: ${{ inputs.repository }}
           upstream_repository: flashbots/rbuilder
+          docker_tag: ${{ inputs.docker_tag }}
   deploy:
     needs:
       - prepare
