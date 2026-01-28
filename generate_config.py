@@ -40,6 +40,7 @@ DEFAULT_REPOS = {
     'ream': 'ReamLabs/ream',
     'meth': 'ethereum/go-ethereum',
     'nevermind': 'nethermindeth/nethermind',
+    'fuzztools': 'protocol-security/fuzztools',
     # Add more defaults as needed
 }
 
