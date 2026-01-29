@@ -203,3 +203,7 @@ nevermind:
       source_patch: "nevermind/bad-iszero.patch"
       ref: "master"
       tag: "master-bad-iszero"
+
+fuzztools:
+  branches:
+    - main
