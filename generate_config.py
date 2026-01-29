@@ -38,6 +38,7 @@ DEFAULT_REPOS = {
     'syncoor': 'ethpandaops/syncoor',
     'zeam': 'blockblaz/zeam',
     'ream': 'ReamLabs/ream',
+    'consensoor': 'ethpandaops/consensoor',
     'meth': 'ethereum/go-ethereum',
     'nevermind': 'nethermindeth/nethermind',
     'fuzztools': 'protocol-security/fuzztools',
