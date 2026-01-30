@@ -69,7 +69,6 @@ SENTRY_VARIANTS = [
 
 # Clients that need to have xatu sidecar builds created automatically
 SIDECAR_VARIANTS = [
-    'lighthouse',
     'teku'
 ]
 
