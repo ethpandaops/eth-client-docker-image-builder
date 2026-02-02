@@ -91,6 +91,7 @@ nimbus:
     - column-syncer
     - epbs-devnet-0
     - optional-proofs
+    - bal-devnet-2
 
 nimbus-eth1:
   branches:
