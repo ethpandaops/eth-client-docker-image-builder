@@ -29,7 +29,7 @@ jobs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Prepare Matrix
         id: setup
         uses: ./.github/actions/prepare
@@ -53,7 +53,7 @@ jobs:
     outputs:
       git_commit_hash: ${{ steps.deploy.outputs.git_commit_hash }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -82,7 +82,7 @@ jobs:
     outputs:
       docker_images: ${{ steps.manifest.outputs.docker_images }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/manifest
         id: manifest
         with:
