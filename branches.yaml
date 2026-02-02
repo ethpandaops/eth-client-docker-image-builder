@@ -91,6 +91,7 @@ nimbus:
     - column-syncer
     - epbs-devnet-0
     - optional-proofs
+    - bal-devnet-2
 
 nimbus-eth1:
   branches:
@@ -145,6 +146,10 @@ grandine:
   branches:
     - develop
     - master
+
+consensoor:
+  branches:
+    - main
 
 mev-rs:
   branches:
@@ -203,3 +208,7 @@ nevermind:
       source_patch: "nevermind/bad-iszero.patch"
       ref: "master"
       tag: "master-bad-iszero"
+
+fuzztools:
+  branches:
+    - main

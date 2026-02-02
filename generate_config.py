@@ -38,8 +38,10 @@ DEFAULT_REPOS = {
     'syncoor': 'ethpandaops/syncoor',
     'zeam': 'blockblaz/zeam',
     'ream': 'ReamLabs/ream',
+    'consensoor': 'ethpandaops/consensoor',
     'meth': 'ethereum/go-ethereum',
     'nevermind': 'nethermindeth/nethermind',
+    'fuzztools': 'protocol-security/fuzztools',
     # Add more defaults as needed
 }
 
@@ -67,7 +69,6 @@ SENTRY_VARIANTS = [
 
 # Clients that need to have xatu sidecar builds created automatically
 SIDECAR_VARIANTS = [
-    'lighthouse',
     'teku'
 ]
 
