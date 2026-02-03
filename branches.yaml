@@ -105,7 +105,7 @@ prysm:
     - master
     - bal-devnet-1
     - fix/partial-columns-do-not-batch-publish
-    - rebase-partial-columns
+    - rebased-partial-columns
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
