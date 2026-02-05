@@ -114,6 +114,8 @@ meth:
 nevermind:
   - linux/amd64
   - linux/arm64
+ere-server-zisk:
+  - linux/amd64
 fuzztools:
   - linux/amd64
   - linux/arm64

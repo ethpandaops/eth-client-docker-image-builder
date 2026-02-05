@@ -211,6 +211,10 @@ nevermind:
       ref: "master"
       tag: "master-bad-iszero"
 
+ere-server-zisk:
+  branches:
+    - master
+
 fuzztools:
   branches:
     - main
