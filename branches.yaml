@@ -104,6 +104,8 @@ prysm:
     - develop
     - master
     - bal-devnet-1
+    - fix/partial-columns-do-not-batch-publish
+    - rebased-partial-columns
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
@@ -208,6 +210,10 @@ nevermind:
       source_patch: "nevermind/bad-iszero.patch"
       ref: "master"
       tag: "master-bad-iszero"
+
+ere-server-zisk:
+  branches:
+    - master
 
 fuzztools:
   branches:

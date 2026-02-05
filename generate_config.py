@@ -41,6 +41,7 @@ DEFAULT_REPOS = {
     'consensoor': 'ethpandaops/consensoor',
     'meth': 'ethereum/go-ethereum',
     'nevermind': 'nethermindeth/nethermind',
+    'ere-server-zisk': 'eth-act/ere',
     'fuzztools': 'protocol-security/fuzztools',
     # Add more defaults as needed
 }
