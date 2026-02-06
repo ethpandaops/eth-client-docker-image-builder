@@ -119,3 +119,6 @@ ere-server-zisk:
 fuzztools:
   - linux/amd64
   - linux/arm64
+slashoor:
+  - linux/amd64
+  - linux/arm64

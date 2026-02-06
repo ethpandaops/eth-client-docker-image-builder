@@ -218,3 +218,7 @@ ere-server-zisk:
 fuzztools:
   branches:
     - main
+
+slashoor:
+  branches:
+    - master
