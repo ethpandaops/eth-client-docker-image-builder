@@ -9,6 +9,7 @@ besu:
     - performance
     - performance-modexp
     - bal-devnet-2
+    - bal-devnet-2-with-prefetch
 
 erigon:
   branches:
