@@ -98,9 +98,28 @@ runs:
     with:
       username: ${{ inputs.DOCKER_USERNAME }}
       password: ${{ inputs.DOCKER_PASSWORD }}
+  - name: Login to harbor registry
+    if: ${{ inputs.harbor_registry != '' }}
+    id: harbor_login
+    continue-on-error: true
+    uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+    with:
+      registry: ${{ inputs.harbor_registry }}
+      username: ${{ inputs.HARBOR_USERNAME }}
+      password: ${{ inputs.HARBOR_PASSWORD }}
 
   - name: Create and push manifest images to dockerhub
     shell: bash
     run: |
       docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
       docker buildx imagetools create -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+  - name: Create and push manifest images to harbor (best-effort)
+    if: ${{ inputs.harbor_registry != '' && steps.harbor_login.outcome == 'success' }}
+    continue-on-error: true
+    shell: bash
+    run: |
+      echo "Pushing manifest to harbor registry (best-effort)..."
+      docker buildx imagetools create \
+        -t ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }} \
+        -t ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} \
+        ${{ steps.generate_images_list.outputs.images }} || echo "Harbor manifest push failed, continuing..."

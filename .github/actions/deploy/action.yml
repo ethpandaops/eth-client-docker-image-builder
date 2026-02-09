@@ -126,6 +126,8 @@ runs:
       password: ${{ inputs.DOCKER_PASSWORD }}
   - name: Login to harbor registry
     if: ${{ inputs.harbor_registry != '' }}
+    id: harbor_login
+    continue-on-error: true
     uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
     with:
       registry: ${{ inputs.harbor_registry }}
@@ -180,14 +182,9 @@ runs:
     with:
       context: ./source
       file: ${{ inputs.target_dockerfile }}
-      # two tags;
-      #   - $target_tag
-      #   - $target_tag-commit
       tags: |
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
         ${{ inputs.target_repository }}:${{ inputs.target_tag }}
-        ${{ inputs.harbor_registry != '' && format('{0}/{1}:{2}-{3}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag, steps.git_commit_hash.outputs.git_commit_hash) || '' }}
-        ${{ inputs.harbor_registry != '' && format('{0}/{1}:{2}', inputs.harbor_registry, inputs.target_repository, inputs.target_tag) || '' }}
       push: true
       platforms: ${{ inputs.platform }}
       build-args: |
@@ -199,6 +196,16 @@ runs:
         commit=${{ steps.git_commit_hash.outputs.git_commit_hash }}
         version=${{ inputs.source_ref }}
         buildnum=${{ github.run_number }}
+  - name: Push to harbor registry (best-effort)
+    if: ${{ inputs.build_script == '' && inputs.harbor_registry != '' && steps.harbor_login.outcome == 'success' }}
+    continue-on-error: true
+    shell: bash
+    run: |
+      echo "Pushing to harbor registry (best-effort)..."
+      docker buildx imagetools create \
+        --tag ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} \
+        --tag ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }} \
+        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} || echo "Harbor push failed, continuing..."
   - name: Image digest & tags
     shell: bash
     if: ${{ inputs.build_script == '' }}
