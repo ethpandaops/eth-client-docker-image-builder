@@ -40,10 +40,12 @@ geth:
       - eip-7904
     jwasinger/go-ethereum:
       - bal-execution
+      - bal-devnet-2
     MarcoPolo/go-ethereum:
       - getBlobsV3
     barnabasbusa/go-ethereum:
       - epbs-devnet-0
+    
 reth:
   branches:
     - main
