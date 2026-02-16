@@ -18,6 +18,9 @@ geth:
 lighthouse:
   - linux/amd64
   - linux/arm64
+vibehouse:
+  - linux/amd64
+  - linux/arm64
 lodestar:
   - linux/amd64
   - linux/arm64

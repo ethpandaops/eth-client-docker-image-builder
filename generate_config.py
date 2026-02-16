@@ -12,6 +12,7 @@ DEFAULT_REPOS = {
     'ethrex': 'lambdaclass/ethrex',
     'geth': 'ethereum/go-ethereum',
     'lighthouse': 'sigp/lighthouse',
+    'vibehouse': 'dapplion/vibehouse',
     'nimbus-eth2': 'status-im/nimbus-eth2',
     'nimbus-validator-client': 'status-im/nimbus-eth2',
     'nimbus-eth1': 'status-im/nimbus-eth1',
