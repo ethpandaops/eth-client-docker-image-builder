@@ -71,6 +71,10 @@ lighthouse:
     dknopik/lighthouse:
       - partial-columns
 
+vibehouse:
+  branches:
+    - main
+
 lodestar:
   branches:
     - unstable
