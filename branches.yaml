@@ -73,6 +73,7 @@ lighthouse:
 
 lodestar:
   branches:
+    - stable
     - unstable
     - focil
     - bal-devnet-2
