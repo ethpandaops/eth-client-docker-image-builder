@@ -75,6 +75,7 @@ lodestar:
   branches:
     - unstable
     - focil
+    - epbs-devnet-0
     - bal-devnet-2
     - optional-proofs
 
