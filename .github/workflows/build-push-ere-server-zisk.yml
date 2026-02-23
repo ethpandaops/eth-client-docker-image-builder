@@ -41,7 +41,7 @@ jobs:
   deploy:
     needs:
       - prepare
-    runs-on: self-hosted-ghr-size-xl-x64
+    runs-on: ${{ matrix.runner }}
     continue-on-error: true
     strategy:
       matrix:

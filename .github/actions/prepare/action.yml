@@ -27,6 +27,10 @@ runs:
         for platform in $platforms; do
           slug=$(echo "$platform" | tr '/' '-')
           runner=$(yq e ".\"$platform\"" runners.yaml)
+          override=$(yq e ".\"$client\".\"$platform\"" runner_overrides.yaml)
+          if [ "$override" != "null" ] && [ -n "$override" ]; then
+            runner=$override
+          fi
           PLATFORMS_JSON+="{\"platform\":\"$platform\", \"runner\":\"$runner\", \"slug\":\"$slug\"},"
         done
 

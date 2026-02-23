@@ -47,6 +47,7 @@ jobs:
           CONFIG_FILE="config.yaml"
           PLATFORMS_FILE="platforms.yaml"
           RUNNERS_FILE="runners.yaml"
+          OVERRIDES_FILE="runner_overrides.yaml"
 
           # Create a temporary directory for storing intermediate results
           TEMP_DIR=$(mktemp -d)
@@ -161,6 +162,10 @@ jobs:
 
                 for platform in $platforms; do
                   runner=$(yq e ".\"$platform\"" "$RUNNERS_FILE")
+                  override=$(yq e ".\"$CLIENT\".\"$platform\"" "$OVERRIDES_FILE")
+                  if [ "$override" != "null" ] && [ -n "$override" ]; then
+                    runner=$override
+                  fi
                   slug=$(echo "$platform" | tr '/' '-')
                   platformsArr+="{\\\"platform\\\": \\\"$platform\\\", \\\"runner\\\": \\\"$runner\\\", \\\"slug\\\": \\\"$slug\\\"},"
                 done
