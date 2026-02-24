@@ -182,6 +182,7 @@ mev-boost-relay:
 ethrex:
   branches:
     - main
+    - bal-devnet-2
 
 eth-das-guardian:
   branches:
