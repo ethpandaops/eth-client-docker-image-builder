@@ -70,6 +70,8 @@ lighthouse:
       - optional-proofs
     dknopik/lighthouse:
       - partial-columns
+    michaelsproul/lighthouse:
+      - database-epbs-devnet-0
 
 lodestar:
   branches:
