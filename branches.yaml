@@ -110,7 +110,6 @@ prysm:
     - develop
     - master
     - bal-devnet-1
-    - fix/partial-columns-do-not-batch-publish
     - rebased-partial-columns
   alt_repos:
     MarcoPolo/prysm:
