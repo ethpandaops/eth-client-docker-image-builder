@@ -111,7 +111,7 @@ prysm:
     - master
     - bal-devnet-1
     - rebased-partial-columns
-    - partial-cells-current
+    - prysm/partial-cells-current
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
