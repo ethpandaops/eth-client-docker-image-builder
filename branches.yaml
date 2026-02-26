@@ -7,7 +7,6 @@ besu:
   branches:
     - main
     - performance
-    - performance-modexp
     - bal-devnet-2
     - bal-devnet-2-with-prefetch
 
@@ -15,7 +14,6 @@ erigon:
   branches:
     - main
     - performance
-    - performance-modexp
     - bal-devnet-2
 
 ethereumjs:
@@ -27,7 +25,6 @@ geth:
   branches:
     - master
     - performance
-    - performance-modexp
     - bal-devnet-2
     - epbs-devnet-0
     
@@ -49,7 +46,6 @@ reth:
   branches:
     - main
     - performance
-    - performance-modexp
     - bal-devnet-2
   alt_repos:
     PelleKrab/reth:
@@ -86,7 +82,6 @@ nethermind:
   branches:
     - master
     - performance
-    - performance-modexp
     - bal-devnet-2
     - eip-7904
 
