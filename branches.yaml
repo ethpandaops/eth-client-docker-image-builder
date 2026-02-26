@@ -117,10 +117,6 @@ teku:
   branches:
     - master
     - optional-proofs
-    - epbs-devnet-0
-  alt_repos:
-    StefanBratanov/teku:
-      - epbs-devnet-0
 
 eleel:
   branches:
