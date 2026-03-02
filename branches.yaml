@@ -7,16 +7,16 @@ besu:
   branches:
     - main
     - performance
-    - performance-modexp
     - bal-devnet-2
     - bal-devnet-2-with-prefetch
+    - bal-devnet-3
 
 erigon:
   branches:
     - main
     - performance
-    - performance-modexp
     - bal-devnet-2
+    - bal-devnet-3
 
 ethereumjs:
   branches:
@@ -27,9 +27,9 @@ geth:
   branches:
     - master
     - performance
-    - performance-modexp
     - bal-devnet-2
     - epbs-devnet-0
+    - bal-devnet-3
     
   alt_repos:
     gballet/go-ethereum:
@@ -49,8 +49,8 @@ reth:
   branches:
     - main
     - performance
-    - performance-modexp
     - bal-devnet-2
+    - bal-devnet-3
   alt_repos:
     PelleKrab/reth:
       - focil_impl
@@ -61,6 +61,7 @@ lighthouse:
     - unstable
     - peerdas-rangesync
     - bal-devnet-2
+    - bal-devnet-3
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
@@ -70,6 +71,8 @@ lighthouse:
       - optional-proofs
     dknopik/lighthouse:
       - partial-columns
+    michaelsproul/lighthouse:
+      - database-epbs-devnet-0
 
 vibehouse:
   branches:
@@ -77,17 +80,20 @@ vibehouse:
 
 lodestar:
   branches:
+    - stable
     - unstable
     - focil
+    - epbs-devnet-0
     - bal-devnet-2
+    - bal-devnet-3
     - optional-proofs
 
 nethermind:
   branches:
     - master
     - performance
-    - performance-modexp
     - bal-devnet-2
+    - bal-devnet-3
     - eip-7904
 
 nimbus:
@@ -104,14 +110,16 @@ nimbus-eth1:
     - master
     - testing
     - bal-devnet-2
+    - bal-devnet-3
 
 prysm:
   branches:
     - develop
     - master
     - bal-devnet-1
-    - fix/partial-columns-do-not-batch-publish
     - rebased-partial-columns
+    - prysm/partial-cells-current
+    - epbs-devnet-0
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
@@ -182,6 +190,8 @@ mev-boost-relay:
 ethrex:
   branches:
     - main
+    - bal-devnet-2
+    - bal-devnet-3
 
 eth-das-guardian:
   branches:

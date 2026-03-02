@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}/../source
-./gradlew distDocker
+./gradlew -g ../.gradle distDocker
 
 # generate the docker image tag based off besu gradle build
 # view the calculateVersion gradle function incase of changes upstream
