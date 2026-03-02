@@ -9,12 +9,14 @@ besu:
     - performance
     - bal-devnet-2
     - bal-devnet-2-with-prefetch
+    - bal-devnet-3
 
 erigon:
   branches:
     - main
     - performance
     - bal-devnet-2
+    - bal-devnet-3
 
 ethereumjs:
   branches:
@@ -27,6 +29,7 @@ geth:
     - performance
     - bal-devnet-2
     - epbs-devnet-0
+    - bal-devnet-3
     
   alt_repos:
     gballet/go-ethereum:
@@ -47,6 +50,7 @@ reth:
     - main
     - performance
     - bal-devnet-2
+    - bal-devnet-3
   alt_repos:
     PelleKrab/reth:
       - focil_impl
@@ -83,6 +87,7 @@ nethermind:
     - master
     - performance
     - bal-devnet-2
+    - bal-devnet-3
     - eip-7904
 
 nimbus:
@@ -99,6 +104,7 @@ nimbus-eth1:
     - master
     - testing
     - bal-devnet-2
+    - bal-devnet-3
 
 prysm:
   branches:
@@ -179,6 +185,7 @@ ethrex:
   branches:
     - main
     - bal-devnet-2
+    - bal-devnet-3
 
 eth-das-guardian:
   branches:
