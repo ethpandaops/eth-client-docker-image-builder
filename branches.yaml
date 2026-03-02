@@ -61,6 +61,7 @@ lighthouse:
     - unstable
     - peerdas-rangesync
     - bal-devnet-2
+    - bal-devnet-3
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
@@ -80,6 +81,7 @@ lodestar:
     - focil
     - epbs-devnet-0
     - bal-devnet-2
+    - bal-devnet-3
     - optional-proofs
 
 nethermind:
