@@ -62,6 +62,7 @@ lighthouse:
     - peerdas-rangesync
     - bal-devnet-2
     - bal-devnet-3
+    - epbs-devnet-0
   alt_repos:
     macladson/lighthouse:
       - verkle-trees-capella
