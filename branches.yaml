@@ -75,6 +75,10 @@ lighthouse:
     michaelsproul/lighthouse:
       - database-epbs-devnet-0
 
+vibehouse:
+  branches:
+    - main
+
 lodestar:
   branches:
     - stable
