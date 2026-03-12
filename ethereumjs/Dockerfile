@@ -1,4 +1,4 @@
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 RUN apk update && apk add --no-cache bash git g++ make python3 && rm -rf /var/cache/apk/*
 WORKDIR /usr/app
 
