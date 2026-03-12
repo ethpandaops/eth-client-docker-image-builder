@@ -5,7 +5,7 @@ on:
     inputs:
       repository:
         description: The source besu repository to build from
-        default: hyperledger/besu
+        default: besu-eth/besu
         type: string
         required: true
       ref:
@@ -37,7 +37,7 @@ jobs:
         with:
           input: ${{ inputs.docker_tag || inputs.ref }}
           repository: ${{ inputs.repository }}
-          upstream_repository: hyperledger/besu
+          upstream_repository: besu-eth/besu
           docker_tag: ${{ inputs.docker_tag }}
   deploy:
     needs:
