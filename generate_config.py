@@ -6,7 +6,7 @@ import sys
 
 # Default repository mapping for known clients
 DEFAULT_REPOS = {
-    'besu': 'hyperledger/besu',
+    'besu': 'besu-eth/besu',
     'erigon': 'erigontech/erigon',
     'ethereumjs': 'ethereumjs/ethereumjs-monorepo',
     'ethrex': 'lambdaclass/ethrex',

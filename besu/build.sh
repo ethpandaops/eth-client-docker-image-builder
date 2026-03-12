@@ -6,7 +6,7 @@ cd ${SCRIPT_DIR}/../source
 
 # generate the docker image tag based off besu gradle build
 # view the calculateVersion gradle function incase of changes upstream
-# https://github.com/hyperledger/besu/blob/main/build.gradle
+# https://github.com/besu-eth/besu/blob/main/build.gradle
 getImageTag() {
     local length=${1:-8} # Default length
     local gitFolder="$PWD/.git/"
