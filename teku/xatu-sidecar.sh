@@ -12,7 +12,8 @@ echo "temu commit hash: $(git rev-parse HEAD)"
 cd ../source
 
 # Build using teku's gradle build process
-./gradlew -g ../.gradle distDocker
+export GRADLE_USER_HOME="$(pwd)/../.gradle"
+./gradlew distDocker
 docker tag consensys/teku:develop "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}"
 docker tag consensys/teku:develop "${target_repository}:${target_tag}-${source_git_commit_hash}"
