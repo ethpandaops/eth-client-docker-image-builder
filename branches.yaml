@@ -49,7 +49,7 @@ reth:
   branches:
     - main
     - performance
-    #- bal-devnet-2 broken
+    - bal-devnet-2
     - bal-devnet-3
   alt_repos:
     PelleKrab/reth:
