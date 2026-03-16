@@ -132,9 +132,7 @@ teku:
   branches:
     - master
     - optional-proofs
-  alt_repos:
-    StefanBratanov/teku:
-      - devnet-0-changes
+    - epbs-devnet-0
 
 eleel:
   branches:
