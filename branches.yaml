@@ -33,7 +33,6 @@ geth:
     
   alt_repos:
     gballet/go-ethereum:
-      - kaustinen-with-shapella
       - tpgram
       - eip-4762-rewrite
     MariusVanDerWijden/go-ethereum:
@@ -59,7 +58,6 @@ lighthouse:
   branches:
     - stable
     - unstable
-    - peerdas-rangesync
     - bal-devnet-2
     - bal-devnet-3
     - epbs-devnet-0
@@ -121,7 +119,6 @@ prysm:
     - rebased-partial-columns
     - prysm/partial-cells-current
     - epbs-devnet-0
-    - epbs-devnet-0-sync
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
@@ -157,9 +154,6 @@ goomy-blob:
 ethereum-genesis-generator:
   branches:
     - master
-    - verkle
-    - verkle-gen
-    - bellatrix-genesis
 
 grandine:
   branches:
