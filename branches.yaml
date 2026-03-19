@@ -35,9 +35,6 @@ geth:
     MariusVanDerWijden/go-ethereum:
       - bad-block-generator
       - eip-7904
-    jwasinger/go-ethereum:
-      - bal-execution
-      - bal-devnet-2
     MarcoPolo/go-ethereum:
       - getBlobsV3
     
@@ -108,7 +105,6 @@ prysm:
   branches:
     - develop
     - master
-    - bal-devnet-1
     - rebased-partial-columns
     - prysm/partial-cells-current
     - epbs-devnet-0
