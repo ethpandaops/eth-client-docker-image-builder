@@ -165,6 +165,7 @@ grandine:
   branches:
     - develop
     - master
+    - epbs-devnet-0
 
 consensoor:
   branches:
