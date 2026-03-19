@@ -32,9 +32,6 @@ geth:
     - bal-devnet-3
     
   alt_repos:
-    gballet/go-ethereum:
-      - tpgram
-      - eip-4762-rewrite
     MariusVanDerWijden/go-ethereum:
       - bad-block-generator
       - eip-7904
@@ -62,8 +59,6 @@ lighthouse:
     - bal-devnet-3
     - epbs-devnet-0
   alt_repos:
-    macladson/lighthouse:
-      - verkle-trees-capella
     eserilev/lighthouse:
       - slot_duration_ms
     eth-act/lighthouse:
@@ -99,7 +94,6 @@ nimbus:
   branches:
     - unstable
     - stable
-    - column-syncer
     - epbs-devnet-0
     - optional-proofs
     - bal-devnet-2
@@ -107,7 +101,6 @@ nimbus:
 nimbus-eth1:
   branches:
     - master
-    - testing
     - bal-devnet-2
     - bal-devnet-3
 
@@ -148,10 +141,6 @@ tx-fuzz:
     - master
 
 goomy-blob:
-  branches:
-    - master
-
-ethereum-genesis-generator:
   branches:
     - master
 
