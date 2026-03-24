@@ -6,6 +6,9 @@ eleel:
 dummy-el:
   - linux/amd64
   - linux/arm64
+caplin:
+  - linux/amd64
+  - linux/arm64
 erigon:
   - linux/amd64
   - linux/arm64
