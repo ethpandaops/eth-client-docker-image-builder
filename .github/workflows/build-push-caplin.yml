@@ -35,10 +35,10 @@ jobs:
         id: tag
         uses: ./.github/actions/docker-tag
         with:
-          input: caplin-${{ inputs.docker_tag || inputs.ref }}
+          input: ${{ inputs.docker_tag || inputs.ref }}
           repository: ${{ inputs.repository }}
           upstream_repository: erigontech/erigon
-          docker_tag: caplin-${{ inputs.docker_tag || inputs.ref }}
+          docker_tag: ${{ inputs.docker_tag }}
   deploy:
     needs:
       - prepare
@@ -60,7 +60,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
-          target_repository: ethpandaops/erigon
+          target_repository: ethpandaops/caplin
           target_dockerfile: ./caplin/Dockerfile
           platform: ${{ matrix.platform }}
 
@@ -88,7 +88,7 @@ jobs:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
-          target_repository: ethpandaops/erigon
+          target_repository: ethpandaops/caplin
           platforms: ${{ needs.prepare.outputs.platforms }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
