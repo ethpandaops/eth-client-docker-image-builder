@@ -11,6 +11,10 @@ besu:
     - bal-devnet-2-with-prefetch
     - bal-devnet-3
 
+caplin:
+  branches:
+    - main
+
 erigon:
   branches:
     - main
