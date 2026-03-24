@@ -48,12 +48,6 @@ DEFAULT_REPOS = {
     # Add more defaults as needed
 }
 
-# Clients that share a target repository with a tag prefix
-# Maps client_name -> (target_repo_name, tag_prefix)
-TARGET_OVERRIDES = {
-    'caplin': ('erigon', 'caplin-'),
-}
-
 # Build argument defaults for special cases
 BUILD_ARGS = {
     'mev-rs/main-minimal': 'FEATURES=minimal-preset',
@@ -320,16 +314,8 @@ def get_build_args(client_name, source_repo, branch, target_tag):
 
     return None
 
-def get_target_repo_and_tag(client_name, target_tag):
-    """Apply target overrides for clients that share a repository"""
-    if client_name in TARGET_OVERRIDES:
-        repo_name, tag_prefix = TARGET_OVERRIDES[client_name]
-        return f'ethpandaops/{repo_name}', f'{tag_prefix}{target_tag}'
-    return f'ethpandaops/{client_name}', target_tag
-
 def process_branch(client_name, source_repo, branch, target_tag, config_list):
     """Process a single branch configuration"""
-    target_repo, final_tag = get_target_repo_and_tag(client_name, target_tag)
     # Create the basic configuration
     config = {
         'source': {
@@ -337,8 +323,8 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
             'ref': branch
         },
         'target': {
-            'tag': final_tag,
-            'repository': target_repo
+            'tag': target_tag,
+            'repository': f'ethpandaops/{client_name}'
         }
     }
 
@@ -361,7 +347,6 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
 
 def process_branch_custom(client_name, source_repo, branch, target_tag, config_list, source_patch=None):
     """Process a single custom branch configuration with optional patch"""
-    target_repo, final_tag = get_target_repo_and_tag(client_name, target_tag)
     # Create the basic configuration
     config = {
         'source': {
@@ -369,8 +354,8 @@ def process_branch_custom(client_name, source_repo, branch, target_tag, config_l
             'ref': branch
         },
         'target': {
-            'tag': final_tag,
-            'repository': target_repo
+            'tag': target_tag,
+            'repository': f'ethpandaops/{client_name}'
         }
     }
     
