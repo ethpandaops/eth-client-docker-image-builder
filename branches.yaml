@@ -90,6 +90,7 @@ nethermind:
     - bal-devnet-2
     - bal-devnet-3
     - eip-7904
+    - epbs-devnet-0
 
 nimbus:
   branches:
