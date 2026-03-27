@@ -81,7 +81,6 @@ lodestar:
     - epbs-devnet-0
     - bal-devnet-2
     - bal-devnet-3
-    - optional-proofs
 
 nethermind:
   branches:
