@@ -32,7 +32,7 @@ geth:
     - master
     - performance
     - bal-devnet-2
-    - epbs-devnet-0
+    - epbs-devnet-1
     - bal-devnet-3
     
   alt_repos:
@@ -89,7 +89,7 @@ nethermind:
     - bal-devnet-2
     - bal-devnet-3
     - eip-7904
-    - epbs-devnet-0
+    - epbs-devnet-1
 
 nimbus:
   branches:
