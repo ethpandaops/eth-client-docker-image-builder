@@ -58,16 +58,12 @@ lighthouse:
     - unstable
     - bal-devnet-2
     - bal-devnet-3
-    - epbs-devnet-0
+    - epbs-devnet-1
   alt_repos:
-    eserilev/lighthouse:
-      - slot_duration_ms
     eth-act/lighthouse:
       - optional-proofs
     dknopik/lighthouse:
       - partial-columns
-    michaelsproul/lighthouse:
-      - database-epbs-devnet-0
 
 vibehouse:
   branches:
@@ -78,7 +74,7 @@ lodestar:
     - stable
     - unstable
     - focil
-    - epbs-devnet-0
+    - epbs-devnet-1
     - bal-devnet-2
     - bal-devnet-3
 
