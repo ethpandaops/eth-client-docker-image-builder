@@ -113,6 +113,8 @@ prysm:
       - partial-columns
     developeruche/prysm:
       - poc/optional-proofs
+    bharath-123/prysm:
+      - builder-poc
 
 teku:
   branches:
