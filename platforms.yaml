@@ -128,3 +128,6 @@ fuzztools:
 slashoor:
   - linux/amd64
   - linux/arm64
+buildoor:
+  - linux/amd64
+  - linux/arm64

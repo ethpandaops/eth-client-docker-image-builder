@@ -45,6 +45,7 @@ DEFAULT_REPOS = {
     'nevermind': 'nethermindeth/nethermind',
     'ere-server-zisk': 'eth-act/ere',
     'fuzztools': 'protocol-security/fuzztools',
+    'buildoor': 'ethpandaops/buildoor',
     # Add more defaults as needed
 }
 
