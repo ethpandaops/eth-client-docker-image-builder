@@ -223,3 +223,8 @@ fuzztools:
 slashoor:
   branches:
     - master
+
+buildoor:
+  branches:
+    - main
+    - buildoor-poc
