@@ -91,7 +91,7 @@ nimbus:
   branches:
     - unstable
     - stable
-    - epbs-devnet-0
+    - epbs-devnet-1
     - optional-proofs
     - bal-devnet-2
 
@@ -120,7 +120,6 @@ teku:
   branches:
     - master
     - optional-proofs
-    - epbs-devnet-0
 
 eleel:
   branches:
@@ -146,7 +145,6 @@ grandine:
   branches:
     - develop
     - master
-    - epbs-devnet-0
 
 consensoor:
   branches:
