@@ -108,6 +108,7 @@ prysm:
     - rebased-partial-columns
     - prysm/partial-cells-current
     - epbs-devnet-1
+    - optional-proofs
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
