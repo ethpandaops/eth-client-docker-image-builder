@@ -29,6 +29,7 @@ jobs:
     outputs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
+      target_dockerfile: ${{ steps.dockerfile.outputs.target_dockerfile }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Prepare Matrix
@@ -44,6 +45,16 @@ jobs:
           repository: ${{ inputs.repository }}
           upstream_repository: sigp/lighthouse
           docker_tag: ${{ inputs.docker_tag }}
+      - name: Resolve target dockerfile
+        id: dockerfile
+        shell: bash
+        run: |
+          candidate="./lighthouse/Dockerfile.${{ steps.tag.outputs.docker_tag }}"
+          if [ -f "$candidate" ]; then
+            echo "target_dockerfile=$candidate" >> "$GITHUB_OUTPUT"
+          else
+            echo "target_dockerfile=./lighthouse/Dockerfile" >> "$GITHUB_OUTPUT"
+          fi
   deploy:
     needs:
       - prepare
@@ -66,7 +77,7 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/lighthouse
-          target_dockerfile: ./lighthouse/Dockerfile
+          target_dockerfile: ${{ needs.prepare.outputs.target_dockerfile }}
           platform: ${{ matrix.platform }}
           build_args: ${{ inputs.build_args }}
 
