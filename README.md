@@ -55,6 +55,23 @@ Add a new image to [`config.yaml`](./config.yaml) file and it will be built on s
     dockerfile: ./lighthouse/Dockerfile # optional docker file to use, defaults to the source repository's Dockerfile
 ```
 
+## Per-tag Dockerfile convention
+
+When a build needs a different Dockerfile than the default (e.g. an alt-fork branch that doesn't work with the upstream one), drop it in alongside the default using the naming convention:
+
+```
+./<client>/Dockerfile.<target_tag>
+```
+
+Both paths apply this convention automatically:
+
+1. **Scheduled builds** (via `config.yaml` → `generate_config.py`): when a per-tag file exists, `get_dockerfile_path()` picks it up and writes `target.dockerfile` into `config.yaml`.
+2. **Manual `workflow_dispatch`** (via the shared `deploy` composite action): at build time, if `basename(target_dockerfile) == "Dockerfile"` and `./<client>/Dockerfile.<resolved-tag>` exists, the per-tag file is used; otherwise the default `./<client>/Dockerfile` is used.
+
+Example: dispatching `build-push-lighthouse.yml` with `repository=eth-act/lighthouse` and `ref=optional-proofs` resolves the tag to `eth-act-optional-proofs` and automatically picks up `./lighthouse/Dockerfile.eth-act-optional-proofs` if it exists. No workflow changes required to add a new per-tag Dockerfile.
+
+The convention is skipped when the workflow explicitly passes a non-default Dockerfile (e.g. prysm's `Dockerfile.beacon`, nimbus-eth2's `Dockerfile.beacon-minimal`), so sub-component builds are unaffected.
+
 ## Output image tags
 
 Take the following config;
