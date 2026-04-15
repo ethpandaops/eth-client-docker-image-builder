@@ -152,8 +152,20 @@ def generate_config():
                 prefix = repo_parts[0].lower()
 
                 for branch_spec in branches:
+                    # Dict form allows per-branch options (e.g. use_upstream_dockerfile)
+                    if isinstance(branch_spec, dict):
+                        branch = branch_spec['branch']
+                        use_upstream_dockerfile = branch_spec.get('use_upstream_dockerfile', False)
+                        safe_branch_name = branch.replace('/', '-')
+                        target_tag = f"{prefix}-{safe_branch_name}"
+                        process_branch(client_name, alt_repo, branch, target_tag, config_list,
+                                       use_upstream_dockerfile=use_upstream_dockerfile)
+
+                        if client_name in MINIMAL_VARIANTS:
+                            process_branch(client_name, alt_repo, branch, f"{prefix}-{safe_branch_name}-minimal",
+                                           config_list, use_upstream_dockerfile=use_upstream_dockerfile)
                     # Check if this is a branch with special tag
-                    if '@' in branch_spec:
+                    elif '@' in branch_spec:
                         branch, special_tag = branch_spec.split('@', 1)
                         # Create the target tag with prefix and special tag
                         target_tag = f"{prefix}-{special_tag}"
@@ -314,7 +326,7 @@ def get_build_args(client_name, source_repo, branch, target_tag):
 
     return None
 
-def process_branch(client_name, source_repo, branch, target_tag, config_list):
+def process_branch(client_name, source_repo, branch, target_tag, config_list, use_upstream_dockerfile=False):
     """Process a single branch configuration"""
     # Create the basic configuration
     config = {
@@ -328,10 +340,12 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
         }
     }
 
-    # Add dockerfile if one exists for this client
-    dockerfile_path = get_dockerfile_path(client_name, target_tag)
-    if dockerfile_path:
-        config['target']['dockerfile'] = dockerfile_path
+    # Add dockerfile if one exists for this client, unless the source repo's
+    # own Dockerfile should be used instead
+    if not use_upstream_dockerfile:
+        dockerfile_path = get_dockerfile_path(client_name, target_tag)
+        if dockerfile_path:
+            config['target']['dockerfile'] = dockerfile_path
 
     # Add build script if one exists for this client/branch combination
     build_script = get_build_script(client_name, branch, target_tag)
