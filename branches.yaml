@@ -61,8 +61,7 @@ lighthouse:
     - epbs-devnet-1
   alt_repos:
     eth-act/lighthouse:
-      - branch: optional-proofs
-        use_upstream_dockerfile: true
+      - optional-proofs
     dknopik/lighthouse:
       - partial-columns
 
