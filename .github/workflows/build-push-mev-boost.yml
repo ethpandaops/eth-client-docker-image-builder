@@ -1,4 +1,5 @@
 name: Build mev-boost docker image
+run-name: "${{ inputs.repository }}@${{ inputs.ref }}${{ inputs.correlation_id && format(' [{0}]', inputs.correlation_id) || '' }}"
 
 on:
   workflow_dispatch:
@@ -22,6 +23,10 @@ on:
         type: string
         required: false
         default: ""
+      correlation_id:
+        description: Optional correlation ID passed through to the run name (used by integrations)
+        type: string
+        required: false
 
 jobs:
   prepare:
