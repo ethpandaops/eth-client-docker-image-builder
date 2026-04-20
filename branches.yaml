@@ -32,7 +32,7 @@ geth:
     - master
     - performance
     - bal-devnet-2
-    - epbs-devnet-1
+    - glamsterdam-devnet-0
     - bal-devnet-3
     
   alt_repos:
