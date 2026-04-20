@@ -1,4 +1,5 @@
 name: Build besu docker image
+run-name: "${{ inputs.repository }}@${{ inputs.ref }}${{ inputs.correlation_id && format(' [{0}]', inputs.correlation_id) || '' }}"
 
 on:
   workflow_dispatch:
@@ -15,6 +16,10 @@ on:
         required: true
       docker_tag:
         description: Override target docker tag (defaults to the above source ref if left blank)
+        type: string
+        required: false
+      correlation_id:
+        description: Optional correlation ID passed through to the run name (used by integrations)
         type: string
         required: false
 

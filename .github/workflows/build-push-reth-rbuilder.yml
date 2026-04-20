@@ -1,4 +1,5 @@
 name: Build reth-rbuilder docker image
+run-name: "${{ inputs.repository }}@${{ inputs.ref }}${{ inputs.correlation_id && format(' [{0}]', inputs.correlation_id) || '' }}"
 
 on:
   workflow_dispatch:
@@ -20,6 +21,10 @@ on:
       build_args:
         description: Build arguments to pass to the Docker build
         default: "RBUILDER_BIN=reth-rbuilder"
+        type: string
+        required: false
+      correlation_id:
+        description: Optional correlation ID passed through to the run name (used by integrations)
         type: string
         required: false
 
