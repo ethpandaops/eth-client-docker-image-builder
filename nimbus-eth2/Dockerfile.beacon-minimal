@@ -1,4 +1,4 @@
-FROM debian:testing-slim AS build
+FROM debian:trixie-slim AS build
 
 SHELL ["/bin/bash", "-c"]
 
@@ -17,7 +17,7 @@ RUN cd /root/nimbus-eth2 \
 # --------------------------------- #
 # Starting new image to reduce size #
 # --------------------------------- #
-FROM debian:testing-slim as deploy
+FROM debian:trixie-slim as deploy
 
 SHELL ["/bin/bash", "-c"]
 RUN apt-get clean && apt update \
