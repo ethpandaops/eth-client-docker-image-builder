@@ -84,19 +84,55 @@ jobs:
               local LINE=$1
               local IMAGE=$2
               local URL=$3
+              local IMAGE_TAG=$4
 
               local imageOutput="${TEMP_DIR}/${LINE}_image.json"
               touch $imageOutput
-              local exists=$(curl -s $URL | jq '.results | length > 0')
 
-              # check if exists == true
-              if [ "$exists" == "true" ]; then
-                exists=true
-              else
-                exists=false
+              # Classify the Docker Hub response so we only trigger a build on an
+              # authoritative "tag missing" answer. Retries absorb transient
+              # failures (rate limits, 5xx, connection resets, non-JSON bodies).
+              local exists="unknown"
+              local attempt response http_code body count
+              for attempt in 1 2 3; do
+                response=$(curl -s --max-time 20 -w $'\n%{http_code}' "$URL")
+                if [ $? -ne 0 ] || [ -z "$response" ]; then
+                  sleep $((attempt * 2))
+                  continue
+                fi
+                http_code=$(printf '%s' "$response" | tail -n1)
+                body=$(printf '%s' "$response" | sed '$d')
+
+                if [ "$http_code" = "200" ]; then
+                  # Require a well-formed tags payload and exact-match the tag
+                  # name so a substring hit (e.g. `foo-abc` vs `foo-abcdef`)
+                  # can't mask a missing tag.
+                  count=$(echo "$body" | jq -e --arg tag "$IMAGE_TAG" '[.results[]? | select(.name == $tag)] | length' 2>/dev/null)
+                  if [ -n "$count" ]; then
+                    if [ "$count" -gt 0 ]; then
+                      exists=true
+                    else
+                      exists=false
+                    fi
+                    break
+                  fi
+                elif [ "$http_code" = "404" ]; then
+                  # Repository itself doesn't exist yet on Docker Hub — first build needs to push.
+                  if echo "$body" | jq -e '.message == "object not found"' >/dev/null 2>&1; then
+                    exists=false
+                    break
+                  fi
+                fi
+
+                echo "[LINE:$LINE] Docker Hub check attempt $attempt inconclusive for ${IMAGE} (http=$http_code), retrying." >&2
+                sleep $((attempt * 2))
+              done
+
+              if [ "$exists" = "unknown" ]; then
+                echo "[LINE:$LINE] WARN: Docker Hub check inconclusive for ${IMAGE} after retries, skipping build." >&2
               fi
 
-              echo "{\"line\": \"$LINE\", \"image\": \"$IMAGE\", \"exists\": $exists}" >> $imageOutput
+              echo "{\"line\": \"$LINE\", \"image\": \"$IMAGE\", \"exists\": \"$exists\"}" >> $imageOutput
           }
 
           # Get commit hashes for each configuration in parallel
@@ -126,7 +162,7 @@ jobs:
               IMAGE_TAG="${TARGET_TAG}-${COMMIT_HASH}"
               IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
               URL="https://hub.docker.com/v2/repositories/${TARGET_REPOSITORY}/tags?page_size=25&page=1&ordering=&name=${IMAGE_TAG}"
-              process_image $LINE $IMAGE $URL &
+              process_image "$LINE" "$IMAGE" "$URL" "$IMAGE_TAG" &
           done < <(yq -r 'to_entries | map_values({"value":.value, "index":.key}) | .[] | [.index, .value.source.repository, .value.source.ref, .value.target.repository, .value.target.tag] | @tsv' "$CONFIG_FILE")
 
           wait
@@ -154,8 +190,13 @@ jobs:
               IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
               CLIENT="${TARGET_REPOSITORY#*/}"
 
-              # Build if image doesn't exist OR if we couldn't determine existence (fail-safe)
-              if [ -z "${images[$IMAGE]}" ] || [ "${images[$IMAGE]}" == "false" ]; then
+              # Only build when Docker Hub authoritatively reported the tag as missing.
+              # "unknown" (check failed after retries) or missing entries are skipped to
+              # avoid burning runner time on rebuilds that the existence check couldn't verify.
+              if [ "${images[$IMAGE]}" != "true" ] && [ "${images[$IMAGE]}" != "false" ]; then
+                echo "[LINE:$LINE] Skipping ${IMAGE}: Docker Hub existence check was inconclusive."
+              fi
+              if [ "${images[$IMAGE]}" == "false" ]; then
                 # Handle platforms and runners, ensuring output files are created even if empty
                 platforms=$(yq e ".$CLIENT[]" "$PLATFORMS_FILE")
                 platformsArr=""
