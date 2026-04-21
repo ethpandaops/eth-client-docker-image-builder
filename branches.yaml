@@ -92,9 +92,7 @@ nimbus:
   branches:
     - unstable
     - stable
-    - epbs-devnet-1
     - optional-proofs
-    - bal-devnet-2
 
 nimbus-eth1:
   branches:
