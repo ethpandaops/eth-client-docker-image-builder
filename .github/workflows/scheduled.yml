@@ -95,8 +95,13 @@ jobs:
               local exists="unknown"
               local attempt response http_code body count
               for attempt in 1 2 3; do
-                response=$(curl -s --max-time 20 -w $'\n%{http_code}' "$URL")
-                if [ $? -ne 0 ] || [ -z "$response" ]; then
+                # `|| true` is load-bearing: the surrounding script runs under
+                # `bash -e`, which aborts the subshell on a failed command
+                # substitution — so a curl timeout here would kill the background
+                # process_image mid-function and leave an empty output file,
+                # breaking the aggregator with "bad array subscript".
+                response=$(curl -s --max-time 20 -w $'\n%{http_code}' "$URL" || true)
+                if [ -z "$response" ]; then
                   sleep $((attempt * 2))
                   continue
                 fi
@@ -106,8 +111,10 @@ jobs:
                 if [ "$http_code" = "200" ]; then
                   # Require a well-formed tags payload and exact-match the tag
                   # name so a substring hit (e.g. `foo-abc` vs `foo-abcdef`)
-                  # can't mask a missing tag.
-                  count=$(echo "$body" | jq -e --arg tag "$IMAGE_TAG" '[.results[]? | select(.name == $tag)] | length' 2>/dev/null)
+                  # can't mask a missing tag. `|| true` again: jq -e exits
+                  # non-zero on parse errors / null results and would otherwise
+                  # abort the subshell under bash -e.
+                  count=$(echo "$body" | jq -e --arg tag "$IMAGE_TAG" '[.results[]? | select(.name == $tag)] | length' 2>/dev/null || true)
                   if [ -n "$count" ]; then
                     if [ "$count" -gt 0 ]; then
                       exists=true
@@ -169,13 +176,21 @@ jobs:
 
           declare -A images
 
-          # Concatenate results, ensuring files exist before attempting to read
+          # Concatenate results, ensuring files exist before attempting to read.
+          # Skip empty / malformed files so a single aborted process_image subshell
+          # can't crash the whole check job with "bad array subscript".
           for file in $TEMP_DIR/*_image.json; do
-              if [ -f "$file" ]; then
-                  LINE=$(cat "$file" | jq -r '.line')
-                  IMAGE=$(cat "$file" | jq -r '.image')
-                  EXISTS=$(cat "$file" | jq -r '.exists')
-                  images[$IMAGE]=$EXISTS
+              if [ -f "$file" ] && [ -s "$file" ]; then
+                  LINE=$(jq -r '.line // empty' "$file" 2>/dev/null || true)
+                  IMAGE=$(jq -r '.image // empty' "$file" 2>/dev/null || true)
+                  EXISTS=$(jq -r '.exists // empty' "$file" 2>/dev/null || true)
+                  if [ -n "$IMAGE" ]; then
+                      images[$IMAGE]=$EXISTS
+                  else
+                      echo "WARN: dropping malformed image-check result $(basename "$file"): $(head -c 200 "$file")" >&2
+                  fi
+              else
+                  echo "WARN: image-check result $(basename "$file") is empty; skipping" >&2
               fi
           done
 
