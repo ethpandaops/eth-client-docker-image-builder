@@ -4,6 +4,12 @@ inputs:
   client:
     description: 'The client'
     required: true
+  repository:
+    description: 'Source repository to validate (e.g. owner/repo). If omitted, validation is skipped.'
+    required: false
+  ref:
+    description: 'Branch, tag, or commit SHA to validate against the source repository.'
+    required: false
 outputs:
   platforms:
     description: "Matrix of platforms and runner to use"
@@ -14,6 +20,28 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
     - uses: mikefarah/yq@6609ed76ecb69f9d8254345292d90ea72f641715 # v4.35.1
+    - name: Validate source repository and ref exist
+      if: inputs.repository != '' && inputs.ref != ''
+      shell: bash
+      env:
+        SOURCE_REPOSITORY: ${{ inputs.repository }}
+        SOURCE_REF: ${{ inputs.ref }}
+        GIT_TERMINAL_PROMPT: '0'
+      run: |
+        url="https://github.com/${SOURCE_REPOSITORY}.git"
+        if [[ "$SOURCE_REF" =~ ^[0-9a-fA-F]+$ ]]; then
+          tmp=$(mktemp -d)
+          git -C "$tmp" init -q
+          if ! git -C "$tmp" fetch --depth=1 "$url" "$SOURCE_REF" >/dev/null 2>&1; then
+            echo "::error::Commit '$SOURCE_REF' not found in repository '$SOURCE_REPOSITORY'"
+            exit 1
+          fi
+        else
+          if ! git ls-remote --exit-code "$url" "$SOURCE_REF" >/dev/null 2>&1; then
+            echo "::error::Ref '$SOURCE_REF' not found in repository '$SOURCE_REPOSITORY'"
+            exit 1
+          fi
+        fi
     - name: Generate platform and runner matrix from config files
       id: setup_platforms
       shell: bash
