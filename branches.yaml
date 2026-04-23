@@ -34,6 +34,7 @@ geth:
     - bal-devnet-2
     - glamsterdam-devnet-0
     - bal-devnet-3
+    - bal-devnet-4
     
   alt_repos:
     MariusVanDerWijden/go-ethereum:
