@@ -110,6 +110,7 @@ prysm:
     - epbs-devnet-1
     - optional-proofs
     - v1.7.0-alpha.5
+    - glamsterdam-devnet-0
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
