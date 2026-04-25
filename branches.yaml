@@ -87,6 +87,7 @@ nethermind:
     - performance
     - bal-devnet-2
     - bal-devnet-3
+    - bal-devnet-4
     - eip-7904
     - epbs-devnet-1
 
