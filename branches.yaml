@@ -7,10 +7,8 @@ besu:
   branches:
     - main
     - performance
-    - bal-devnet-2
-    - bal-devnet-2-with-prefetch
     - bal-devnet-3
-    - bal-devnet-4 
+    - bal-devnet-4
 
 caplin:
   branches:
@@ -20,8 +18,8 @@ erigon:
   branches:
     - main
     - performance
-    - bal-devnet-2
     - bal-devnet-3
+    - bal-devnet-4
 
 ethereumjs:
   branches:
@@ -32,7 +30,6 @@ geth:
   branches:
     - master
     - performance
-    - bal-devnet-2
     - glamsterdam-devnet-0
     - bal-devnet-3
     - bal-devnet-4
@@ -48,8 +45,8 @@ reth:
   branches:
     - main
     - performance
-    - bal-devnet-2
     - bal-devnet-3
+    - bal-devnet-4
   alt_repos:
     PelleKrab/reth:
       - focil_impl
@@ -58,8 +55,8 @@ lighthouse:
   branches:
     - stable
     - unstable
-    - bal-devnet-2
     - bal-devnet-3
+    - bal-devnet-4
     - epbs-devnet-1
   alt_repos:
     eth-act/lighthouse:
@@ -77,8 +74,8 @@ lodestar:
     - unstable
     - focil
     - epbs-devnet-1
-    - bal-devnet-2
     - bal-devnet-3
+    - bal-devnet-4
     - optional-proofs
     - glamsterdam-devnet-0
 
@@ -86,7 +83,6 @@ nethermind:
   branches:
     - master
     - performance
-    - bal-devnet-2
     - bal-devnet-3
     - bal-devnet-4
     - eip-7904
@@ -101,7 +97,6 @@ nimbus:
 nimbus-eth1:
   branches:
     - master
-    - bal-devnet-2
     - bal-devnet-3
     - bal-devnet-4
 
@@ -180,8 +175,8 @@ mev-boost-relay:
 ethrex:
   branches:
     - main
-    - bal-devnet-2
     - bal-devnet-3
+    - bal-devnet-4
 
 eth-das-guardian:
   branches:
