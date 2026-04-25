@@ -79,6 +79,7 @@ lodestar:
     - bal-devnet-2
     - bal-devnet-3
     - optional-proofs
+    - glamsterdam-devnet-0
 
 nethermind:
   branches:
