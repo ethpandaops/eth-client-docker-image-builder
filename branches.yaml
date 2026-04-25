@@ -10,6 +10,7 @@ besu:
     - bal-devnet-2
     - bal-devnet-2-with-prefetch
     - bal-devnet-3
+    - bal-devnet-4 
 
 caplin:
   branches:
