@@ -58,6 +58,7 @@ lighthouse:
     - bal-devnet-3
     - bal-devnet-4
     - epbs-devnet-1
+    - glamsterdam-devnet-0
   alt_repos:
     eth-act/lighthouse:
       - optional-proofs
