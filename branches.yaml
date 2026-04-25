@@ -178,6 +178,7 @@ ethrex:
     - main
     - bal-devnet-3
     - bal-devnet-4
+    - glamsterdam-devnet-0
 
 eth-das-guardian:
   branches:
