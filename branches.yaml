@@ -124,6 +124,7 @@ teku:
   branches:
     - master
     - optional-proofs
+    - glamsterdam-devnet-0
 
 eleel:
   branches:
