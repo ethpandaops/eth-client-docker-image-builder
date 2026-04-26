@@ -20,6 +20,7 @@ erigon:
     - performance
     - bal-devnet-3
     - bal-devnet-4
+    - glamsterdam-devnet-0
 
 ethereumjs:
   branches:
