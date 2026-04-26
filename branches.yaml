@@ -94,6 +94,7 @@ nimbus:
     - unstable
     - stable
     - optional-proofs
+    - glamsterdam-devnet-0
 
 nimbus-eth1:
   branches:
