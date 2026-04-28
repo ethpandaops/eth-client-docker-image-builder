@@ -14,6 +14,20 @@ else
 fi
 
 build_method=${build_method:-bazel}  # Default to bazel if not set
+preset=${preset:-mainnet}  # Default to mainnet if not set
+
+case ${preset} in
+  "mainnet")
+    bazel_config_args=(--config=release)
+    ;;
+  "minimal")
+    bazel_config_args=(--config=minimal --stamp)
+    ;;
+  *)
+    echo "Invalid preset value: ${preset}. Must be 'mainnet' or 'minimal'"
+    exit 1
+    ;;
+esac
 
 case ${build_method} in
   "go")
@@ -37,16 +51,16 @@ END
       -o _validator ./cmd/validator
     ;;
   "bazel")
-    echo "Building with Bazel..."
+    echo "Building with Bazel (preset=${preset})..."
     # Try with remote cache first
-    if ! $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443; then
+    if ! $HOME/go/bin/bazelisk build //cmd/validator:validator "${bazel_config_args[@]}" --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443; then
       echo "Build failed with remote cache, trying without remote cache..."
       # Try without remote cache to avoid cache corruption issues
-      if ! $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false; then
+      if ! $HOME/go/bin/bazelisk build //cmd/validator:validator "${bazel_config_args[@]}" --define pgo_enabled=0 --enable_bzlmod=false; then
         echo "Build still failing, cleaning local Bazel cache and retrying..."
         # Clean the local Bazel cache and try once more
         $HOME/go/bin/bazelisk clean --expunge
-        $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false
+        $HOME/go/bin/bazelisk build //cmd/validator:validator "${bazel_config_args[@]}" --define pgo_enabled=0 --enable_bzlmod=false
       fi
     fi
     mv bazel-bin/cmd/validator/validator_/validator _validator
