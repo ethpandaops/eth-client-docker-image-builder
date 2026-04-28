@@ -33,6 +33,7 @@ geth:
     - performance
     - glamsterdam-devnet-0
     - bal-devnet-3
+    - bal-devnet-5
     
   alt_repos:
     MariusVanDerWijden/go-ethereum:
