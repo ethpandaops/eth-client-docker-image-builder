@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-ghr-size-s-x64
     outputs:
       configs: ${{ steps.repo_check.outputs.configs }}
     steps:
@@ -275,7 +275,7 @@ jobs:
 
   notify:
     name: Discord Notification
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-ghr-size-s-x64
     needs:
       - check
       - deploy
