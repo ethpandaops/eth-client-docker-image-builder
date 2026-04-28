@@ -25,7 +25,7 @@ on:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-ghr-size-s-x64
     outputs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
@@ -90,7 +90,7 @@ jobs:
     needs:
       - prepare
       - deploy
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-ghr-size-s-x64
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/manifest
