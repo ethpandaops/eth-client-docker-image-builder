@@ -8,6 +8,7 @@ besu:
     - main
     - performance
     - bal-devnet-3
+    - bal-devnet-5
 
 caplin:
   branches:
