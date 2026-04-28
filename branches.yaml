@@ -45,6 +45,8 @@ reth:
     - main
     - performance
     - bal-devnet-3
+    - bal-devnet-5
+    - glamsterdam-devnet-0
   alt_repos:
     PelleKrab/reth:
       - focil_impl
