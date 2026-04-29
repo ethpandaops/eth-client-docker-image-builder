@@ -9,6 +9,7 @@ besu:
     - performance
     - bal-devnet-3
     - bal-devnet-5
+    - focil
 
 caplin:
   branches:
