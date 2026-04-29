@@ -1,4 +1,4 @@
-FROM debian:trixie-slim AS build
+FROM nimlang/nim:2.2.4 AS build
 
 SHELL ["/bin/bash", "-c"]
 
@@ -9,9 +9,7 @@ RUN ldd --version ldd
 
 ADD . /root/nimbus-eth2
 
-RUN cd /root/nimbus-eth2 \
- && make -j$(nproc) update \
- && make -j$(nproc) V=1 NIMFLAGS="-d:const_preset=mainnet -d:disableMarchNative" LOG_LEVEL=TRACE nimbus_validator_client
+RUN cd /root/nimbus-eth2 && make -j$(nproc) V=1 USE_SYSTEM_NIM=1 NIMFLAGS="-d:const_preset=mainnet -d:disableMarchNative" LOG_LEVEL=TRACE nimbus_validator_client
 
 
 # --------------------------------- #
