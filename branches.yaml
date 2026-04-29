@@ -118,7 +118,7 @@ prysm:
     developeruche/prysm:
       - poc/optional-proofs
     bharath-123/prysm:
-      - builder-poc
+      - buildoor-apis
 
 teku:
   branches:
