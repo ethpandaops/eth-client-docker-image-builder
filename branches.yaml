@@ -98,12 +98,14 @@ nimbus:
     - stable
     - optional-proofs
     - glamsterdam-devnet-0
+    - glamsterdam-devnet-2
 
 nimbus-eth1:
   branches:
     - master
     - bal-devnet-3
     - bal-devnet-4
+    - bal-devnet-6
 
 prysm:
   branches:
@@ -155,6 +157,7 @@ grandine:
     - develop
     - master
     - glamsterdam-devnet-0
+    - glamsterdam-devnet-2
 
 consensoor:
   branches:
