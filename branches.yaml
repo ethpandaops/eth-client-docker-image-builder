@@ -115,6 +115,7 @@ prysm:
     - optional-proofs
     - v1.7.0-alpha.5
     - glamsterdam-devnet-0
+    - glamsterdam-devnet-2
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
