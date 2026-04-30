@@ -61,6 +61,7 @@ lighthouse:
     - bal-devnet-5
     - epbs-devnet-1
     - glamsterdam-devnet-0
+    - glamsterdam-devnet-2
   alt_repos:
     eth-act/lighthouse:
       - optional-proofs
@@ -80,6 +81,7 @@ lodestar:
     - bal-devnet-5
     - optional-proofs
     - glamsterdam-devnet-0
+    - glamsterdam-devnet-2
 
 nethermind:
   branches:
