@@ -21,7 +21,6 @@ erigon:
     - performance
     - bal-devnet-3
     - bal-devnet-6
-    - glamsterdam-devnet-0
 
 ethereumjs:
   branches:
@@ -32,7 +31,6 @@ geth:
   branches:
     - master
     - performance
-    - glamsterdam-devnet-0
     - bal-devnet-3
     - bal-devnet-6
     
@@ -49,7 +47,6 @@ reth:
     - performance
     - bal-devnet-3
     - bal-devnet-6
-    - glamsterdam-devnet-0
   alt_repos:
     PelleKrab/reth:
       - focil_impl
@@ -58,9 +55,8 @@ lighthouse:
   branches:
     - stable
     - unstable
-    - bal-devnet-5
+    - bal-devnet-6
     - epbs-devnet-1
-    - glamsterdam-devnet-0
     - glamsterdam-devnet-2
   alt_repos:
     eth-act/lighthouse:
@@ -78,9 +74,8 @@ lodestar:
     - unstable
     - focil
     - epbs-devnet-1
-    - bal-devnet-5
+    - bal-devnet-6
     - optional-proofs
-    - glamsterdam-devnet-0
     - glamsterdam-devnet-2
 
 nethermind:
@@ -88,8 +83,7 @@ nethermind:
     - master
     - performance
     - bal-devnet-3
-    - bal-devnet-5
-    - glamsterdam-devnet-0
+    - bal-devnet-6
     - eip-7904
 
 nimbus:
@@ -97,14 +91,12 @@ nimbus:
     - unstable
     - stable
     - optional-proofs
-    - glamsterdam-devnet-0
     - glamsterdam-devnet-2
 
 nimbus-eth1:
   branches:
     - master
     - bal-devnet-3
-    - bal-devnet-4
     - bal-devnet-6
 
 prysm:
