@@ -57,6 +57,7 @@ lighthouse:
     - unstable
     - epbs-devnet-1
     - glamsterdam-devnet-2
+    - focil
   alt_repos:
     eth-act/lighthouse:
       - optional-proofs
