@@ -44,7 +44,6 @@ geth:
 reth:
   branches:
     - main
-    - performance
     - bal-devnet-3
     - bal-devnet-6
   alt_repos:
