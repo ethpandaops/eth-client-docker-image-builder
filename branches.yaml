@@ -181,6 +181,7 @@ ethrex:
     - bal-devnet-4
     - bal-devnet-6
     - glamsterdam-devnet-0
+    - focil
 
 eth-das-guardian:
   branches:
