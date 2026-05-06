@@ -24,16 +24,16 @@ runs:
       id: docker_tag
       shell: bash
       run: |
-        docker_tag="${{ inputs.input }}"
+        docker_tag="$(echo "${{ inputs.input }}" | tr '[:upper:]' '[:lower:]')"
         if [ -z "$docker_tag" ]; then
           echo "Cannot generate tag for empty input"
           exit 1
         fi
 
         # Check if repository is provided and is not the upstream repo
-        repository="${{ inputs.repository }}"
-        upstream_repo="${{ inputs.upstream_repository }}"
-        docker_tag_override="${{ inputs.docker_tag }}"
+        repository="$(echo "${{ inputs.repository }}" | tr '[:upper:]' '[:lower:]')"
+        upstream_repo="$(echo "${{ inputs.upstream_repository }}" | tr '[:upper:]' '[:lower:]')"
+        docker_tag_override="$(echo "${{ inputs.docker_tag }}" | tr '[:upper:]' '[:lower:]')"
         prefix=""
 
         # If upstream_repo is not provided, we don't add any prefix
