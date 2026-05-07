@@ -16,9 +16,9 @@ inputs:
     type: string
     required: true
   git_commit_hash:
-    description: The git commit hash that was used in the deploy action
+    description: The git commit hash that was used in the deploy action. If empty (e.g. on a manifest-only "Re-run failed jobs"), it is re-derived from source_repository@source_ref.
     type: string
-    required: true
+    required: false
   target_tag:
     description: Docker hub tag to push to
     type: string
@@ -45,6 +45,30 @@ runs:
   steps:
   - name: Checkout this repo
     uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+  - name: Resolve git commit hash
+    id: resolve_hash
+    shell: bash
+    env:
+      INPUT_HASH: ${{ inputs.git_commit_hash }}
+      SOURCE_REPOSITORY: ${{ inputs.source_repository }}
+      SOURCE_REF: ${{ inputs.source_ref }}
+    run: |
+      hash="$INPUT_HASH"
+      if [ -z "$hash" ]; then
+        # "Re-run failed jobs" drops needs.<job>.outputs.*; re-derive so we never push a "<tag>-" trailing-dash manifest.
+        echo "git_commit_hash input was empty; re-deriving from ${SOURCE_REPOSITORY}@${SOURCE_REF}"
+        url="https://github.com/${SOURCE_REPOSITORY}.git"
+        hash=$(git ls-remote "$url" "$SOURCE_REF" 2>/dev/null | head -n1 | awk '{print $1}' | cut -c1-7)
+        if [ -z "$hash" ] && [[ "$SOURCE_REF" =~ ^[0-9a-fA-F]{7,40}$ ]]; then
+          hash=$(echo "$SOURCE_REF" | cut -c1-7)
+        fi
+      fi
+      if [ -z "$hash" ]; then
+        echo "::error::Could not resolve git_commit_hash from input or by re-deriving from ${SOURCE_REPOSITORY}@${SOURCE_REF}; refusing to push trailing-dash tag"
+        exit 1
+      fi
+      echo "git_commit_hash=$hash" >> "$GITHUB_OUTPUT"
+      echo "Resolved git_commit_hash: $hash"
   - name: Generate images list
     id: generate_images_list
     shell: bash
@@ -67,11 +91,11 @@ runs:
           exists=$(echo "$response" | jq -e '.results | length > 0') || exists="false"
           if [ "$exists" == "true" ]; then
             IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
-            TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug ${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug-${{ inputs.git_commit_hash }} "
+            TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug ${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug-${{ steps.resolve_hash.outputs.git_commit_hash }} "
           fi
       done
 
-      TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }} ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} "
+      TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }} ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} "
 
       IMAGES=${IMAGES::-1}  # Remove the trailing space
       echo "IMAGES: $IMAGES"
@@ -111,8 +135,8 @@ runs:
   - name: Create and push manifest images to dockerhub
     shell: bash
     run: |
-      docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
-      docker buildx imagetools create -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+      docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+      docker buildx imagetools create -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
   - name: Create and push manifest images to harbor (best-effort)
     if: ${{ inputs.harbor_registry != '' && steps.harbor_login.outcome == 'success' }}
     continue-on-error: true
@@ -121,5 +145,5 @@ runs:
       echo "Pushing manifest to harbor registry (best-effort)..."
       docker buildx imagetools create \
         -t ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }} \
-        -t ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ inputs.git_commit_hash }} \
+        -t ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} \
         ${{ steps.generate_images_list.outputs.images }} || echo "Harbor manifest push failed, continuing..."
