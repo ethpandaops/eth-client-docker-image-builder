@@ -55,7 +55,7 @@ lighthouse:
     - stable
     - unstable
     - epbs-devnet-1
-    - glamsterdam-devnet-2
+    - glamsterdam-devnet-3
     - focil
   alt_repos:
     eth-act/lighthouse:
@@ -89,7 +89,7 @@ nimbus:
     - unstable
     - stable
     - optional-proofs
-    - glamsterdam-devnet-2
+    - glamsterdam-devnet-3
 
 nimbus-eth1:
   branches:
@@ -104,7 +104,6 @@ prysm:
     - rebased-partial-columns
     - prysm/partial-cells-current
     - optional-proofs
-    - glamsterdam-devnet-2
     - glamsterdam-devnet-3
   alt_repos:
     MarcoPolo/prysm:
