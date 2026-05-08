@@ -144,8 +144,7 @@ grandine:
   branches:
     - develop
     - master
-    - glamsterdam-devnet-0
-    - glamsterdam-devnet-2
+    - glamsterdam-devnet-3
 
 consensoor:
   branches:
