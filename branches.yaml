@@ -38,6 +38,7 @@ geth:
     MariusVanDerWijden/go-ethereum:
       - bad-block-generator
       - eip-7904
+      - has-blobs
     MarcoPolo/go-ethereum:
       - getBlobsV3
     
