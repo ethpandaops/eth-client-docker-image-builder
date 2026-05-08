@@ -75,6 +75,7 @@ lodestar:
     - epbs-devnet-1
     - optional-proofs
     - glamsterdam-devnet-2
+    - glamsterdam-devnet-3
 
 nethermind:
   branches:
