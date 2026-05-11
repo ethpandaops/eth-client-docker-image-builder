@@ -219,6 +219,10 @@ ere-server-zisk:
   branches:
     - master
 
+zkboost:
+  branches:
+    - master
+
 fuzztools:
   branches:
     - main

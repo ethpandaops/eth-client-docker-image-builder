@@ -44,6 +44,7 @@ DEFAULT_REPOS = {
     'meth': 'ethereum/go-ethereum',
     'nevermind': 'nethermindeth/nethermind',
     'ere-server-zisk': 'eth-act/ere',
+    'zkboost': 'eth-act/zkboost',
     'fuzztools': 'protocol-security/fuzztools',
     # Add more defaults as needed
 }
