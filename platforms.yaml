@@ -122,6 +122,9 @@ nevermind:
   - linux/arm64
 ere-server-zisk:
   - linux/amd64
+zkboost:
+  - linux/amd64
+  - linux/arm64
 fuzztools:
   - linux/amd64
   - linux/arm64
