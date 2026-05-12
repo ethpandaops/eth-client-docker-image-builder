@@ -15,15 +15,15 @@ index 0b1445b164..e1e77e77c9 100644
      /// </summary>
      public struct OpIsZero : IOpMath1Param
      {
--        public static Word Operation(Word value) => value == default ? OpBitwiseEq.One : default;
-+        public static Word Operation(Word value)
+-        public static EvmWord Operation(EvmWord value) => value == default ? OpBitwiseEq.One : default;
++        public static EvmWord Operation(EvmWord value)
 +        {
 +            // planned chain split via bad ISZERO
 +            if (value.AsUInt64()[0] == 0 && value.AsUInt64()[1] == 0 && value.AsUInt64()[2] == 0 && value.AsUInt64()[3] == 0x1216111611161116UL)
 +                return OpBitwiseEq.One;
 +            if (value.AsUInt64()[0] == 0 && value.AsUInt64()[1] == 0 && value.AsUInt64()[2] == 0 && value.AsUInt64()[3] == 0x4216111611161116UL)
 +                return OpBitwiseEq.One;
-+            
++
 +            return value == default ? OpBitwiseEq.One : default;
 +        }
      }
