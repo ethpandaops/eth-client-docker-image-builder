@@ -121,6 +121,7 @@ teku:
     - optional-proofs
     - glamsterdam-devnet-0
     - glamsterdam-devnet-2
+    - focil
 
 eleel:
   branches:
