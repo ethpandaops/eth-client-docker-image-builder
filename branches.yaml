@@ -106,7 +106,7 @@ prysm:
     - rebased-partial-columns
     - prysm/partial-cells-current
     - optional-proofs
-    - glamsterdam-devnet-3
+    - glamsterdam-devnet-4
   alt_repos:
     MarcoPolo/prysm:
       - partial-columns
