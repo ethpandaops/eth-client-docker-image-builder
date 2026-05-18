@@ -166,6 +166,11 @@ jobs:
           while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF TARGET_REPOSITORY TARGET_TAG; do
               # get the image commit hash from LINE
               COMMIT_HASH=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash')
+              # Skip configs whose upstream ref couldn't be resolved (process_commits already logged the cause);
+              # otherwise we'd query Docker Hub for a malformed "<tag>-" image and queue a build that has no source.
+              if [[ -z "$COMMIT_HASH" || "$COMMIT_HASH" == "null" ]]; then
+                  continue
+              fi
               IMAGE_TAG="${TARGET_TAG}-${COMMIT_HASH}"
               IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
               URL="https://hub.docker.com/v2/repositories/${TARGET_REPOSITORY}/tags?page_size=25&page=1&ordering=&name=${IMAGE_TAG}"
@@ -195,12 +200,30 @@ jobs:
           done
 
           CONFIGS="configs=["
+          SKIPPED_HEADER_WRITTEN=0
 
           echo "Generating configuration files..."
           while IFS=$'\t' read -r LINE SOURCE_REPOSITORY SOURCE_REF SOURCE_PATCH TARGET_REPOSITORY TARGET_TAG; do
               # get the image commit hash from LINE
               COMMIT_HASH=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash')
               COMMIT_HASH_FULL=$(echo "$COMMITS" | jq -r --arg LINE "$LINE" '.[] | select(.line == $LINE) | .commit_hash_full')
+              # Missing upstream ref: emit a workflow warning + run-summary entry instead of letting
+              # the deploy step fail on `actions/checkout`. Self-healing — once the branch lands upstream,
+              # process_commits gets a SHA and the next run builds it normally.
+              if [[ -z "$COMMIT_HASH" || "$COMMIT_HASH" == "null" ]]; then
+                  echo "::warning::Skipping ${SOURCE_REPOSITORY}#${SOURCE_REF} -> ${TARGET_REPOSITORY}:${TARGET_TAG}: upstream ref not found"
+                  if [ "$SKIPPED_HEADER_WRITTEN" = "0" ]; then
+                      {
+                          echo "## Skipped builds (upstream ref missing)"
+                          echo ""
+                          echo "| Source | Target |"
+                          echo "| --- | --- |"
+                      } >> "$GITHUB_STEP_SUMMARY"
+                      SKIPPED_HEADER_WRITTEN=1
+                  fi
+                  echo "| \`${SOURCE_REPOSITORY}#${SOURCE_REF}\` | \`${TARGET_REPOSITORY}:${TARGET_TAG}\` |" >> "$GITHUB_STEP_SUMMARY"
+                  continue
+              fi
               IMAGE_TAG="${TARGET_TAG}-${COMMIT_HASH}"
               IMAGE="${TARGET_REPOSITORY}:${IMAGE_TAG}"
               CLIENT="${TARGET_REPOSITORY#*/}"
