@@ -2,6 +2,10 @@
 
 # Default upstream repository is assumed for each client
 # Branch names are used directly as tags unless in alt_repos
+#
+# Tag override: use "<branch>:<tag>" to build from <branch> but publish as <tag>.
+# Example: "prototype/focil:focil" builds the prototype/focil branch and tags it "focil".
+# Without an override, slashes in branch names are replaced with hyphens for the tag.
 
 besu:
   branches:
@@ -85,6 +89,7 @@ nethermind:
     - bal-devnet-3
     - bal-devnet-7
     - eip-7904
+    - glamsterdam-devnet-4
 
 nimbus:
   branches:
@@ -121,7 +126,7 @@ teku:
     - optional-proofs
     - glamsterdam-devnet-0
     - glamsterdam-devnet-2
-    - focil
+    - prototype/focil:focil
 
 eleel:
   branches:
