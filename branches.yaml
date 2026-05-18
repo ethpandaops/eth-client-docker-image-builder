@@ -60,7 +60,7 @@ lighthouse:
     - stable
     - unstable
     - epbs-devnet-1
-    - glamsterdam-devnet-3
+    - glamsterdam-devnet-4
     - focil
   alt_repos:
     eth-act/lighthouse:
