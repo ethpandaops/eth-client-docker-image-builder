@@ -85,6 +85,7 @@ nethermind:
     - bal-devnet-3
     - bal-devnet-7
     - eip-7904
+    - glamsterdam-devnet-4
 
 nimbus:
   branches:
