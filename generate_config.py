@@ -113,9 +113,9 @@ def generate_config():
         # Process main branches
         if 'branches' in client_config:
             for branch_spec in client_config['branches']:
-                # Check if this is a branch with special tag
-                if '@' in branch_spec:
-                    branch, special_tag = branch_spec.split('@', 1)
+                # Check if this is a branch with a tag override (e.g. "prototype/focil:focil")
+                if ':' in branch_spec:
+                    branch, special_tag = branch_spec.split(':', 1)
                     process_branch(client_name, default_repo, branch, special_tag, config_list)
                 else:
                     # Regular branch
@@ -153,9 +153,9 @@ def generate_config():
                 prefix = repo_parts[0].lower()
 
                 for branch_spec in branches:
-                    # Check if this is a branch with special tag
-                    if '@' in branch_spec:
-                        branch, special_tag = branch_spec.split('@', 1)
+                    # Check if this is a branch with a tag override (e.g. "prototype/focil:focil")
+                    if ':' in branch_spec:
+                        branch, special_tag = branch_spec.split(':', 1)
                         # Create the target tag with prefix and special tag
                         target_tag = f"{prefix}-{special_tag}"
                         process_branch(client_name, alt_repo, branch, target_tag, config_list)
