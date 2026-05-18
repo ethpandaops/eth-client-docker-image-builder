@@ -55,6 +55,23 @@ Add a new image to [`config.yaml`](./config.yaml) file and it will be built on s
     dockerfile: ./lighthouse/Dockerfile # optional docker file to use, defaults to the source repository's Dockerfile
 ```
 
+## `branches.yaml` syntax
+
+`config.yaml` is generated from `branches.yaml` by `generate_config.py`. Each client lists branches that should be built; the branch name is used directly as the docker tag (slashes become hyphens).
+
+To build from one branch but publish under a different tag, use `<branch>:<tag>`:
+
+```yaml
+teku:
+  branches:
+    - master
+    - prototype/focil:focil   # builds prototype/focil, publishes as :focil
+```
+
+The same syntax works inside `alt_repos` entries (the alt-repo prefix is still prepended to the override tag).
+
+After editing `branches.yaml`, run `python3 generate_config.py` to regenerate `config.yaml`.
+
 ## Per-tag Dockerfile convention
 
 When a build needs a different Dockerfile than the default (e.g. an alt-fork branch that doesn't work with the upstream one), drop it in alongside the default using the naming convention:
