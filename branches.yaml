@@ -234,3 +234,8 @@ fuzztools:
 slashoor:
   branches:
     - master
+
+trueblocks:
+  branches:
+    - main
+    - v5.9.3

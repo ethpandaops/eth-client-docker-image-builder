@@ -46,6 +46,7 @@ DEFAULT_REPOS = {
     'ere-server-zisk': 'eth-act/ere',
     'zkboost': 'eth-act/zkboost',
     'fuzztools': 'protocol-security/fuzztools',
+    'trueblocks': 'TrueBlocks/trueblocks-core',
     # Add more defaults as needed
 }
 

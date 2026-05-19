@@ -39,6 +39,7 @@ Run the *Build **tooling*** workflow;
 - [Build Syncoor](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-syncoor.yml) [[source](https://github.com/ethpandaops/syncoor)]
 - [Build Slashoor](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-slashoor.yml) [[source](https://github.com/ethpandaops/slashoor)]
 - [Build ere-server-zisk](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ere-server-zisk.yml) [[source](https://github.com/eth-act/ere)]
+- [Build TrueBlocks](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-trueblocks.yml) [[source](https://github.com/TrueBlocks/trueblocks-core)]
 
 ## Adding a new image to build on schedule
 
