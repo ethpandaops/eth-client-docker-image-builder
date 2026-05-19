@@ -80,7 +80,6 @@ lodestar:
     - epbs-devnet-1
     - optional-proofs
     - glamsterdam-devnet-4
-    - glamsterdam-devnet-3
 
 nethermind:
   branches:
@@ -96,7 +95,7 @@ nimbus:
     - unstable
     - stable
     - optional-proofs
-    - glamsterdam-devnet-3
+    - glamsterdam-devnet-4
 
 nimbus-eth1:
   branches:
@@ -124,8 +123,7 @@ teku:
   branches:
     - master
     - optional-proofs
-    - glamsterdam-devnet-0
-    - glamsterdam-devnet-2
+    - glamsterdam-devnet-4
     - prototype/focil:focil
 
 eleel:
@@ -152,7 +150,7 @@ grandine:
   branches:
     - develop
     - master
-    - glamsterdam-devnet-3
+    - glamsterdam-devnet-4
 
 consensoor:
   branches:
