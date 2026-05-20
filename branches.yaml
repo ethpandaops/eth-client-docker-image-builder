@@ -29,11 +29,6 @@ el:
       branches:
         - main
         - performance
-    ethereumjs:
-      skip_common: true
-      branches:
-        - master
-        - stable
     ethrex:
       branches:
         - main
@@ -183,9 +178,6 @@ tooling:
     # Commented out in config.yaml
     # goevmlab:
     #   branches: ["master"]
-    goomy-blob:
-      branches:
-        - master
     slashoor:
       branches:
         - master
