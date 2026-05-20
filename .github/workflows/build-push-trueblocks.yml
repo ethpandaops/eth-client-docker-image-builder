@@ -18,11 +18,6 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
-      build_args:
-        description: Build arguments to pass to the Docker build
-        default: ""
-        type: string
-        required: false
       correlation_id:
         description: Optional correlation ID passed through to the run name (used by integrations)
         type: string
@@ -74,9 +69,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/trueblocks
           target_dockerfile: ./trueblocks/Dockerfile
-          build_script: ./trueblocks/build.sh
           platform: ${{ matrix.platform }}
-          build_args: ${{ inputs.build_args }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"

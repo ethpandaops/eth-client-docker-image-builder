@@ -1,7 +1,4 @@
 # Builds chifra from trueblocks-core source.
-#
-# Invoked via ./trueblocks/build.sh, which stages ./entrypoint.sh into the
-# build context as .trueblocks-entrypoint.sh before running docker build.
 
 FROM golang:1.25.1-bookworm AS builder
 
@@ -41,8 +38,5 @@ COPY --from=builder /src/bin/chifra /usr/local/bin/chifra
 # networks; without them chifra's IsNodeArchive can't validate against block 0.
 COPY --from=builder /src/src/other/install/per-chain /root/.local/share/trueblocks/config
 
-COPY .trueblocks-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 EXPOSE 8080
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["chifra"]
