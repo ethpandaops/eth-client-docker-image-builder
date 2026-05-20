@@ -6,236 +6,225 @@
 # Tag override: use "<branch>:<tag>" to build from <branch> but publish as <tag>.
 # Example: "prototype/focil:focil" builds the prototype/focil branch and tags it "focil".
 # Without an override, slashes in branch names are replaced with hyphens for the tag.
+#
+# Each top-level key is a group (el, cl, mev, zk, tooling, other, lean).
+# A group's `common_branches:` list is merged into every client in that group
+# (set `skip_common: true` on a client to opt out).
 
-besu:
-  branches:
-    - main
-    - performance
-    - bal-devnet-3
-    - bal-devnet-7
-    - focil
-    - glamsterdam-devnet-4
-
-caplin:
-  branches:
-    - main
-
-erigon:
-  branches:
-    - main
-    - performance
+# ============================================================
+# Execution Layer (EL)
+# ============================================================
+el:
+  common_branches:
     - bal-devnet-3
     - bal-devnet-7
     - glamsterdam-devnet-4
+  clients:
+    besu:
+      branches:
+        - main
+        - performance
+        - focil
+    erigon:
+      branches:
+        - main
+        - performance
+    ethereumjs:
+      skip_common: true
+      branches:
+        - master
+        - stable
+    ethrex:
+      branches:
+        - main
+        - bal-devnet-4
+        - focil
+    geth:
+      branches:
+        - master
+        - performance
+      alt_repos:
+        MariusVanDerWijden/go-ethereum:
+          - bad-block-generator
+          - eip-7904
+          - has-blobs
+        MarcoPolo/go-ethereum:
+          - getBlobsV3
+    nethermind:
+      branches:
+        - master
+        - performance
+        - eip-7904
+    nimbus-eth1:
+      branches:
+        - master
+    reth:
+      branches:
+        - main
+      alt_repos:
+        PelleKrab/reth:
+          - focil_impl
 
-ethereumjs:
-  branches:
-    - master
-    - stable
-
-geth:
-  branches:
-    - master
-    - performance
-    - bal-devnet-3
-    - bal-devnet-7
+# ============================================================
+# Consensus Layer (CL)
+# ============================================================
+cl:
+  common_branches:
     - glamsterdam-devnet-4
-    
-  alt_repos:
-    MariusVanDerWijden/go-ethereum:
-      - bad-block-generator
-      - eip-7904
-      - has-blobs
-    MarcoPolo/go-ethereum:
-      - getBlobsV3
-    
-reth:
-  branches:
-    - main
-    - bal-devnet-3
-    - bal-devnet-7
-    - glamsterdam-devnet-4
-  alt_repos:
-    PelleKrab/reth:
-      - focil_impl
+  clients:
+    caplin:
+      skip_common: true
+      branches:
+        - main
+    consensoor:
+      skip_common: true
+      branches:
+        - main
+    grandine:
+      branches:
+        - develop
+        - master
+    lighthouse:
+      branches:
+        - stable
+        - unstable
+        - epbs-devnet-1
+        - focil
+      alt_repos:
+        eth-act/lighthouse:
+          - optional-proofs
+        dknopik/lighthouse:
+          - partial-columns
+    lodestar:
+      branches:
+        - stable
+        - unstable
+        - focil
+        - epbs-devnet-1
+        - optional-proofs
+    nimbus:
+      branches:
+        - unstable
+        - stable
+        - optional-proofs
+    prysm:
+      branches:
+        - develop
+        - master
+        - rebased-partial-columns
+        - prysm/partial-cells-current
+        - optional-proofs
+      alt_repos:
+        MarcoPolo/prysm:
+          - partial-columns
+        developeruche/prysm:
+          - poc/optional-proofs
+        bharath-123/prysm:
+          - buildoor-apis
+    teku:
+      branches:
+        - master
+        - optional-proofs
+        - prototype/focil:focil
 
-lighthouse:
-  branches:
-    - stable
-    - unstable
-    - epbs-devnet-1
-    - glamsterdam-devnet-4
-    - focil
-  alt_repos:
-    eth-act/lighthouse:
-      - optional-proofs
-    dknopik/lighthouse:
-      - partial-columns
+# ============================================================
+# MEV
+# ============================================================
+mev:
+  clients:
+    flashbots-builder:
+      branches:
+        - main
+    mev-boost:
+      branches:
+        - develop
+    mev-boost-relay:
+      branches:
+        - main
+    mev-rs:
+      branches:
+        - main
+    reth-rbuilder:
+      branches:
+        - develop
+    rustic-builder:
+      branches:
+        - main
 
-vibehouse:
-  branches:
-    - main
+# ============================================================
+# ZK
+# ============================================================
+zk:
+  clients:
+    dummy-el:
+      branches:
+        - master
+    zkboost:
+      branches:
+        - master
 
-lodestar:
-  branches:
-    - stable
-    - unstable
-    - focil
-    - epbs-devnet-1
-    - optional-proofs
-    - glamsterdam-devnet-4
+# ============================================================
+# Tooling
+# ============================================================
+tooling:
+  clients:
+    eleel:
+      branches:
+        - main
+    ere-server-zisk:
+      branches:
+        - master
+    eth-das-guardian:
+      branches:
+        - main
+    fuzztools:
+      branches:
+        - main
+    # Commented out in config.yaml
+    # goevmlab:
+    #   branches: ["master"]
+    goomy-blob:
+      branches:
+        - master
+    slashoor:
+      branches:
+        - master
+    syncoor:
+      branches:
+        - master
+    tx-fuzz:
+      branches:
+        - master
 
-nethermind:
-  branches:
-    - master
-    - performance
-    - bal-devnet-3
-    - bal-devnet-7
-    - eip-7904
-    - glamsterdam-devnet-4
+# ============================================================
+# Other
+# ============================================================
+other:
+  clients:
+    meth:
+      custom_configs:
+        - name: "bad-iszero"
+          source_patch: "meth/bad-iszero.patch"
+          ref: "master"
+          tag: "master-bad-iszero"
+    nevermind:
+      custom_configs:
+        - name: "bad-iszero"
+          source_patch: "nevermind/bad-iszero.patch"
+          ref: "master"
+          tag: "master-bad-iszero"
+    vibehouse:
+      branches:
+        - main
 
-nimbus:
-  branches:
-    - unstable
-    - stable
-    - optional-proofs
-    - glamsterdam-devnet-4
-
-nimbus-eth1:
-  branches:
-    - master
-    - bal-devnet-3
-    - bal-devnet-7
-    - glamsterdam-devnet-4
-
-prysm:
-  branches:
-    - develop
-    - master
-    - rebased-partial-columns
-    - prysm/partial-cells-current
-    - optional-proofs
-    - glamsterdam-devnet-4
-  alt_repos:
-    MarcoPolo/prysm:
-      - partial-columns
-    developeruche/prysm:
-      - poc/optional-proofs
-    bharath-123/prysm:
-      - buildoor-apis
-
-teku:
-  branches:
-    - master
-    - optional-proofs
-    - glamsterdam-devnet-4
-    - prototype/focil:focil
-
-eleel:
-  branches:
-    - main
-
-dummy-el:
-  branches:
-    - master
-
-flashbots-builder:
-  branches:
-    - main
-
-tx-fuzz:
-  branches:
-    - master
-
-goomy-blob:
-  branches:
-    - master
-
-grandine:
-  branches:
-    - develop
-    - master
-    - glamsterdam-devnet-4
-
-consensoor:
-  branches:
-    - main
-
-mev-rs:
-  branches:
-    - main
-
-reth-rbuilder:
-  branches:
-    - develop
-
-rustic-builder:
-  branches:
-    - main
-
-mev-boost:
-  branches:
-    - develop
-
-mev-boost-relay:
-  branches:
-    - main
-
-ethrex:
-  branches:
-    - main
-    - bal-devnet-3
-    - bal-devnet-4
-    - bal-devnet-7
-    - glamsterdam-devnet-4
-    - focil
-
-eth-das-guardian:
-  branches:
-    - main
-
-# Commented out in config.yaml
-# goevmlab:
-#   branches: ["master"]
-
-syncoor:
-  branches:
-    - master
-
-zeam:
- branches:
-   - main
-
-ream:
-  branches:
-    - master
-
-meth:
-  custom_configs:
-    - name: "bad-iszero"
-      source_patch: "meth/bad-iszero.patch"
-      ref: "master"
-      tag: "master-bad-iszero"
-
-nevermind:
-  custom_configs:
-    - name: "bad-iszero"
-      source_patch: "nevermind/bad-iszero.patch"
-      ref: "master"
-      tag: "master-bad-iszero"
-
-ere-server-zisk:
-  branches:
-    - master
-
-zkboost:
-  branches:
-    - master
-
-fuzztools:
-  branches:
-    - main
-
-slashoor:
-  branches:
-    - master
+# ============================================================
+# Lean
+# ============================================================
+lean:
+  clients:
+    ream:
+      branches:
+        - master
+    zeam:
+      branches:
+        - main

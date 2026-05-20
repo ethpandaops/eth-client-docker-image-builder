@@ -76,10 +76,40 @@ SIDECAR_VARIANTS = [
     'teku'
 ]
 
+def flatten_groups(raw_config):
+    """Flatten the grouped branches.yaml structure into a flat client dict.
+
+    Top-level keys are groups (el, cl, mev, zk, tooling, other, lean). Each group
+    may declare `common_branches:` which are merged into every client's branches
+    under its `clients:` map. A client can set `skip_common: true` to opt out.
+    """
+    flat = {}
+    for group_name, group_data in raw_config.items():
+        if not isinstance(group_data, dict):
+            continue
+        common_branches = group_data.get('common_branches', []) or []
+        clients = group_data.get('clients', {}) or {}
+        for client_name, client_config in clients.items():
+            merged = dict(client_config) if client_config else {}
+            skip_common = merged.pop('skip_common', False)
+            if common_branches and not skip_common:
+                existing = list(merged.get('branches', []) or [])
+                for cb in common_branches:
+                    if cb not in existing:
+                        existing.append(cb)
+                merged['branches'] = existing
+            flat[client_name] = merged
+    return flat
+
+
 def generate_config():
     # Read the simplified branches configuration
     with open('branches.yaml', 'r') as f:
-        branches_config = yaml.safe_load(f)
+        raw_config = yaml.safe_load(f)
+
+    # Flatten grouped structure (el/cl/mev/...) into a per-client dict,
+    # merging each group's `common_branches:` into its clients.
+    branches_config = flatten_groups(raw_config)
 
     # Expand combined client definitions
     expanded_config = {}
