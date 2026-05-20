@@ -14,6 +14,7 @@ besu:
     - bal-devnet-3
     - bal-devnet-7
     - focil
+    - glamsterdam-devnet-4
 
 caplin:
   branches:
@@ -25,6 +26,7 @@ erigon:
     - performance
     - bal-devnet-3
     - bal-devnet-7
+    - glamsterdam-devnet-4
 
 ethereumjs:
   branches:
@@ -37,6 +39,7 @@ geth:
     - performance
     - bal-devnet-3
     - bal-devnet-7
+    - glamsterdam-devnet-4
     
   alt_repos:
     MariusVanDerWijden/go-ethereum:
@@ -51,6 +54,7 @@ reth:
     - main
     - bal-devnet-3
     - bal-devnet-7
+    - glamsterdam-devnet-4
   alt_repos:
     PelleKrab/reth:
       - focil_impl
@@ -102,6 +106,7 @@ nimbus-eth1:
     - master
     - bal-devnet-3
     - bal-devnet-7
+    - glamsterdam-devnet-4
 
 prysm:
   branches:
