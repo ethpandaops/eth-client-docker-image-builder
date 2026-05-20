@@ -34,9 +34,12 @@ RUN apt-get update \
 
 COPY --from=builder /src/bin/chifra /usr/local/bin/chifra
 
+# Tell chifra to look here instead of its default $HOME/.local/share/trueblocks
+ENV XDG_CONFIG_HOME=/config
+
 # Ship chifra's bundled per-chain configs (allocs.csv etc.) for known public
 # networks; without them chifra's IsNodeArchive can't validate against block 0.
-COPY --from=builder /src/src/other/install/per-chain /root/.local/share/trueblocks/config
+COPY --from=builder /src/src/other/install/per-chain /config/config
 
 EXPOSE 8080
 ENTRYPOINT ["chifra"]
