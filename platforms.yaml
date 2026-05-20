@@ -12,9 +12,6 @@ caplin:
 erigon:
   - linux/amd64
   - linux/arm64
-ethereumjs:
-  - linux/amd64
-  - linux/arm64
 geth:
   - linux/amd64
   - linux/arm64
@@ -64,9 +61,6 @@ execution-monitor:
   - linux/amd64
   - linux/arm64
 beacon-metrics-gazer:
-  - linux/amd64
-  - linux/arm64
-goomy-blob:
   - linux/amd64
   - linux/arm64
 ethereum-genesis-generator:
