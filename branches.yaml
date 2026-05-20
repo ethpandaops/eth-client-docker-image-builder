@@ -184,6 +184,9 @@ tooling:
     syncoor:
       branches:
         - master
+    trueblocks:
+      branches:
+        - main
     tx-fuzz:
       branches:
         - master
