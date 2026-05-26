@@ -71,3 +71,10 @@ docker tag "${tag}" "${target_repository}:${target_tag}"
 docker push "${target_repository}:${target_tag}"
 docker tag "${tag}" "${target_repository}:${target_tag}-${source_git_commit_hash}"
 docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
+
+# Optionally build a Project Leyden AOT-cache variant (benchmarking only).
+# Opt-in via BESU_BUILD_AOT=true. See besu/aot/README.md.
+if [ "${BESU_BUILD_AOT:-false}" = "true" ]; then
+    echo "BESU_BUILD_AOT=true — generating AOT-cache image"
+    "${SCRIPT_DIR}/aot/generate-aot.sh"
+fi
