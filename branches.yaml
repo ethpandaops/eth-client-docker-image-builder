@@ -18,7 +18,7 @@ el:
   common_branches:
     - bal-devnet-3
     - bal-devnet-7
-    - glamsterdam-devnet-4
+    - glamsterdam-devnet-5
   clients:
     besu:
       branches:
