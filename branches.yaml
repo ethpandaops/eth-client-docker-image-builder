@@ -65,7 +65,7 @@ el:
 # ============================================================
 cl:
   common_branches:
-    - glamsterdam-devnet-4
+    - glamsterdam-devnet-5
   clients:
     caplin:
       skip_common: true
