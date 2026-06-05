@@ -210,6 +210,9 @@ runs:
       build-args: |
         ${{ inputs.build_args }}
         COMMIT_HASH=${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
+        GIT_SHA=${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
+        GIT_BRANCH=${{ inputs.source_ref }}
+        VERSION=${{ inputs.source_ref }}
       labels: |
         ethpandaops.io.repo=${{ inputs.source_repository }}
         ethpandaops.io.commitRef=${{ inputs.source_ref }}
