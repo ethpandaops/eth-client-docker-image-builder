@@ -114,6 +114,17 @@ runs:
     run: |
       docker context create builders
   - name: Set up Docker Buildx
+    id: buildx_setup
+    continue-on-error: true
+    uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+    with:
+      endpoint: builders
+  - name: Wait before retrying Docker Buildx setup
+    if: steps.buildx_setup.outcome == 'failure'
+    shell: bash
+    run: sleep 30
+  - name: Set up Docker Buildx (retry)
+    if: steps.buildx_setup.outcome == 'failure'
     uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
     with:
       endpoint: builders
