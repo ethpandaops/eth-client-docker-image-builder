@@ -19,6 +19,7 @@ el:
     - bal-devnet-3
     - bal-devnet-7
     - glamsterdam-devnet-5
+    - glamsterdam-devnet-6
   clients:
     besu:
       branches:
@@ -66,6 +67,7 @@ el:
 cl:
   common_branches:
     - glamsterdam-devnet-5
+    - glamsterdam-devnet-6
   clients:
     caplin:
       skip_common: true
