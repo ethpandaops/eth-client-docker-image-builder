@@ -44,6 +44,7 @@ el:
           - bad-block-generator
           - eip-7904
           - has-blobs
+          - ssz-engine-api
         MarcoPolo/go-ethereum:
           - getBlobsV3
     nethermind:
