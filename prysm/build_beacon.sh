@@ -13,7 +13,7 @@ else
   go install github.com/bazelbuild/bazelisk@latest
 fi
 
-build_method=${build_method:-bazel}  # Default to bazel if not set
+build_method=${build_method:-go}  # Default to go if not set
 
 case ${build_method} in
   "go")
