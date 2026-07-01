@@ -118,6 +118,8 @@ cl:
           - poc/optional-proofs
         bharath-123/prysm:
           - buildoor-apis
+        syjn99/prysm:
+          - prototype/ssz-over-http
     teku:
       branches:
         - master
