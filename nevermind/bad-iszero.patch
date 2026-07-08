@@ -8,13 +8,13 @@ Subject: [PATCH] hack ISZERO opcode for planned chain split
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs b/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs
-index 0b1445b164..e1e77e77c9 100644
+index e316244bd4..5ddcd8073e 100644
 --- a/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs
 +++ b/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs
-@@ -88,7 +88,16 @@ internal static partial class EvmInstructions
-     /// </summary>
-     public struct OpIsZero : IOpMath1Param
-     {
+@@ -110,7 +110,16 @@ internal static partial class EvmInstructions
+             return (p | Add(ref p, 1) | Add(ref p, 2) | Add(ref p, 3)) == 0UL ? OpBitwiseEq.One : default;
+         }
+ #else
 -        public static EvmWord Operation(EvmWord value) => value == default ? OpBitwiseEq.One : default;
 +        public static EvmWord Operation(EvmWord value)
 +        {
@@ -26,6 +26,7 @@ index 0b1445b164..e1e77e77c9 100644
 +
 +            return value == default ? OpBitwiseEq.One : default;
 +        }
+ #endif
      }
  
      /// <summary>
