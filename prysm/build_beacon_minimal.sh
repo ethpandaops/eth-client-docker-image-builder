@@ -38,15 +38,22 @@ END
     ;;
   "bazel")
     echo "Building with Bazel..."
+    # Branches carrying the //tools:disable_progressive_merkleization build setting
+    # (glamsterdam-devnet-7+) gate progressive SSZ merkleization off in their
+    # .bazelrc for spectest compatibility; devnet images need it enabled.
+    extra_bazel_flags=""
+    if grep -qs "disable_progressive_merkleization" tools/BUILD.bazel; then
+      extra_bazel_flags="--//tools:disable_progressive_merkleization=false"
+    fi
     # Try with remote cache first
-    if ! $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443; then
+    if ! $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags} --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443; then
       echo "Build failed with remote cache, trying without remote cache..."
       # Try without remote cache to avoid cache corruption issues
-      if ! $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false; then
+      if ! $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags}; then
         echo "Build still failing, cleaning local Bazel cache and retrying..."
         # Clean the local Bazel cache and try once more
         $HOME/go/bin/bazelisk clean --expunge
-        $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false
+        $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags}
       fi
     fi
     mv bazel-bin/cmd/beacon-chain/beacon-chain_/beacon-chain _beacon-chain
