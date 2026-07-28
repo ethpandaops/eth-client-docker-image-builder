@@ -99,6 +99,7 @@ cl:
         - focil
         - epbs-devnet-1
         - optional-proofs
+        - deathstar
     nimbus:
       branches:
         - unstable
