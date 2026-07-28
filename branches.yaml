@@ -97,8 +97,8 @@ cl:
         - stable
         - unstable
         - focil
-        - epbs-devnet-1
         - optional-proofs
+        - deathstar
     nimbus:
       branches:
         - unstable
