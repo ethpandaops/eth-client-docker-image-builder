@@ -28,6 +28,7 @@ el:
       branches:
         - main
         - performance
+        - binary-trie
     ethrex:
       branches:
         - main
