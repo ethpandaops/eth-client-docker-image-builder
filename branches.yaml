@@ -50,6 +50,7 @@ el:
         - master
         - performance
         - eip-7904
+        - eip8141-frame-txs-devnet7:frames
     nimbus-eth1:
       branches:
         - master
