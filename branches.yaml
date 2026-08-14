@@ -18,26 +18,22 @@ el:
   common_branches:
     - glamsterdam-devnet-7
     - glamsterdam-devnet-8
+    - focil-devnet-0
+    - frames-devnet-0
   clients:
     besu:
       branches:
         - main
-        - performance
-        - focil
     erigon:
       branches:
         - main
-        - performance
         - binary-trie
     ethrex:
       branches:
         - main
-        - bal-devnet-4
-        - focil
     geth:
       branches:
         - master
-        - performance
       alt_repos:
         MariusVanDerWijden/go-ethereum:
           - bad-block-generator
@@ -49,8 +45,6 @@ el:
     nethermind:
       branches:
         - master
-        - performance
-        - eip-7904
     nimbus-eth1:
       branches:
         - master
@@ -68,6 +62,7 @@ cl:
   common_branches:
     - glamsterdam-devnet-7
     - glamsterdam-devnet-8
+    - focil-devnet-0
   clients:
     caplin:
       skip_common: true
@@ -85,8 +80,6 @@ cl:
       branches:
         - stable
         - unstable
-        - epbs-devnet-1
-        - focil
       alt_repos:
         eth-act/lighthouse:
           - optional-proofs
@@ -96,7 +89,6 @@ cl:
       branches:
         - stable
         - unstable
-        - focil
         - optional-proofs
         - deathstar
     nimbus:
@@ -108,12 +100,8 @@ cl:
       branches:
         - develop
         - master
-        - rebased-partial-columns
-        - prysm/partial-cells-current
         - optional-proofs
-      alt_repos:
-        MarcoPolo/prysm:
-          - partial-columns
+      alt_repos:          
         developeruche/prysm:
           - poc/optional-proofs
         bharath-123/prysm:
@@ -124,7 +112,6 @@ cl:
       branches:
         - master
         - optional-proofs
-        - prototype/focil:focil
 
 # ============================================================
 # MEV
