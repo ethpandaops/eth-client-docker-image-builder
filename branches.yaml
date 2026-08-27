@@ -108,6 +108,8 @@ cl:
           - buildoor-apis
         syjn99/prysm:
           - prototype/ssz-over-http
+        sukunrt/prysm:
+          - decoupled-casper
     teku:
       branches:
         - master
