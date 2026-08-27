@@ -16,7 +16,6 @@
 # ============================================================
 el:
   common_branches:
-    - glamsterdam-devnet-7
     - glamsterdam-devnet-8
     - focil-devnet-0
     - frames-devnet-0
@@ -60,7 +59,6 @@ el:
 # ============================================================
 cl:
   common_branches:
-    - glamsterdam-devnet-7
     - glamsterdam-devnet-8
     - focil-devnet-0
   clients:
