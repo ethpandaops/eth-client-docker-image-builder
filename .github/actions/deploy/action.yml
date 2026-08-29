@@ -47,7 +47,7 @@ inputs:
   build_method:
     description: Build method to use (go or bazel)
     type: string
-    default: bazel
+    default: go
     required: false
   harbor_registry:
     description: Harbor registry to push the images to
