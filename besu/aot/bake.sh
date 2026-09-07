@@ -56,11 +56,12 @@ docker build -q --platform linux/amd64 \
 
 # Strict load test. AOTMode=on makes the JVM exit non-zero on any jar/arch/JDK
 # mismatch instead of silently running cold, and the log line proves the
-# archived classes were actually linked.
+# archived classes were actually linked. -Xmx8g is the benchmark heap ceiling;
+# it only reserves address space here, so it is fine on a small runner.
 verify() {
   local image="$1" log
   if ! log=$(docker run --rm --platform linux/amd64 --entrypoint /opt/besu/bin/besu \
-      -e BESU_OPTS="-XX:AOTCache=/opt/besu/aot/besu.aot -XX:AOTMode=on -Xlog:aot=info" \
+      -e BESU_OPTS="-Xmx8g -XX:AOTCache=/opt/besu/aot/besu.aot -XX:AOTMode=on -Xlog:aot=info" \
       "${image}" --version 2>&1); then
     echo "${log}" | tail -n 20 >&2
     echo "AOT cache failed to load in ${image}" >&2
