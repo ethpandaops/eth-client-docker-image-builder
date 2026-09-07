@@ -1,0 +1,91 @@
+name: Bake besu AOT image
+run-name: "besu AOT: ${{ inputs.aot_release || 'poll for new caches' }}${{ inputs.base_tag && format(' ({0})', inputs.base_tag) || '' }}"
+
+# Derives ethpandaops/besu:<devnet>-aot-<sha> from an already-published
+# ethpandaops/besu:<devnet>-<sha> plus the Project Leyden AOT cache the Besu
+# team recorded against it. Nothing is compiled here; see besu/aot/README.md.
+on:
+  workflow_dispatch:
+    inputs:
+      aot_release:
+        description: Release tag on the Besu team's cache repo (ahamlat/besu), e.g. aot-glam-devnet8-0d7d0f5
+        type: string
+        required: true
+      base_tag:
+        description: Only bake this per-commit base tag, e.g. glamsterdam-devnet-8-0d7d0f5. Default = every ethpandaops/besu tag built from the release's commit
+        type: string
+        required: false
+      force:
+        description: Re-bake even if the -aot- tag already exists
+        type: boolean
+        default: false
+  schedule:
+    # Hourly poll of the cache repo; bakes anything new that has no image yet.
+    - cron: '17 * * * *'
+
+env:
+  AOT_RELEASE_REPO: ahamlat/besu
+  TARGET_REPOSITORY: ethpandaops/besu
+
+concurrency:
+  group: bake-besu-aot
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.discover.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Find caches without a baked image
+        id: discover
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AOT_RELEASE_TAG: ${{ inputs.aot_release }}
+          BASE_TAG: ${{ inputs.base_tag }}
+          FORCE: ${{ inputs.force }}
+          target_repository: ${{ env.TARGET_REPOSITORY }}
+        run: |
+          matrix=$(./besu/aot/discover.sh)
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${matrix}" = "[]" ]; then
+            echo "::error::Nothing to bake for ${AOT_RELEASE_TAG} (already baked? use force=true)"
+            exit 1
+          fi
+
+  bake:
+    needs: discover
+    if: needs.discover.outputs.matrix != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Login to Docker Hub
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Bake ${{ matrix.base_tag }}
+        env:
+          BASE_TAG: ${{ matrix.base_tag }}
+          AOT_URL: ${{ matrix.aot_url }}
+          target_repository: ${{ env.TARGET_REPOSITORY }}
+        run: ./besu/aot/bake.sh
+
+  notify:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+    needs:
+      - discover
+      - bake
+    if: failure()
+    steps:
+      - name: Notify
+        uses: nobrayner/discord-webhook@1766a33bf571acdcc0678f00da4fb83aad01ebc7 # v1
+        with:
+          github-token: ${{ secrets.github_token }}
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
