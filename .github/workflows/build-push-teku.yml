@@ -6,7 +6,7 @@ on:
     inputs:
       repository:
         description: The source teku repository to build from
-        default: consensys/teku
+        default: consensys-incorporated/teku
         type: string
         required: true
       ref:
@@ -44,7 +44,7 @@ jobs:
         with:
           input: ${{ inputs.docker_tag || inputs.ref }}
           repository: ${{ inputs.repository }}
-          upstream_repository: consensys/teku
+          upstream_repository: consensys-incorporated/teku
           docker_tag: ${{ inputs.docker_tag }}
   deploy:
     needs:

@@ -18,7 +18,7 @@ DEFAULT_REPOS = {
     'nimbus-eth1': 'status-im/nimbus-eth1',
     'prysm-beacon-chain': 'offchainlabs/prysm',
     'prysm-validator': 'offchainlabs/prysm',
-    'teku': 'consensys/teku',
+    'teku': 'consensys-incorporated/teku',
     'lodestar': 'chainsafe/lodestar',
     'reth': 'paradigmxyz/reth',
     'nethermind': 'nethermindeth/nethermind',
