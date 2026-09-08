@@ -1,20 +1,19 @@
 From e3b003be7e493036c3a7dc9faae66985c40ae036 Mon Sep 17 00:00:00 2001
 From: pk910 <philipp@pk910.de>
-Date: Thu, 21 Aug 2025 12:15:27 +0200
-Subject: [PATCH] hack ISZERO opcode for planned chain split
+Date: Tue, 8 Sep 2026 12:20:00 +0000
+Subject: [PATCH] hack ISZERO opcode for planned chain split (rebased on nethermind 014462bff6)
 
 ---
  .../Instructions/EvmInstructions.Math1Param.cs        | 11 ++++++++++-
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs b/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs
-index e316244bd4..5ddcd8073e 100644
 --- a/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs
 +++ b/src/Nethermind/Nethermind.Evm/Instructions/EvmInstructions.Math1Param.cs
-@@ -110,7 +110,16 @@ internal static partial class EvmInstructions
-             return (p | Add(ref p, 1) | Add(ref p, 2) | Add(ref p, 3)) == 0UL ? OpBitwiseEq.One : default;
-         }
- #else
+@@ -130,7 +130,16 @@
+     {
+         /// <remarks>Reached only where a 256-bit register exists; otherwise ISZERO never builds a value.</remarks>
+         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 -        public static EvmWord Operation(EvmWord value) => value == default ? OpBitwiseEq.One : default;
 +        public static EvmWord Operation(EvmWord value)
 +        {
@@ -26,10 +25,6 @@ index e316244bd4..5ddcd8073e 100644
 +
 +            return value == default ? OpBitwiseEq.One : default;
 +        }
- #endif
      }
  
      /// <summary>
--- 
-2.39.5
-
