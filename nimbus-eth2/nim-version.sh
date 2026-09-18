@@ -9,8 +9,10 @@
 #    following the gitlinks:
 #      nimbus-eth2 -> vendor/nimbus-build-system -> vendor/Nim -> a Nim commit
 #    and reading NimMajor/NimMinor/NimPatch out of lib/system/compilation.nim in
-#    that Nim tree. Our source checkout has no submodules, so the two gitlinks
-#    are resolved over the GitHub API rather than by cloning.
+#    that Nim tree. Our source checkout has no submodules, so the gitlinks are
+#    resolved over the GitHub API rather than by cloning. Both repositories are
+#    taken from the .gitmodules that declares them, never assumed, because we
+#    build forks of nimbus-eth2 as readily as status-im/nimbus-eth2.
 # 2. `requires("nim == 2.2.12", ...)` in beacon_chain.nimble - the production
 #    version, maintained alongside Nimble support that nimbus doesn't use yet.
 # 3. `const v = ["2.2.12", "2.2.13"]` in config.nims, asserted at compile time:
@@ -40,6 +42,9 @@ ARCH="${PLATFORM##*/}"
 VERSION_RE='[0-9]+\.[0-9]+\.[0-9]+'
 SHA_RE='[0-9a-f]{40}'
 
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
+
 gh_api() {
   local url="$1"
   if [ -n "${GITHUB_TOKEN:-}" ]; then
@@ -50,9 +55,42 @@ gh_api() {
   fi
 }
 
+# url of the submodule registered for a path, out of a .gitmodules file
+submodule_url() {
+  local gitmodules="$1" want="$2" name
+  name=$(git config -f "$gitmodules" --get-regexp '^submodule\..*\.path$' 2>/dev/null \
+    | awk -v p="$want" '$2 == p { sub(/^submodule\./, "", $1); sub(/\.path$/, "", $1); print $1; exit }') || true
+  [ -n "$name" ] || return 1
+  git config -f "$gitmodules" --get "submodule.${name}.url"
+}
+
+# https://github.com/status-im/nimbus-build-system.git -> status-im/nimbus-build-system
+github_slug() {
+  local url="${1%.git}"
+  case "$url" in
+    https://github.com/*|http://github.com/*) echo "${url#*://github.com/}" ;;
+    ssh://git@github.com/*)                   echo "${url#ssh://git@github.com/}" ;;
+    git@github.com:*)                         echo "${url#git@github.com:}" ;;
+    *) return 1 ;;
+  esac
+}
+
+# the repo a checkout's submodule points at, as owner/name
+submodule_slug() {
+  local gitmodules="$1" path="$2" url
+  url=$(submodule_url "$gitmodules" "$path") || return 1
+  github_slug "$url" || return 1
+}
+
 # nimbus-eth2 -> vendor/nimbus-build-system -> vendor/Nim -> Nim's own version
 canonical_version() {
-  local nbs_sha nim_sha major minor patch
+  local nbs_slug nbs_sha nim_slug nim_sha nbs_gitmodules major minor patch
+
+  nbs_slug=$(submodule_slug "${SOURCE_DIR}/.gitmodules" vendor/nimbus-build-system) || nbs_slug=""
+  if [ -z "$nbs_slug" ]; then
+    echo "could not tell which github repo ${SOURCE_DIR} vendors nimbus-build-system from" >&2
+    return 1
+  fi
 
   # The gitlink is in our checkout, no network needed for this one
   nbs_sha=$(git -C "$SOURCE_DIR" rev-parse "HEAD:vendor/nimbus-build-system" 2>/dev/null) || nbs_sha=""
@@ -61,26 +99,37 @@ canonical_version() {
     return 1
   fi
 
-  nim_sha=$(gh_api "https://api.github.com/repos/status-im/nimbus-build-system/contents/vendor/Nim?ref=${nbs_sha}" \
+  nim_sha=$(gh_api "https://api.github.com/repos/${nbs_slug}/contents/vendor/Nim?ref=${nbs_sha}" \
     | grep -oE "\"sha\"[[:space:]]*:[[:space:]]*\"${SHA_RE}\"" | grep -oE "$SHA_RE" | head -n1) || nim_sha=""
   if ! grep -qE "^${SHA_RE}$" <<< "$nim_sha"; then
-    echo "could not resolve vendor/Nim in nimbus-build-system@${nbs_sha:0:7}" >&2
+    echo "could not resolve vendor/Nim in ${nbs_slug}@${nbs_sha:0:7}" >&2
+    return 1
+  fi
+
+  # which Nim repo that commit lives in is nimbus-build-system's business too
+  nbs_gitmodules="${TMP_DIR}/nbs.gitmodules"
+  curl -sfL --max-time 20 "https://raw.githubusercontent.com/${nbs_slug}/${nbs_sha}/.gitmodules" \
+    -o "$nbs_gitmodules" || true
+  nim_slug=""
+  [ -s "$nbs_gitmodules" ] && nim_slug=$(submodule_slug "$nbs_gitmodules" vendor/Nim) || true
+  if [ -z "$nim_slug" ]; then
+    echo "could not tell which github repo ${nbs_slug}@${nbs_sha:0:7} vendors Nim from" >&2
     return 1
   fi
 
   # NimMajor* {.intdefine.}: int = 2
   read -r major minor patch < <(
-    curl -sfL --max-time 20 "https://raw.githubusercontent.com/nim-lang/Nim/${nim_sha}/lib/system/compilation.nim" \
+    curl -sfL --max-time 20 "https://raw.githubusercontent.com/${nim_slug}/${nim_sha}/lib/system/compilation.nim" \
       | sed -n 's/^[[:space:]]*Nim\(Major\|Minor\|Patch\)\*[^=]*=[[:space:]]*\([0-9]\+\).*/\1 \2/p' \
       | sort | awk '{ v[$1] = $2 } END { print v["Major"], v["Minor"], v["Patch"] }'
   ) || true
 
   if [ -z "${major:-}" ] || [ -z "${minor:-}" ] || [ -z "${patch:-}" ]; then
-    echo "could not read the Nim version from nim-lang/Nim@${nim_sha:0:7}" >&2
+    echo "could not read the Nim version from ${nim_slug}@${nim_sha:0:7}" >&2
     return 1
   fi
 
-  echo "nimbus-build-system@${nbs_sha:0:7} pins nim-lang/Nim@${nim_sha:0:7} = Nim ${major}.${minor}.${patch}" >&2
+  echo "${nbs_slug}@${nbs_sha:0:7} pins ${nim_slug}@${nim_sha:0:7} = Nim ${major}.${minor}.${patch}" >&2
   echo "${major}.${minor}.${patch}"
 }
 
