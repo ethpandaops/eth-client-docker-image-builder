@@ -139,6 +139,7 @@ runs:
     if: inputs.build_args_script
     env:
       BUILD_ARGS_SCRIPT: ${{ inputs.build_args_script }}
+      GITHUB_TOKEN: ${{ github.token }}
       source_repository: ${{ inputs.source_repository }}
       source_ref: ${{ inputs.source_ref }}
       target_tag: ${{ inputs.target_tag }}
