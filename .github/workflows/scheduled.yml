@@ -283,6 +283,7 @@ jobs:
       source_patch: ${{ matrix.config.source_patch }}
       build_script: ${{ matrix.config.build_script }}
       build_args: "${{ matrix.config.build_args }}"
+      build_args_script: "${{ matrix.config.build_args_script }}"
       target_tag: ${{ matrix.config.target.tag }}
       target_repository: ${{ matrix.config.target.repository }}
       target_dockerfile: ${{ matrix.config.target.dockerfile }}

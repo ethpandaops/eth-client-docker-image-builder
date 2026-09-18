@@ -329,6 +329,15 @@ def get_build_script(client_name, branch, target_tag=None):
 
     return None
 
+def get_build_args_script(client_name, branch, target_tag=None):
+    """Determine the script that resolves build args from the source at build time"""
+    # nimbus-eth2 pins the Nim versions it accepts in its config.nims and fails
+    # the build on anything else, so the base image tag is resolved per ref
+    if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
+        return './nimbus-eth2/nim-version.sh'
+
+    return None
+
 def get_build_args(client_name, source_repo, branch, target_tag):
     """Determine the build arguments based on conventions"""
     # Check for known build args based on client/repo/tag combinations
@@ -380,6 +389,11 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
     if build_args:
         config['build_args'] = build_args
 
+    # Add a build args script if one applies to this client
+    build_args_script = get_build_args_script(client_name, branch, target_tag)
+    if build_args_script:
+        config['build_args_script'] = build_args_script
+
     config_list.append(config)
 
 def process_branch_custom(client_name, source_repo, branch, target_tag, config_list, source_patch=None):
@@ -412,6 +426,11 @@ def process_branch_custom(client_name, source_repo, branch, target_tag, config_l
     build_args = get_build_args(client_name, source_repo, branch, target_tag)
     if build_args:
         config['build_args'] = build_args
+
+    # Add a build args script if one applies to this client
+    build_args_script = get_build_args_script(client_name, branch, target_tag)
+    if build_args_script:
+        config['build_args_script'] = build_args_script
     config_list.append(config)
 
 if __name__ == '__main__':

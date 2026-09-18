@@ -25,6 +25,10 @@ on:
         description: Extra arguments to pass to the build script
         type: string
         required: false
+      build_args_script:
+        description: Bash script path in this repository that prints extra `KEY=value` docker build args on stdout
+        type: string
+        required: false
       target_tag:
         description: Docker hub tag to push to
         type: string
@@ -94,6 +98,7 @@ jobs:
         source_patch: ${{ inputs.source_patch }}
         build_script: ${{ inputs.build_script }}
         build_args: ${{ inputs.build_args }}
+        build_args_script: ${{ inputs.build_args_script }}
         target_tag: ${{ inputs.target_tag }}-${{ matrix.config.slug }}
         target_repository: ${{ inputs.target_repository }}
         target_dockerfile: ${{ inputs.target_dockerfile }}
