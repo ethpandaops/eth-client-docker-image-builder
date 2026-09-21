@@ -12,7 +12,7 @@ git clone https://github.com/ethpandaops/temu.git
 
 cd temu
 echo "temu commit hash: $(git rev-parse HEAD)"
-./apply-temu-patch.sh "${source_repository}" "${source_ref}" ../source
+./scripts/apply-temu-patch.sh "${source_repository}" "${source_ref}" ../source
 
 cd ../source
 
