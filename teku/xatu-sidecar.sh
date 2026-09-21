@@ -12,7 +12,12 @@ git clone https://github.com/ethpandaops/temu.git
 
 cd temu
 echo "temu commit hash: $(git rev-parse HEAD)"
-./scripts/apply-temu-patch.sh "${source_repository}" "${source_ref}" ../source
+# Temu still stores patches under Teku's former GitHub organization.
+patch_repository="${source_repository}"
+if [ "$patch_repository" = "consensys-incorporated/teku" ]; then
+    patch_repository="consensys/teku"
+fi
+./scripts/apply-temu-patch.sh "${patch_repository}" "${source_ref}" ../source
 
 cd ../source
 
