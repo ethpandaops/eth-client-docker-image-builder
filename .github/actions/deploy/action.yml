@@ -27,6 +27,14 @@ inputs:
     default: ""
     type: string
     required: false
+  build_args_script:
+    description: >-
+      Bash script path in this repository that prints extra `KEY=value` docker build
+      args on stdout, one per line. Runs after the source repository is checked out,
+      so it can derive build args from the source. Also exported to the environment
+      of build_script.
+    type: string
+    required: false
   target_tag:
     description: Docker hub tag to push to
     type: string
@@ -125,6 +133,36 @@ runs:
     run: |
       cd source
       patch -p 1 < ../${{ inputs.source_patch }}
+  - name: Resolve dynamic build args
+    id: build_args_script
+    shell: bash
+    if: inputs.build_args_script
+    env:
+      BUILD_ARGS_SCRIPT: ${{ inputs.build_args_script }}
+      GITHUB_TOKEN: ${{ github.token }}
+      source_repository: ${{ inputs.source_repository }}
+      source_ref: ${{ inputs.source_ref }}
+      target_tag: ${{ inputs.target_tag }}
+      target_dockerfile: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
+      platform: ${{ inputs.platform }}
+    run: |
+      set -euo pipefail
+      # Kept as two statements on purpose: piping straight into grep would let
+      # `|| true` swallow a failing script instead of failing the build.
+      raw="$("$BUILD_ARGS_SCRIPT")"
+      # Only well-formed KEY=value lines are build args; anything else the
+      # script prints is progress logging on stderr.
+      args="$(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' <<< "$raw" || true)"
+      echo "resolved build args: ${args:-<none>}"
+      {
+        echo "build_args<<BUILD_ARGS_EOF"
+        echo "$args"
+        echo "BUILD_ARGS_EOF"
+      } >> "$GITHUB_OUTPUT"
+      # build_script runs its own `docker build`, so hand it the args as env vars
+      if [ -n "$args" ]; then
+        echo "$args" >> "$GITHUB_ENV"
+      fi
   - name: Set up Docker Context for Buildx
     shell: bash
     id: buildx-context
@@ -220,6 +258,7 @@ runs:
       platforms: ${{ inputs.platform }}
       build-args: |
         ${{ inputs.build_args }}
+        ${{ steps.build_args_script.outputs.build_args }}
         COMMIT_HASH=${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
         GIT_SHA=${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
         GIT_BRANCH=${{ inputs.source_ref }}
