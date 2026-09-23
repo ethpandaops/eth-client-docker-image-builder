@@ -1,0 +1,2 @@
+# Overrides the source's .dockerignore, which drops vendor/*: the deploy action checks
+# the submodules out with the job token, so the Makefile must not re-clone them anonymously.

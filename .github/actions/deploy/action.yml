@@ -18,6 +18,13 @@ inputs:
     description: The patch to apply to the source repository
     type: string
     required: false
+  source_submodules:
+    description: >-
+      Passed to actions/checkout `submodules` (true / recursive). Checks them out with
+      the job token, so builds don't clone them anonymously inside docker.
+    type: string
+    default: "false"
+    required: false
   build_script:
     description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
     type: string
@@ -115,6 +122,7 @@ runs:
       path: source
       ref: ${{ inputs.source_commit || inputs.source_ref }}
       fetch-depth: 0
+      submodules: ${{ inputs.source_submodules }}
   - name: get short git commit hash
     id: git_commit_hash
     shell: bash

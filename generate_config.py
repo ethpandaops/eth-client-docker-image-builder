@@ -338,6 +338,15 @@ def get_build_args_script(client_name, branch, target_tag=None):
 
     return None
 
+def get_source_submodules(client_name):
+    """Determine whether the source checkout needs its submodules"""
+    # nimbus-eth2's Makefile clones ~70 submodules on its own when they are missing,
+    # anonymously from inside docker, which GitHub rejects once several builds share an IP
+    if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
+        return 'recursive'
+
+    return None
+
 def get_build_args(client_name, source_repo, branch, target_tag):
     """Determine the build arguments based on conventions"""
     # Check for known build args based on client/repo/tag combinations
@@ -373,6 +382,10 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
             'repository': f'ethpandaops/{client_name}'
         }
     }
+
+    source_submodules = get_source_submodules(client_name)
+    if source_submodules:
+        config['source']['submodules'] = source_submodules
 
     # Add dockerfile if one exists for this client
     dockerfile_path = get_dockerfile_path(client_name, target_tag)
@@ -414,6 +427,10 @@ def process_branch_custom(client_name, source_repo, branch, target_tag, config_l
     if source_patch:
         config['source']['patch'] = source_patch
     
+    source_submodules = get_source_submodules(client_name)
+    if source_submodules:
+        config['source']['submodules'] = source_submodules
+
     # Add dockerfile if one exists for this client
     dockerfile_path = get_dockerfile_path(client_name, target_tag)
     if dockerfile_path:

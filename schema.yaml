@@ -11,6 +11,7 @@ source:
   repository: str()
   ref: str(required=False)
   patch: str(required=False)
+  submodules: str(required=False)
 
 target:
   tag: str()
