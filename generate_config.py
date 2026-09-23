@@ -165,11 +165,9 @@ def generate_config():
 
                     # Auto-generate xatu sidecar builds if needed
                     if client_name in SIDECAR_VARIANTS:
+                        # No devnet variants: temu only ships patches/consensys/teku/master.patch
                         if branch_spec == 'unstable':
                             process_branch(client_name, default_repo, branch_spec, "xatu-sidecar-unstable", config_list)
-                        elif 'devnet' in branch_spec:
-                            # For devnet branches, append -xatu-sidecar to the safe branch name
-                            process_branch(client_name, default_repo, branch_spec, f"{safe_branch_name}-xatu-sidecar", config_list)
                         # Teku uses master as its main development branch (equivalent to unstable)
                         elif client_name == 'teku' and branch_spec == 'master':
                             process_branch(client_name, default_repo, branch_spec, "xatu-sidecar-master", config_list)
