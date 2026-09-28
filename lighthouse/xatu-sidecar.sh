@@ -1,13 +1,18 @@
 #! /bin/bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd ${SCRIPT_DIR}/..
+set -euo pipefail
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "${SCRIPT_DIR}/.."
+
+# a clone left behind by an earlier run on this runner would both break `set -e` and
+# risk patching with stale tooling
+rm -rf dimhouse
 git clone https://github.com/ethpandaops/dimhouse.git
 
 cd dimhouse
 echo "dimhouse commit hash: $(git rev-parse HEAD)"
-./apply-dimhouse-patch.sh ${source_repository} ${source_ref} ../source
+./apply-dimhouse-patch.sh "${source_repository}" "${source_ref}" ../source
 
 cd ../source
 

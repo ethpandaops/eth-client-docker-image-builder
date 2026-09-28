@@ -1,4 +1,4 @@
-FROM rust:1.88-bullseye AS builder
+FROM rust:1.88-bookworm AS builder
 RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y cmake clang libclang-dev protobuf-compiler
 COPY . lighthouse
 ARG FEATURES=gnosis,spec-minimal,slasher-lmdb
@@ -9,7 +9,7 @@ ENV PROFILE=$PROFILE
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=$CARGO_USE_GIT_CLI
 RUN cd lighthouse && make
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
   libssl-dev \
   ca-certificates \

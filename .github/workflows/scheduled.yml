@@ -281,8 +281,10 @@ jobs:
       source_ref: ${{ matrix.config.source.ref }}
       source_commit: ${{ matrix.config.source_commit }}
       source_patch: ${{ matrix.config.source_patch }}
+      source_submodules: ${{ matrix.config.source.submodules || 'false' }}
       build_script: ${{ matrix.config.build_script }}
       build_args: "${{ matrix.config.build_args }}"
+      build_args_script: "${{ matrix.config.build_args_script }}"
       target_tag: ${{ matrix.config.target.tag }}
       target_repository: ${{ matrix.config.target.repository }}
       target_dockerfile: ${{ matrix.config.target.dockerfile }}

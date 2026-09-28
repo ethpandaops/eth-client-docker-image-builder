@@ -18,7 +18,7 @@ DEFAULT_REPOS = {
     'nimbus-eth1': 'status-im/nimbus-eth1',
     'prysm-beacon-chain': 'offchainlabs/prysm',
     'prysm-validator': 'offchainlabs/prysm',
-    'teku': 'consensys/teku',
+    'teku': 'consensys-incorporated/teku',
     'lodestar': 'chainsafe/lodestar',
     'reth': 'paradigmxyz/reth',
     'nethermind': 'nethermindeth/nethermind',
@@ -165,11 +165,9 @@ def generate_config():
 
                     # Auto-generate xatu sidecar builds if needed
                     if client_name in SIDECAR_VARIANTS:
+                        # No devnet variants: temu only ships patches/consensys/teku/master.patch
                         if branch_spec == 'unstable':
                             process_branch(client_name, default_repo, branch_spec, "xatu-sidecar-unstable", config_list)
-                        elif 'devnet' in branch_spec:
-                            # For devnet branches, append -xatu-sidecar to the safe branch name
-                            process_branch(client_name, default_repo, branch_spec, f"{safe_branch_name}-xatu-sidecar", config_list)
                         # Teku uses master as its main development branch (equivalent to unstable)
                         elif client_name == 'teku' and branch_spec == 'master':
                             process_branch(client_name, default_repo, branch_spec, "xatu-sidecar-master", config_list)
@@ -329,6 +327,24 @@ def get_build_script(client_name, branch, target_tag=None):
 
     return None
 
+def get_build_args_script(client_name, branch, target_tag=None):
+    """Determine the script that resolves build args from the source at build time"""
+    # nimbus-eth2 pins the Nim versions it accepts in its config.nims and fails
+    # the build on anything else, so the base image tag is resolved per ref
+    if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
+        return './nimbus-eth2/nim-version.sh'
+
+    return None
+
+def get_source_submodules(client_name):
+    """Determine whether the source checkout needs its submodules"""
+    # nimbus-eth2's Makefile clones ~70 submodules on its own when they are missing,
+    # anonymously from inside docker, which GitHub rejects once several builds share an IP
+    if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
+        return 'recursive'
+
+    return None
+
 def get_build_args(client_name, source_repo, branch, target_tag):
     """Determine the build arguments based on conventions"""
     # Check for known build args based on client/repo/tag combinations
@@ -365,6 +381,10 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
         }
     }
 
+    source_submodules = get_source_submodules(client_name)
+    if source_submodules:
+        config['source']['submodules'] = source_submodules
+
     # Add dockerfile if one exists for this client
     dockerfile_path = get_dockerfile_path(client_name, target_tag)
     if dockerfile_path:
@@ -379,6 +399,11 @@ def process_branch(client_name, source_repo, branch, target_tag, config_list):
     build_args = get_build_args(client_name, source_repo, branch, target_tag)
     if build_args:
         config['build_args'] = build_args
+
+    # Add a build args script if one applies to this client
+    build_args_script = get_build_args_script(client_name, branch, target_tag)
+    if build_args_script:
+        config['build_args_script'] = build_args_script
 
     config_list.append(config)
 
@@ -400,6 +425,10 @@ def process_branch_custom(client_name, source_repo, branch, target_tag, config_l
     if source_patch:
         config['source']['patch'] = source_patch
     
+    source_submodules = get_source_submodules(client_name)
+    if source_submodules:
+        config['source']['submodules'] = source_submodules
+
     # Add dockerfile if one exists for this client
     dockerfile_path = get_dockerfile_path(client_name, target_tag)
     if dockerfile_path:
@@ -412,6 +441,11 @@ def process_branch_custom(client_name, source_repo, branch, target_tag, config_l
     build_args = get_build_args(client_name, source_repo, branch, target_tag)
     if build_args:
         config['build_args'] = build_args
+
+    # Add a build args script if one applies to this client
+    build_args_script = get_build_args_script(client_name, branch, target_tag)
+    if build_args_script:
+        config['build_args_script'] = build_args_script
     config_list.append(config)
 
 if __name__ == '__main__':

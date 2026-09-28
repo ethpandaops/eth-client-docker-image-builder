@@ -69,6 +69,8 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth2
           target_dockerfile: ./nimbus-eth2/Dockerfile.beacon
+          build_args_script: ./nimbus-eth2/nim-version.sh
+          source_submodules: recursive
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
@@ -107,6 +109,8 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth2
           target_dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+          build_args_script: ./nimbus-eth2/nim-version.sh
+          source_submodules: recursive
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
@@ -139,6 +143,8 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-validator-client
           target_dockerfile: ./nimbus-eth2/Dockerfile.validator
+          build_args_script: ./nimbus-eth2/nim-version.sh
+          source_submodules: recursive
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
@@ -174,6 +180,8 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-validator-client
           target_dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
+          build_args_script: ./nimbus-eth2/nim-version.sh
+          source_submodules: recursive
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"

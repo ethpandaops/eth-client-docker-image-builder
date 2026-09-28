@@ -1,4 +1,8 @@
-FROM nimlang/nim:2.2.10 AS build
+# Overridden per build by ./nimbus-eth2/nim-version.sh, which reads the Nim
+# versions the source ref accepts from its config.nims. This default only
+# applies to refs that don't declare one (stable, column-syncer).
+ARG NIM_VERSION=2.2.10
+FROM nimlang/nim:${NIM_VERSION} AS build
 
 SHELL ["/bin/bash", "-c"]
 

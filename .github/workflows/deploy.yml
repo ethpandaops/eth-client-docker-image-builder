@@ -17,12 +17,21 @@ on:
         description: The patch to apply to the source repository
         type: string
         required: false
+      source_submodules:
+        description: Passed to actions/checkout `submodules` (true / recursive)
+        type: string
+        default: "false"
+        required: false
       build_script:
         description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
         type: string
         required: false
       build_args:
         description: Extra arguments to pass to the build script
+        type: string
+        required: false
+      build_args_script:
+        description: Bash script path in this repository that prints extra `KEY=value` docker build args on stdout
         type: string
         required: false
       target_tag:
@@ -92,8 +101,10 @@ jobs:
         source_ref: ${{ inputs.source_ref }}
         source_commit: ${{ inputs.source_commit }}
         source_patch: ${{ inputs.source_patch }}
+        source_submodules: ${{ inputs.source_submodules }}
         build_script: ${{ inputs.build_script }}
         build_args: ${{ inputs.build_args }}
+        build_args_script: ${{ inputs.build_args_script }}
         target_tag: ${{ inputs.target_tag }}-${{ matrix.config.slug }}
         target_repository: ${{ inputs.target_repository }}
         target_dockerfile: ${{ inputs.target_dockerfile }}
