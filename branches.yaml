@@ -16,8 +16,7 @@
 # ============================================================
 el:
   common_branches:
-    - glamsterdam-devnet-8
-    - focil-devnet-0
+    - focil-devnet-1
     - frames-devnet-0
   clients:
     besu:
@@ -59,8 +58,7 @@ el:
 # ============================================================
 cl:
   common_branches:
-    - glamsterdam-devnet-8
-    - focil-devnet-0
+    - focil-devnet-1
   clients:
     caplin:
       skip_common: true
