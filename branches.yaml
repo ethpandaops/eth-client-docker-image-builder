@@ -181,6 +181,14 @@ tooling:
     tx-fuzz:
       branches:
         - master
+    dora:
+      alt_repos:          
+        sukunrt/dora:
+          - decoupled-consensus
+    ethereum-genesis-generator:
+      alt_repos:
+        sukunrt/ethereum-genesis-generator:
+          - decoupled-consensus
 
 # ============================================================
 # Other
