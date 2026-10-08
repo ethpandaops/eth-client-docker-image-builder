@@ -17,6 +17,7 @@
 el:
   common_branches:
     - focil-devnet-1
+    - focil-devnet-2
     - frames-devnet-0
   clients:
     besu:
@@ -59,6 +60,7 @@ el:
 cl:
   common_branches:
     - focil-devnet-1
+    - focil-devnet-2
   clients:
     caplin:
       skip_common: true
