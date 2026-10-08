@@ -128,3 +128,6 @@ slashoor:
 trueblocks:
   - linux/amd64
   - linux/arm64
+dora:
+  - linux/amd64
+  - linux/arm64

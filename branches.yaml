@@ -107,7 +107,7 @@ cl:
         syjn99/prysm:
           - prototype/ssz-over-http
         sukunrt/prysm:
-          - decoupled-casper
+          - decoupled-consensus
     teku:
       branches:
         - master
@@ -182,7 +182,7 @@ tooling:
       branches:
         - master
     dora:
-      alt_repos:          
+      alt_repos:
         sukunrt/dora:
           - decoupled-consensus
     ethereum-genesis-generator:
