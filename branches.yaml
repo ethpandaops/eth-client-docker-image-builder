@@ -19,6 +19,7 @@ el:
     - focil-devnet-1
     - focil-devnet-2
     - frames-devnet-0
+    - frames-devnet-1
   clients:
     besu:
       branches:
