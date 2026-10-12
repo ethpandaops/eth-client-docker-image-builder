@@ -16,10 +16,10 @@
 # ============================================================
 el:
   common_branches:
-    - focil-devnet-1
-    - focil-devnet-2
-    - frames-devnet-0
-    - frames-devnet-1
+    - heze-devnet-1
+    - heze-devnet-2
+    - bogota-devnet-0
+    - bogota-devnet-1
   clients:
     besu:
       branches:
@@ -60,8 +60,8 @@ el:
 # ============================================================
 cl:
   common_branches:
-    - focil-devnet-1
-    - focil-devnet-2
+    - heze-devnet-1
+    - heze-devnet-2
   clients:
     caplin:
       skip_common: true
