@@ -71,9 +71,7 @@ SENTRY_VARIANTS = [
 ]
 
 # Clients that need to have xatu sidecar builds created automatically
-SIDECAR_VARIANTS = [
-    'teku'
-]
+SIDECAR_VARIANTS = []
 
 def flatten_groups(raw_config):
     """Flatten the grouped branches.yaml structure into a flat client dict.
