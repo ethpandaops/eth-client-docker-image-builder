@@ -1,18 +1,19 @@
 #! /bin/bash
 #
-# Prints the NIM_VERSION docker build arg for a nimbus-eth2 build, on stdout.
+# Prints the NIM_VERSION docker build arg for a nimbus-eth2 or nimbus-eth1
+# build, on stdout.
 #
 # Three sources declare the Nim version a ref builds with, in decreasing order
 # of authority:
 #
 # 1. The canonical one - the compiler nimbus actually builds with, reached by
 #    following the gitlinks:
-#      nimbus-eth2 -> vendor/nimbus-build-system -> vendor/Nim -> a Nim commit
+#      nimbus-eth{1,2} -> vendor/nimbus-build-system -> vendor/Nim -> a Nim commit
 #    and reading NimMajor/NimMinor/NimPatch out of lib/system/compilation.nim in
 #    that Nim tree. Our source checkout has no submodules, so the gitlinks are
 #    resolved over the GitHub API rather than by cloning. Both repositories are
 #    taken from the .gitmodules that declares them, never assumed, because we
-#    build forks of nimbus-eth2 as readily as status-im/nimbus-eth2.
+#    build forks as readily as the status-im repositories.
 # 2. `requires("nim == 2.2.12", ...)` in beacon_chain.nimble - the production
 #    version, maintained alongside Nimble support that nimbus doesn't use yet.
 # 3. `const v = ["2.2.12", "2.2.13"]` in config.nims, asserted at compile time:
@@ -22,6 +23,10 @@
 #    is what fails the build loudly on a wrong compiler - which is what a
 #    version hardcoded in our Dockerfiles ran into. So it doesn't pick the
 #    version, it vetoes: a candidate it rejects is dropped.
+#    nimbus-eth1 asserts a single version instead:
+#      const e = (2, 2, 12)
+#      doAssert (NimPatch mod 2 == 1 and v >= e) or e == v, "requires Nim " & $e
+#    which, devel snapshots aside, accepts that version alone.
 #
 # Only even minor and patch numbers are Nim releases (2.2.10, 2.2.12, 2.4.0,
 # 2.4.2, ...); odd ones are devel snapshots published only as nightlies, never
@@ -35,6 +40,7 @@ set -euo pipefail
 
 SOURCE_DIR="${source_dir:-./source}"
 NIMBLE="${beacon_chain_nimble:-${SOURCE_DIR}/beacon_chain.nimble}"
+[ -f "$NIMBLE" ] || NIMBLE="${SOURCE_DIR}/nimbus.nimble"
 CONFIG_NIMS="${config_nims:-${SOURCE_DIR}/config.nims}"
 PLATFORM="${platform:-linux/amd64}"
 ARCH="${PLATFORM##*/}"
@@ -156,10 +162,14 @@ if [ -f "$CONFIG_NIMS" ]; then
     | grep -E "^${VERSION_RE}$" \
     | sort -Vr) || true
 
+  # `    e = (2, 2, 12)` -> `2.2.12`
+  [ -n "$ACCEPTED" ] || ACCEPTED=$(sed -n 's/^[[:space:]]*e = (\([0-9]*\), *\([0-9]*\), *\([0-9]*\)).*/\1.\2.\3/p' "$CONFIG_NIMS" \
+    | grep -E "^${VERSION_RE}$") || true
+
   # Upstream is free to reword that block, so tell "no requirement declared"
   # apart from "declared in a shape we no longer parse" - the latter would
   # otherwise silently build against a compiler its assert rejects.
-  if [ -z "$ACCEPTED" ] && grep -q 'requires one of Nim versions' "$CONFIG_NIMS"; then
+  if [ -z "$ACCEPTED" ] && grep -qE 'requires one of Nim versions|"requires Nim "' "$CONFIG_NIMS"; then
     echo "${CONFIG_NIMS} declares a Nim version requirement that this script could not parse - the upstream pattern changed, update ./nimbus-eth2/nim-version.sh" >&2
     exit 1
   fi
