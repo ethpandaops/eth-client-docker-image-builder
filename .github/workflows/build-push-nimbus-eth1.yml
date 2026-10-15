@@ -68,6 +68,9 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth1
+          target_dockerfile: ./nimbus-eth1/Dockerfile
+          build_args_script: ./nimbus-eth2/nim-version.sh
+          source_submodules: recursive
           platform: ${{ matrix.platform }}
 
           DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"

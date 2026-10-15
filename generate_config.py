@@ -327,18 +327,18 @@ def get_build_script(client_name, branch, target_tag=None):
 
 def get_build_args_script(client_name, branch, target_tag=None):
     """Determine the script that resolves build args from the source at build time"""
-    # nimbus-eth2 pins the Nim versions it accepts in its config.nims and fails
+    # nimbus pins the Nim versions it accepts in its config.nims and fails
     # the build on anything else, so the base image tag is resolved per ref
-    if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
+    if client_name in ('nimbus-eth1', 'nimbus-eth2', 'nimbus-validator-client'):
         return './nimbus-eth2/nim-version.sh'
 
     return None
 
 def get_source_submodules(client_name):
     """Determine whether the source checkout needs its submodules"""
-    # nimbus-eth2's Makefile clones ~70 submodules on its own when they are missing,
+    # nimbus's Makefile clones dozens of submodules on its own when they are missing,
     # anonymously from inside docker, which GitHub rejects once several builds share an IP
-    if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
+    if client_name in ('nimbus-eth1', 'nimbus-eth2', 'nimbus-validator-client'):
         return 'recursive'
 
     return None
