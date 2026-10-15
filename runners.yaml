@@ -1,2 +1,2 @@
 linux/amd64: self-hosted-ghr-size-xl-do-x64
-linux/arm64: size-attester7870-arm64
+linux/arm64: self-hosted-ghr-size-attester7870-arm64
