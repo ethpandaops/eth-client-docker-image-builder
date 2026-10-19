@@ -18,7 +18,6 @@ el:
   common_branches:
     - heze-devnet-1
     - heze-devnet-2
-    - bogota-devnet-0
     - bogota-devnet-1
   clients:
     besu:
