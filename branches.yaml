@@ -16,7 +16,7 @@
 # ============================================================
 el:
   common_branches:
-    - heze-devnet-1
+    - heze-devnet-3
     - heze-devnet-2
     - bogota-devnet-1
   clients:
@@ -59,7 +59,7 @@ el:
 # ============================================================
 cl:
   common_branches:
-    - heze-devnet-1
+    - heze-devnet-3
     - heze-devnet-2
   clients:
     caplin:
