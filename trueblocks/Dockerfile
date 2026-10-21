@@ -1,6 +1,6 @@
 # Builds chifra from trueblocks-core source.
 
-FROM golang:1.25.1-bookworm AS builder
+FROM golang:1.26.10-bookworm AS builder
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
