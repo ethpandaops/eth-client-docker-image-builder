@@ -297,6 +297,25 @@ jobs:
       DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
       HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
       MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+
+  # Lets ethpandaops/hive-tests test the new images now instead of at its next
+  # hourly check. Skipped when HIVE_TESTS_DISPATCH_TOKEN is not set.
+  announce:
+    name: Announce the images to hive-tests
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result != 'skipped' }}
+    steps:
+      - name: Run the hive-tests image check
+        env:
+          GH_TOKEN: ${{ secrets.HIVE_TESTS_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "HIVE_TESTS_DISPATCH_TOKEN is not set, skipping"
+            exit 0
+          fi
+          gh workflow run watch-images.yaml --repo ethpandaops/hive-tests --ref master
+
   next:
     name: Dispatch next run
     runs-on: ubuntu-latest
