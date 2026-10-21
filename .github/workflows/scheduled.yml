@@ -310,7 +310,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
-      INTERVAL: 3600
+      INTERVAL: 1800
     steps:
       - name: Wait for next interval
         run: |
