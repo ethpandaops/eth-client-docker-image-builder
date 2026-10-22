@@ -76,7 +76,7 @@ on:
         required: false
       MACOS_PASSWORD:
         required: true
-      HIVE_TESTS_DISPATCH_TOKEN:
+      HIVE_TESTS_APP_PRIVATE_KEY:
         required: false
 
 jobs:
@@ -127,18 +127,26 @@ jobs:
 
     # Lets ethpandaops/hive-tests test the image now instead of at its next
     # hourly check. hive runs the -linux-amd64 tags, so it doesn't wait for the
-    # other platforms. Skipped when HIVE_TESTS_DISPATCH_TOKEN is not set, and a
-    # failed announcement doesn't fail the build.
+    # other platforms. Skipped until the hive-tests dispatch app is set up
+    # (HIVE_TESTS_APP_CLIENT_ID), and a failed announcement doesn't fail the
+    # build.
+    - name: Get a hive-tests token
+      id: hive_tests_token
+      if: ${{ matrix.config.slug == 'linux-amd64' && vars.HIVE_TESTS_APP_CLIENT_ID != '' }}
+      continue-on-error: true
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      with:
+        client-id: ${{ vars.HIVE_TESTS_APP_CLIENT_ID }}
+        private-key: ${{ secrets.HIVE_TESTS_APP_PRIVATE_KEY }}
+        owner: ethpandaops
+        repositories: hive-tests
+        permission-actions: write
     - name: Announce the image to hive-tests
-      if: ${{ matrix.config.slug == 'linux-amd64' }}
+      if: ${{ steps.hive_tests_token.outputs.token != '' }}
       env:
-        TOKEN: ${{ secrets.HIVE_TESTS_DISPATCH_TOKEN }}
+        TOKEN: ${{ steps.hive_tests_token.outputs.token }}
       shell: bash
       run: |
-        if [ -z "$TOKEN" ]; then
-          echo "HIVE_TESTS_DISPATCH_TOKEN is not set, skipping"
-          exit 0
-        fi
         curl -fsS --max-time 30 -X POST \
           -H "Authorization: Bearer $TOKEN" \
           -H "Accept: application/vnd.github+json" \
