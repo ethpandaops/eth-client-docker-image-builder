@@ -76,6 +76,8 @@ on:
         required: false
       MACOS_PASSWORD:
         required: true
+      HIVE_TESTS_DISPATCH_TOKEN:
+        required: false
 
 jobs:
   deploy:
@@ -122,6 +124,27 @@ jobs:
       id: set_output
       run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
       shell: bash
+
+    # Lets ethpandaops/hive-tests test the image now instead of at its next
+    # hourly check. hive runs the -linux-amd64 tags, so it doesn't wait for the
+    # other platforms. Skipped when HIVE_TESTS_DISPATCH_TOKEN is not set, and a
+    # failed announcement doesn't fail the build.
+    - name: Announce the image to hive-tests
+      if: ${{ matrix.config.slug == 'linux-amd64' }}
+      env:
+        TOKEN: ${{ secrets.HIVE_TESTS_DISPATCH_TOKEN }}
+      shell: bash
+      run: |
+        if [ -z "$TOKEN" ]; then
+          echo "HIVE_TESTS_DISPATCH_TOKEN is not set, skipping"
+          exit 0
+        fi
+        curl -fsS --max-time 30 -X POST \
+          -H "Authorization: Bearer $TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          https://api.github.com/repos/ethpandaops/hive-tests/actions/workflows/watch-images.yaml/dispatches \
+          -d '{"ref":"master"}' \
+          || echo "::warning::Announcing the image to hive-tests failed, its hourly check picks it up"
   mainfest:
     name: Manifest
     needs: deploy
