@@ -297,6 +297,7 @@ jobs:
       DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
       HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
       MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
+      HIVE_TESTS_APP_PRIVATE_KEY: "${{ secrets.HIVE_TESTS_APP_PRIVATE_KEY }}"
   next:
     name: Dispatch next run
     runs-on: ubuntu-latest
