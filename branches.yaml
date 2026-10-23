@@ -19,6 +19,7 @@ el:
     - heze-devnet-3
     - heze-devnet-2
     - bogota-devnet-1
+    - bogota-devnet-2
   clients:
     besu:
       branches:
