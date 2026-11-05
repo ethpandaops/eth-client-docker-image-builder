@@ -23,10 +23,13 @@
 #    is what fails the build loudly on a wrong compiler - which is what a
 #    version hardcoded in our Dockerfiles ran into. So it doesn't pick the
 #    version, it vetoes: a candidate it rejects is dropped.
-#    nimbus-eth1 asserts a single version instead:
+#    Older nimbus-eth1 asserts a single version instead:
 #      const e = (2, 2, 12)
 #      doAssert (NimPatch mod 2 == 1 and v >= e) or e == v, "requires Nim " & $e
-#    which, devel snapshots aside, accepts that version alone.
+#    which, devel snapshots aside, accepts that version alone. Current
+#    nimbus-eth1 and nimbus-eth2 assert a minimum:
+#      const e = (2, 2, 14)
+#      doAssert (NimMajor, NimMinor, NimPatch) >= e, "requires Nim " & $e
 #
 # Only even minor and patch numbers are Nim releases (2.2.10, 2.2.12, 2.4.0,
 # 2.4.2, ...); odd ones are devel snapshots published only as nightlies, never
@@ -156,31 +159,42 @@ fi
 
 # `  const v = ["2.2.12", "2.2.13"]` -> `2.2.13\n2.2.12` (newest first)
 ACCEPTED=""
+MINIMUM=""
 if [ -f "$CONFIG_NIMS" ]; then
   ACCEPTED=$(sed -n 's/^[[:space:]]*const v = \[\(.*\)\].*/\1/p' "$CONFIG_NIMS" \
     | tr -d ' "' | tr ',' '\n' \
     | grep -E "^${VERSION_RE}$" \
     | sort -Vr) || true
 
-  # `    e = (2, 2, 12)` -> `2.2.12`
-  [ -n "$ACCEPTED" ] || ACCEPTED=$(sed -n 's/^[[:space:]]*e = (\([0-9]*\), *\([0-9]*\), *\([0-9]*\)).*/\1.\2.\3/p' "$CONFIG_NIMS" \
-    | grep -E "^${VERSION_RE}$") || true
+  # `  const e = (2, 2, 14)` -> `2.2.14`
+  if [ -z "$ACCEPTED" ]; then
+    E_VERSION=$(sed -n 's/^[[:space:]]*\(const[[:space:]]\{1,\}\)\{0,1\}e[[:space:]]*=[[:space:]]*(\([0-9]*\),[[:space:]]*\([0-9]*\),[[:space:]]*\([0-9]*\)).*/\2.\3.\4/p' "$CONFIG_NIMS" \
+      | grep -E "^${VERSION_RE}$" | head -n1) || true
+    if [ -n "$E_VERSION" ]; then
+      if grep -qE '\(NimMajor, *NimMinor, *NimPatch\) *>= *e[^=]*"requires Nim "' "$CONFIG_NIMS"; then
+        MINIMUM="$E_VERSION"
+      elif grep -qE 'e == v' "$CONFIG_NIMS"; then
+        ACCEPTED="$E_VERSION"
+      fi
+    fi
+  fi
 
   # Upstream is free to reword that block, so tell "no requirement declared"
   # apart from "declared in a shape we no longer parse" - the latter would
   # otherwise silently build against a compiler its assert rejects.
-  if [ -z "$ACCEPTED" ] && grep -qE 'requires one of Nim versions|"requires Nim "' "$CONFIG_NIMS"; then
+  if [ -z "$ACCEPTED" ] && [ -z "$MINIMUM" ] && grep -qE 'requires one of Nim versions|"requires Nim "' "$CONFIG_NIMS"; then
     echo "${CONFIG_NIMS} declares a Nim version requirement that this script could not parse - the upstream pattern changed, update ./nimbus-eth2/nim-version.sh" >&2
     exit 1
   fi
   [ -n "$ACCEPTED" ] && echo "${CONFIG_NIMS} accepts Nim $(echo "$ACCEPTED" | tr '\n' ' ')" >&2
+  [ -n "$MINIMUM" ] && echo "${CONFIG_NIMS} requires Nim >= ${MINIMUM}" >&2
 fi
 
 if [ -n "$CANONICAL_VERSION" ] && [ -n "$NIMBLE_VERSION" ] && [ "$CANONICAL_VERSION" != "$NIMBLE_VERSION" ]; then
   echo "note: ${NIMBLE} says ${NIMBLE_VERSION} but the pinned compiler is ${CANONICAL_VERSION}" >&2
 fi
 
-CANDIDATES=$(printf '%s\n%s\n%s\n' "$CANONICAL_VERSION" "$NIMBLE_VERSION" "$ACCEPTED" \
+CANDIDATES=$(printf '%s\n%s\n%s\n%s\n' "$CANONICAL_VERSION" "$NIMBLE_VERSION" "$ACCEPTED" "$MINIMUM" \
   | grep -E "^${VERSION_RE}$" | awk '!seen[$0]++') || true
 
 if [ -z "$CANDIDATES" ]; then
@@ -195,6 +209,18 @@ if [ -n "$ACCEPTED" ]; then
       echo "dropping Nim ${version}: ${CONFIG_NIMS} rejects it" >&2
   done
   CANDIDATES=$(grep -xF -f <(echo "$ACCEPTED") <<< "$CANDIDATES") || CANDIDATES=""
+fi
+
+if [ -n "$MINIMUM" ]; then
+  KEPT=""
+  for version in $CANDIDATES; do
+    if [ "$(printf '%s\n%s\n' "$MINIMUM" "$version" | sort -V | head -n1)" = "$MINIMUM" ]; then
+      KEPT="${KEPT}${version}"$'\n'
+    else
+      echo "dropping Nim ${version}: ${CONFIG_NIMS} requires >= ${MINIMUM}" >&2
+    fi
+  done
+  CANDIDATES=$(grep -E "^${VERSION_RE}$" <<< "$KEPT") || CANDIDATES=""
 fi
 
 CANDIDATES=$(releases_only <<< "$CANDIDATES") || true
