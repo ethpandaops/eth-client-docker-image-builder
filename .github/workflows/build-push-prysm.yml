@@ -1,6 +1,9 @@
 name: Build prysm docker image
 run-name: "${{ inputs.repository }}@${{ inputs.ref }}${{ inputs.correlation_id && format(' [{0}]', inputs.correlation_id) || '' }}"
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
     inputs:
@@ -37,8 +40,11 @@ jobs:
     outputs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
+      source_commit: ${{ steps.setup.outputs.source_commit }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Prepare Matrix
         id: setup
         uses: ./.github/actions/prepare
@@ -66,6 +72,8 @@ jobs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -74,6 +82,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
           build_script: ./prysm/build_beacon.sh
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-beacon-chain
@@ -81,13 +90,7 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
-          HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-          harbor_registry: ${{ vars.HARBOR_REGISTRY }}
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
@@ -104,6 +107,8 @@ jobs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -112,6 +117,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
           build_script: ./prysm/build_beacon_minimal.sh
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-beacon-chain
@@ -119,9 +125,6 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
       - name: Set job output
         id: set_output
@@ -139,6 +142,8 @@ jobs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -147,6 +152,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
           build_script: ./prysm/build_validator.sh
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-validator
@@ -154,9 +160,6 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
       - name: Set job output
         id: set_output
@@ -174,6 +177,8 @@ jobs:
       git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/install-deps
         with:
           repository: ${{ inputs.repository }}
@@ -182,6 +187,7 @@ jobs:
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
           build_script: ./prysm/build_validator_minimal.sh
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-validator
@@ -189,9 +195,6 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-          MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
       - name: Set job output
         id: set_output
@@ -204,13 +207,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
+          build_script: ./prysm/build_beacon.sh
+          target_dockerfile: ./prysm/Dockerfile.beacon
+          build_method: ${{ inputs.build_method }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
           target_repository: ethpandaops/prysm-beacon-chain
           platforms: ${{ needs.prepare.outputs.platforms }}
+          GOPROXY: ${{ vars.GOPROXY }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
@@ -225,13 +235,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
+          build_script: ./prysm/build_beacon_minimal.sh
+          target_dockerfile: ./prysm/Dockerfile.beacon
+          build_method: ${{ inputs.build_method }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal
           target_repository: ethpandaops/prysm-beacon-chain
           platforms: ${{ needs.prepare.outputs.platforms }}
+          GOPROXY: ${{ vars.GOPROXY }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
@@ -246,13 +263,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
+          build_script: ./prysm/build_validator.sh
+          target_dockerfile: ./prysm/Dockerfile.validator
+          build_method: ${{ inputs.build_method }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}
           target_repository: ethpandaops/prysm-validator
           platforms: ${{ needs.prepare.outputs.platforms }}
+          GOPROXY: ${{ vars.GOPROXY }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
@@ -267,13 +291,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/manifest
         with:
           source_repository: ${{ inputs.repository }}
           source_ref: ${{ inputs.ref }}
+          source_commit: ${{ needs.prepare.outputs.source_commit }}
+          build_script: ./prysm/build_validator_minimal.sh
+          target_dockerfile: ./prysm/Dockerfile.validator
+          build_method: ${{ inputs.build_method }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal
           target_repository: ethpandaops/prysm-validator
           platforms: ${{ needs.prepare.outputs.platforms }}
+          GOPROXY: ${{ vars.GOPROXY }}
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"

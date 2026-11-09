@@ -6,67 +6,66 @@ on:
         type: string
         required: true
       source_ref:
-        description: The branch, tag or SHA to checkout and build from
+        description: The branch, tag or SHA to resolve
         type: string
         required: true
       source_commit:
-        description: The specific commit SHA to checkout (takes precedence over source_ref)
+        description: The immutable commit SHA to build
         type: string
-        required: false
+        required: true
       source_patch:
         description: The patch to apply to the source repository
         type: string
         required: false
       source_submodules:
-        description: Passed to actions/checkout `submodules` (true / recursive)
+        description: Passed to actions/checkout submodules (true / recursive)
         type: string
         default: "false"
         required: false
       build_script:
-        description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
+        description: Repository script that builds and locally tags the image
         type: string
         required: false
       build_args:
-        description: Extra arguments to pass to the build script
+        description: Extra Docker build arguments
         type: string
         required: false
       build_args_script:
-        description: Bash script path in this repository that prints extra `KEY=value` docker build args on stdout
+        description: Repository script that prints extra KEY=value Docker build arguments
         type: string
         required: false
       target_tag:
-        description: Docker hub tag to push to
+        description: Target image tag
         type: string
         required: true
       target_repository:
-        description: Docker hub repository to push to
+        description: Target image repository
         type: string
         required: true
       target_dockerfile:
-        description: Dockerfile path in this repository to build from. Omit to use source repository Dockerfile
+        description: Dockerfile path in this repository; defaults to the source Dockerfile
         type: string
         default: ./source/Dockerfile
         required: false
       platforms:
-        # eg [{"platform":"linux/amd64", "runner": "ARM64", "slug": "something-arm64"},{"platform":"linux/arm64", "runner": "ubuntu-latest", "slug": "something-amd64"}]
-        description: JSON list of platforms to build for
+        description: JSON list of platforms and build runners
         type: string
         required: true
       harbor_registry:
-        description: Harbor registry to push the images to
+        description: Optional secondary registry
         type: string
         default: ''
         required: false
       HARBOR_USERNAME:
-        description: Harbor username
+        description: Secondary registry publisher username
         type: string
         required: false
       DOCKER_USERNAME:
-        description: Docker Hub username
+        description: Docker Hub publisher username
         type: string
         required: true
       GOPROXY:
-        description: GOPROXY
+        description: GOPROXY used by supported builds
         type: string
         required: false
     secrets:
@@ -74,102 +73,115 @@ on:
         required: true
       HARBOR_PASSWORD:
         required: false
-      MACOS_PASSWORD:
-        required: true
       HIVE_TESTS_APP_PRIVATE_KEY:
         required: false
 
+permissions:
+  contents: read
+
 jobs:
-  deploy:
-    name: Deploy ${{ matrix.config.slug }} ${{ inputs.target_tag }}
-    continue-on-error: false
+  validate-runners:
+    name: Validate build runners
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate platform configuration
+        env:
+          PLATFORMS: ${{ inputs.platforms }}
+        run: |
+          set -euo pipefail
+          jq -e 'type == "array" and length > 0' <<< "$PLATFORMS" >/dev/null
+          while IFS= read -r runner; do
+            if [[ ! "$runner" =~ ^self-hosted-ghr-[A-Za-z0-9._-]+$ ]]; then
+              echo "::error::Runner '$runner' is not a disposable build runner"
+              exit 1
+            fi
+          done < <(jq -r '.[].runner' <<< "$PLATFORMS")
+
+  build:
+    name: Build ${{ matrix.config.slug }} ${{ inputs.target_tag }}
+    needs: validate-runners
     strategy:
       fail-fast: false
       matrix:
-        config: ${{fromJson(inputs.platforms)}}
+        config: ${{ fromJson(inputs.platforms) }}
     runs-on: ${{ matrix.config.runner }}
-    outputs:
-      git_commit_hash: ${{ steps.set_output.outputs.git_commit_hash }}
-      git_commit_hash_full: ${{ steps.set_output.outputs.git_commit_hash_full }}
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-    - uses: ./.github/actions/install-deps
-      with:
-        repository: ${{ inputs.source_repository }}
-    - uses: ./.github/actions/deploy
-      id: deploy
-      with:
-        source_repository: ${{ inputs.source_repository }}
-        source_ref: ${{ inputs.source_ref }}
-        source_commit: ${{ inputs.source_commit }}
-        source_patch: ${{ inputs.source_patch }}
-        source_submodules: ${{ inputs.source_submodules }}
-        build_script: ${{ inputs.build_script }}
-        build_args: ${{ inputs.build_args }}
-        build_args_script: ${{ inputs.build_args_script }}
-        target_tag: ${{ inputs.target_tag }}-${{ matrix.config.slug }}
-        target_repository: ${{ inputs.target_repository }}
-        target_dockerfile: ${{ inputs.target_dockerfile }}
-        platform: ${{ matrix.config.platform }}
-        DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
-        DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-        MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
-        GOPROXY: "${{ inputs.GOPROXY }}"
-        HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
-        HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-        harbor_registry: ${{ vars.HARBOR_REGISTRY }}
-        
-    # This step captures the git commit hash from the deploy action for job output
-    - name: Set job output
-      id: set_output
-      run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
-      shell: bash
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/install-deps
+        with:
+          repository: ${{ inputs.source_repository }}
+      - uses: ./.github/actions/deploy
+        with:
+          source_repository: ${{ inputs.source_repository }}
+          source_ref: ${{ inputs.source_ref }}
+          source_commit: ${{ inputs.source_commit }}
+          source_patch: ${{ inputs.source_patch }}
+          source_submodules: ${{ inputs.source_submodules }}
+          build_script: ${{ inputs.build_script }}
+          build_args: ${{ inputs.build_args }}
+          build_args_script: ${{ inputs.build_args_script }}
+          target_tag: ${{ inputs.target_tag }}-${{ matrix.config.slug }}
+          target_repository: ${{ inputs.target_repository }}
+          target_dockerfile: ${{ inputs.target_dockerfile }}
+          platform: ${{ matrix.config.platform }}
+          GOPROXY: ${{ inputs.GOPROXY }}
 
-    # Lets ethpandaops/hive-tests test the image now instead of at its next
-    # hourly check. Only the EL images hive runs are announced, and hive runs
-    # the -linux-amd64 tags, so it doesn't wait for the other platforms.
-    # Skipped until the hive-tests dispatch app is set up
-    # (HIVE_TESTS_APP_CLIENT_ID), and a failed announcement doesn't fail the
-    # build.
-    - name: Get a hive-tests token
-      id: hive_tests_token
-      if: ${{ matrix.config.slug == 'linux-amd64' && contains(fromJSON('["ethpandaops/besu","ethpandaops/erigon","ethpandaops/ethrex","ethpandaops/geth","ethpandaops/nethermind","ethpandaops/nimbus-eth1","ethpandaops/reth"]'), inputs.target_repository) && vars.HIVE_TESTS_APP_CLIENT_ID != '' }}
-      continue-on-error: true
-      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-      with:
-        client-id: ${{ vars.HIVE_TESTS_APP_CLIENT_ID }}
-        private-key: ${{ secrets.HIVE_TESTS_APP_PRIVATE_KEY }}
-        owner: ethpandaops
-        repositories: hive-tests
-        permission-actions: write
-    - name: Announce the image to hive-tests
-      if: ${{ steps.hive_tests_token.outputs.token != '' }}
-      env:
-        TOKEN: ${{ steps.hive_tests_token.outputs.token }}
-      shell: bash
-      run: |
-        curl -fsS --max-time 30 -X POST \
-          -H "Authorization: Bearer $TOKEN" \
-          -H "Accept: application/vnd.github+json" \
-          https://api.github.com/repos/ethpandaops/hive-tests/actions/workflows/watch-images.yaml/dispatches \
-          -d '{"ref":"master"}' \
-          || echo "::warning::Announcing the image to hive-tests failed, its hourly check picks it up"
-  mainfest:
-    name: Manifest
-    needs: deploy
+  publish:
+    name: Publish ${{ inputs.target_tag }}
+    needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-    - uses: ./.github/actions/manifest
-      with:
-        platforms: ${{ inputs.platforms }}
-        source_repository: ${{ inputs.source_repository }}
-        source_ref: ${{ inputs.source_ref }}
-        target_tag: ${{ inputs.target_tag }}
-        target_repository: ${{ inputs.target_repository }}
-        harbor_registry: ${{ inputs.harbor_registry }}
-        HARBOR_USERNAME: "${{ inputs.HARBOR_USERNAME }}"
-        HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-        DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
-        DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
-        git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/manifest
+        with:
+          platforms: ${{ inputs.platforms }}
+          source_repository: ${{ inputs.source_repository }}
+          source_ref: ${{ inputs.source_ref }}
+          source_commit: ${{ inputs.source_commit }}
+          source_patch: ${{ inputs.source_patch }}
+          source_submodules: ${{ inputs.source_submodules }}
+          build_script: ${{ inputs.build_script }}
+          build_args: ${{ inputs.build_args }}
+          build_args_script: ${{ inputs.build_args_script }}
+          target_tag: ${{ inputs.target_tag }}
+          target_repository: ${{ inputs.target_repository }}
+          target_dockerfile: ${{ inputs.target_dockerfile }}
+          build_method: bazel
+          GOPROXY: ${{ inputs.GOPROXY }}
+          harbor_registry: ${{ inputs.harbor_registry }}
+          HARBOR_USERNAME: ${{ inputs.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+          DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  announce:
+    name: Announce ${{ inputs.target_tag }}
+    needs: publish
+    if: ${{ contains(fromJSON('["ethpandaops/besu","ethpandaops/erigon","ethpandaops/ethrex","ethpandaops/geth","ethpandaops/nethermind","ethpandaops/nimbus-eth1","ethpandaops/reth"]'), inputs.target_repository) && vars.HIVE_TESTS_APP_CLIENT_ID != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get a hive-tests token
+        id: hive_tests_token
+        continue-on-error: true
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.HIVE_TESTS_APP_CLIENT_ID }}
+          private-key: ${{ secrets.HIVE_TESTS_APP_PRIVATE_KEY }}
+          owner: ethpandaops
+          repositories: hive-tests
+          permission-actions: write
+      - name: Announce the image to hive-tests
+        if: ${{ steps.hive_tests_token.outputs.token != '' }}
+        env:
+          TOKEN: ${{ steps.hive_tests_token.outputs.token }}
+        run: |
+          curl -fsS --max-time 30 -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/ethpandaops/hive-tests/actions/workflows/watch-images.yaml/dispatches \
+            -d '{"ref":"master"}' \
+            || echo "::warning::Announcing the image to hive-tests failed, its hourly check picks it up"

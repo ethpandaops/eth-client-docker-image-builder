@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Setup Python
         uses: actions/setup-python@v7
         with:
@@ -29,6 +31,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Setup Python
         uses: actions/setup-python@v7
         with:
@@ -46,12 +50,51 @@ jobs:
             echo $OUTPUT
             exit 1
           fi
+  runners:
+    name: Build runner configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+      - name: Install Python dependencies
+        run: pip install PyYAML
+      - name: Validate runner labels
+        run: |
+          python3 - <<'PY'
+          import re
+          import yaml
+
+          labels = []
+          for path in ("runners.yaml", "runner_overrides.yaml"):
+              with open(path, encoding="utf-8") as stream:
+                  data = yaml.safe_load(stream) or {}
+              stack = [data]
+              while stack:
+                  value = stack.pop()
+                  if isinstance(value, dict):
+                      stack.extend(value.values())
+                  elif isinstance(value, str):
+                      labels.append((path, value))
+
+          invalid = [(path, label) for path, label in labels if not re.fullmatch(r"self-hosted-ghr-[A-Za-z0-9._-]+", label)]
+          if invalid:
+              for path, label in invalid:
+                  print(f"{path}: unsupported build runner label {label!r}")
+              raise SystemExit(1)
+          PY
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest
     needs:
       - validate
       - duplicates
+      - runners
     if: failure()
     steps:
       - name: Notify

@@ -14,13 +14,19 @@ outputs:
   platforms:
     description: "Matrix of platforms and runner to use"
     value: ${{ steps.setup_platforms.outputs.platforms }}
+  source_commit:
+    description: "Full commit resolved for the configured source ref"
+    value: ${{ steps.source_identity.outputs.commit }}
 runs:
   using: "composite"
   steps:
     - name: Checkout repository
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        persist-credentials: false
     - uses: mikefarah/yq@6609ed76ecb69f9d8254345292d90ea72f641715 # v4.35.1
-    - name: Validate source repository and ref exist
+    - name: Resolve source commit
+      id: source_identity
       if: inputs.repository != '' && inputs.ref != ''
       shell: bash
       env:
@@ -28,24 +34,26 @@ runs:
         SOURCE_REF: ${{ inputs.ref }}
         GIT_TERMINAL_PROMPT: '0'
       run: |
+        set -euo pipefail
         url="https://github.com/${SOURCE_REPOSITORY}.git"
-        if [[ "$SOURCE_REF" =~ ^[0-9a-fA-F]+$ ]]; then
-          tmp=$(mktemp -d)
-          git -C "$tmp" init -q
-          if ! git -C "$tmp" fetch --depth=1 "$url" "$SOURCE_REF" >/dev/null 2>&1; then
-            echo "::error::Commit '$SOURCE_REF' not found in repository '$SOURCE_REPOSITORY'"
-            exit 1
-          fi
-        else
-          if ! git ls-remote --exit-code "$url" "$SOURCE_REF" >/dev/null 2>&1; then
-            echo "::error::Ref '$SOURCE_REF' not found in repository '$SOURCE_REPOSITORY'"
-            exit 1
-          fi
+        tmp="$(mktemp -d)"
+        trap 'rm -rf "$tmp"' EXIT
+        git -C "$tmp" init -q
+        if ! git -C "$tmp" fetch --no-tags --depth=1 "$url" "$SOURCE_REF" >/dev/null 2>&1; then
+          echo "::error::Ref '$SOURCE_REF' not found in repository '$SOURCE_REPOSITORY'"
+          exit 1
         fi
+        commit="$(git -C "$tmp" rev-parse FETCH_HEAD^{commit})"
+        if ! [[ "$commit" =~ ^[0-9a-f]{40}$ ]]; then
+          echo "::error::Ref '$SOURCE_REF' did not resolve to a full commit"
+          exit 1
+        fi
+        echo "commit=$commit" >> "$GITHUB_OUTPUT"
     - name: Generate platform and runner matrix from config files
       id: setup_platforms
       shell: bash
       run: |
+        set -euo pipefail
         PLATFORMS_JSON="["
         client="${{ inputs.client }}"
 
@@ -58,6 +66,10 @@ runs:
           override=$(yq e ".\"$client\".\"$platform\"" runner_overrides.yaml)
           if [ "$override" != "null" ] && [ -n "$override" ]; then
             runner=$override
+          fi
+          if [[ ! "$runner" =~ ^self-hosted-ghr-[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::Runner '$runner' for $client/$platform is not a disposable build runner"
+            exit 1
           fi
           PLATFORMS_JSON+="{\"platform\":\"$platform\", \"runner\":\"$runner\", \"slug\":\"$slug\"},"
         done

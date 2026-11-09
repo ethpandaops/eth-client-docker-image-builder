@@ -1,299 +1,348 @@
-name: Deploy
-description: Build and push a docker image to Docker Hub
+name: Build
+description: Build one architecture image and upload its archive and provenance
 
 inputs:
   source_repository:
     description: The source repository to build from
-    type: string
     required: true
   source_ref:
-    description: The branch, tag or SHA to checkout and build from
-    type: string
+    description: The branch, tag or SHA to resolve
     required: true
   source_commit:
     description: The specific commit SHA to checkout (takes precedence over source_ref)
-    type: string
     required: false
   source_patch:
     description: The patch to apply to the source repository
-    type: string
     required: false
   source_submodules:
-    description: >-
-      Passed to actions/checkout `submodules` (true / recursive). Checks them out with
-      the job token, so builds don't clone them anonymously inside docker.
-    type: string
+    description: Passed to actions/checkout submodules (true / recursive)
     default: "false"
     required: false
   build_script:
-    description: The bash script path in this repository to run instead of the Docker build & push script. You must push the image yourself.
-    type: string
+    description: Repository script that builds the image into the local Docker daemon
     required: false
   build_args:
     description: Build arguments to pass to the Docker build
     default: ""
-    type: string
     required: false
   build_args_script:
-    description: >-
-      Bash script path in this repository that prints extra `KEY=value` docker build
-      args on stdout, one per line. Runs after the source repository is checked out,
-      so it can derive build args from the source. Also exported to the environment
-      of build_script.
-    type: string
+    description: Repository script that prints additional KEY=value Docker build arguments
     required: false
   target_tag:
-    description: Docker hub tag to push to
-    type: string
+    description: Architecture-specific image tag
     required: true
   target_repository:
-    description: Docker hub repository to push to
-    type: string
+    description: Target image repository
     required: true
   target_dockerfile:
-    description: Dockerfile path in this repository to build from. Omit to use source repository Dockerfile
-    type: string
+    description: Dockerfile path in this repository; defaults to the source Dockerfile
     default: ./source/Dockerfile
     required: false
   platform:
-    description: The platform to build for
-    type: string
+    description: Platform to build
     required: true
   build_method:
     description: Build method to use (go or bazel)
-    type: string
     default: bazel
     required: false
-  harbor_registry:
-    description: Harbor registry to push the images to
-    type: string
-    default: ''
-  # Secrets
-  DOCKER_USERNAME:
-    required: true
-  DOCKER_PASSWORD:
-    required: true
-  MACOS_PASSWORD:
-    required: true
   GOPROXY:
+    description: GOPROXY used by supported builds
     required: false
-  HARBOR_USERNAME:
-    required: true
-  HARBOR_PASSWORD:
-    required: true
 
 outputs:
   git_commit_hash:
-    description: The git commit hash of the source repository
-    value: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
+    description: Short source commit
+    value: ${{ steps.source_identity.outputs.short }}
   git_commit_hash_full:
-    description: The full git commit hash of the source repository
-    value: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
+    description: Full source commit
+    value: ${{ steps.source_identity.outputs.full }}
   resolved_dockerfile:
-    description: Dockerfile path actually used (after per-tag convention resolution)
+    description: Dockerfile path used by the build
     value: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
+  artifact_name:
+    description: Uploaded build artifact name
+    value: ${{ steps.package.outputs.artifact_name }}
+  artifact_digest:
+    description: GitHub artifact digest
+    value: ${{ steps.upload.outputs.artifact-digest }}
 
 runs:
   using: composite
   steps:
-  - name: Checkout this repo
-    uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-  - name: Resolve target dockerfile (prefer ./<client>/Dockerfile.<tag>)
-    id: resolve_dockerfile
-    shell: bash
-    env:
-      TARGET_DOCKERFILE: ${{ inputs.target_dockerfile }}
-      TARGET_TAG: ${{ inputs.target_tag }}
-    run: |
-      resolved="$TARGET_DOCKERFILE"
-      if [ -n "$TARGET_DOCKERFILE" ] && [ "$(basename "$TARGET_DOCKERFILE")" = "Dockerfile" ]; then
-        base_tag="${TARGET_TAG%-*-*}"
-        candidate="$(dirname "$TARGET_DOCKERFILE")/Dockerfile.${base_tag}"
-        if [ -f "$candidate" ]; then
-          echo "Using per-tag Dockerfile: $candidate (base tag: $base_tag)"
-          resolved="$candidate"
+    - name: Prepare credential-free Docker configuration
+      shell: bash
+      run: |
+        set -euo pipefail
+        config="${RUNNER_TEMP}/build-docker-config"
+        rm -rf "$config"
+        mkdir -p "$config"
+        printf '{}\n' > "$config/config.json"
+        echo "DOCKER_CONFIG=$config" >> "$GITHUB_ENV"
+
+    - name: Checkout builder configuration
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        ref: ${{ github.sha }}
+        persist-credentials: false
+
+    - name: Resolve target Dockerfile
+      id: resolve_dockerfile
+      shell: bash
+      env:
+        TARGET_DOCKERFILE: ${{ inputs.target_dockerfile }}
+        TARGET_TAG: ${{ inputs.target_tag }}
+      run: |
+        set -euo pipefail
+        resolved="$TARGET_DOCKERFILE"
+        if [ -n "$TARGET_DOCKERFILE" ] && [ "$(basename "$TARGET_DOCKERFILE")" = "Dockerfile" ]; then
+          base_tag="${TARGET_TAG%-*-*}"
+          candidate="$(dirname "$TARGET_DOCKERFILE")/Dockerfile.${base_tag}"
+          if [ -f "$candidate" ]; then
+            resolved="$candidate"
+          fi
         fi
-      fi
-      echo "dockerfile=$resolved" >> "$GITHUB_OUTPUT"
-  - name: Check out source repository
-    uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-    with:
-      repository: ${{ inputs.source_repository }}
-      path: source
-      ref: ${{ inputs.source_commit || inputs.source_ref }}
-      fetch-depth: 0
-      submodules: ${{ inputs.source_submodules }}
-  - name: get short git commit hash
-    id: git_commit_hash
-    shell: bash
-    run: |
-      cd source
-      echo "git_commit_hash=$(echo $(git log --pretty=format:'%h' -n 1 --abbrev=7))" >> $GITHUB_OUTPUT
-  - name: get full git commit hash
-    id: git_commit_hash_full
-    shell: bash
-    run: |
-      cd source
-      echo "git_commit_hash_full=$(echo $(git log --pretty=format:'%H' -n 1))" >> $GITHUB_OUTPUT
-  - name: Apply patch to source repository
-    shell: bash
-    if: inputs.source_patch
-    run: |
-      cd source
-      patch -p 1 < ../${{ inputs.source_patch }}
-  - name: Resolve dynamic build args
-    id: build_args_script
-    shell: bash
-    if: inputs.build_args_script
-    env:
-      BUILD_ARGS_SCRIPT: ${{ inputs.build_args_script }}
-      GITHUB_TOKEN: ${{ github.token }}
-      source_repository: ${{ inputs.source_repository }}
-      source_ref: ${{ inputs.source_ref }}
-      target_tag: ${{ inputs.target_tag }}
-      target_dockerfile: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
-      platform: ${{ inputs.platform }}
-    run: |
-      set -euo pipefail
-      # Kept as two statements on purpose: piping straight into grep would let
-      # `|| true` swallow a failing script instead of failing the build.
-      raw="$("$BUILD_ARGS_SCRIPT")"
-      # Only well-formed KEY=value lines are build args; anything else the
-      # script prints is progress logging on stderr.
-      args="$(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' <<< "$raw" || true)"
-      echo "resolved build args: ${args:-<none>}"
-      {
-        echo "build_args<<BUILD_ARGS_EOF"
-        echo "$args"
-        echo "BUILD_ARGS_EOF"
-      } >> "$GITHUB_OUTPUT"
-      # build_script runs its own `docker build`, so hand it the args as env vars
-      if [ -n "$args" ]; then
-        echo "$args" >> "$GITHUB_ENV"
-      fi
-  - name: Set up Docker Context for Buildx
-    shell: bash
-    id: buildx-context
-    run: |
-      docker context use builders || docker context create builders
-  - name: Set up Docker Buildx
-    id: buildx_setup
-    continue-on-error: true
-    uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-    with:
-      endpoint: builders
-  - name: Wait before retrying Docker Buildx setup
-    if: steps.buildx_setup.outcome == 'failure'
-    shell: bash
-    run: sleep 30
-  - name: Set up Docker Buildx (retry)
-    if: steps.buildx_setup.outcome == 'failure'
-    uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-    with:
-      endpoint: builders
-  - name: Unlock MacOS keychain for Docker Hub login
-    shell: bash
-    if: runner.os == 'macOS'
-    run: |
-      security -v unlock-keychain -p ${{ inputs.MACOS_PASSWORD }} ~/Library/Keychains/login.keychain-db
-  - name: Login to Docker Hub
-    uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-    with:
-      username: ${{ inputs.DOCKER_USERNAME }}
-      password: ${{ inputs.DOCKER_PASSWORD }}
-  - name: Login to harbor registry
-    if: ${{ inputs.harbor_registry != '' }}
-    id: harbor_login
-    continue-on-error: true
-    uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-    with:
-      registry: ${{ inputs.harbor_registry }}
-      username: ${{ inputs.HARBOR_USERNAME }}
-      password: ${{ inputs.HARBOR_PASSWORD }}
-  ########################
-  # Build script case
-  #######################
-  - name: Build script
-    shell: bash
-    if: inputs.build_script
-    env:
-      source_repository: ${{ inputs.source_repository }}
-      source_ref: ${{ inputs.source_ref }}
-      target_tag: ${{ inputs.target_tag }}
-      target_repository: ${{ inputs.target_repository }}
-      target_dockerfile: ${{ steps.resolve_dockerfile.outputs.dockerfile || './source/Dockerfile' }}
-      source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
-      source_git_commit_hash_full: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
-      GOPROXY: ${{ inputs.GOPROXY }}
-      build_method: ${{ inputs.build_method }}
-    run: |
-      ${{ inputs.build_script }}
-  - name: Image digest & tags (build script)
-    shell: bash
-    if: inputs.build_script
-    run: |
-      cat << EOF
-      digest: $(docker image inspect  --format='{{index .RepoDigests 0}}' ${{ inputs.target_repository }}:${{ inputs.target_tag }} | grep -oE "@(.*)" | cut -d'@' -f2-)
-      tags:
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
-      EOF
-  ########################
-  # Non build script case
-  #######################
-  - name: Inject GOPROXY into Dockerfile
-    if: ${{ inputs.build_script == '' }}
-    shell: bash
-    run: |
-      DOCKERFILE_PATH="${{ steps.resolve_dockerfile.outputs.dockerfile }}"
-      if [[ -z "$DOCKERFILE_PATH" ]]; then
-        # Set to default value explicitly if input is empty
-        DOCKERFILE_PATH='./source/Dockerfile'
-      fi
-      awk '/^FROM/ { print; print "ENV GOPROXY=${{ inputs.GOPROXY }}"; next }1' ${DOCKERFILE_PATH} > Dockerfile.new
-      mv Dockerfile.new ${DOCKERFILE_PATH}
-  - name: Docker build & push
-    if: ${{ inputs.build_script == '' }}
-    id: docker_build
-    uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
-    with:
-      context: ./source
-      file: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
-      tags: |
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}
-      push: true
-      platforms: ${{ inputs.platform }}
-      build-args: |
-        ${{ inputs.build_args }}
-        ${{ steps.build_args_script.outputs.build_args }}
-        COMMIT_HASH=${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
-        GIT_SHA=${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
-        GIT_BRANCH=${{ inputs.source_ref }}
-        VERSION=${{ inputs.source_ref }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
-      labels: |
-        ethpandaops.io.repo=${{ inputs.source_repository }}
-        ethpandaops.io.commitRef=${{ inputs.source_ref }}
-        commit=${{ steps.git_commit_hash.outputs.git_commit_hash }}
-        version=${{ inputs.source_ref }}
-        buildnum=${{ github.run_number }}
-  - name: Push to harbor registry (best-effort)
-    if: ${{ inputs.build_script == '' && inputs.harbor_registry != '' && steps.harbor_login.outcome == 'success' }}
-    continue-on-error: true
-    shell: bash
-    run: |
-      echo "Pushing to harbor registry (best-effort)..."
-      docker buildx imagetools create \
-        --tag ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} \
-        --tag ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }} \
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} || echo "Harbor push failed, continuing..."
-  - name: Image digest & tags
-    shell: bash
-    if: ${{ inputs.build_script == '' }}
-    run: |
-      cat << EOF
-      digest: ${{ steps.docker_build.outputs.digest }}
-      tags:
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
-      EOF
+        echo "dockerfile=$resolved" >> "$GITHUB_OUTPUT"
+
+    - name: Check out source repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        repository: ${{ inputs.source_repository }}
+        path: source
+        ref: ${{ inputs.source_commit || inputs.source_ref }}
+        fetch-depth: 0
+        submodules: ${{ inputs.source_submodules }}
+        persist-credentials: false
+
+    - name: Capture source identity
+      id: source_identity
+      shell: bash
+      env:
+        EXPECTED_COMMIT: ${{ inputs.source_commit }}
+      run: |
+        set -euo pipefail
+        full="$(git -C source rev-parse HEAD)"
+        short="$(git -C source rev-parse --short=7 HEAD)"
+        if [ -n "$EXPECTED_COMMIT" ] && [ "$full" != "$EXPECTED_COMMIT" ]; then
+          echo "::error::Resolved source commit $full does not match requested commit $EXPECTED_COMMIT"
+          exit 1
+        fi
+        echo "full=$full" >> "$GITHUB_OUTPUT"
+        echo "short=$short" >> "$GITHUB_OUTPUT"
+
+    - name: Apply source patch
+      shell: bash
+      if: inputs.source_patch
+      env:
+        SOURCE_PATCH: ${{ inputs.source_patch }}
+      run: patch -d source -p 1 < "$SOURCE_PATCH"
+
+    - name: Resolve dynamic build arguments
+      id: build_args_script
+      shell: bash
+      if: inputs.build_args_script
+      env:
+        BUILD_ARGS_SCRIPT: ${{ inputs.build_args_script }}
+        source_repository: ${{ inputs.source_repository }}
+        source_ref: ${{ inputs.source_ref }}
+        target_tag: ${{ inputs.target_tag }}
+        target_dockerfile: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
+        platform: ${{ inputs.platform }}
+      run: |
+        set -euo pipefail
+        raw="$("$BUILD_ARGS_SCRIPT")"
+        args="$(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' <<< "$raw" || true)"
+        {
+          echo "build_args<<BUILD_ARGS_EOF"
+          echo "$args"
+          echo "BUILD_ARGS_EOF"
+        } >> "$GITHUB_OUTPUT"
+        if [ -n "$args" ]; then
+          echo "$args" >> "$GITHUB_ENV"
+        fi
+
+    - name: Set up Docker context
+      shell: bash
+      run: docker context use builders || docker context create builders
+
+    - name: Set up Docker Buildx
+      id: buildx_setup
+      continue-on-error: true
+      uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      with:
+        endpoint: builders
+
+    - name: Wait before retrying Docker Buildx setup
+      if: steps.buildx_setup.outcome == 'failure'
+      shell: bash
+      run: sleep 30
+
+    - name: Set up Docker Buildx (retry)
+      if: steps.buildx_setup.outcome == 'failure'
+      uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      with:
+        endpoint: builders
+
+    - name: Inject GOPROXY into Dockerfile
+      if: inputs.build_script == ''
+      shell: bash
+      env:
+        DOCKERFILE_PATH: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
+        GOPROXY: ${{ inputs.GOPROXY }}
+      run: |
+        set -euo pipefail
+        path="${DOCKERFILE_PATH:-./source/Dockerfile}"
+        awk -v proxy="$GOPROXY" '/^FROM/ { print; print "ENV GOPROXY=" proxy; next }1' "$path" > Dockerfile.new
+        mv Dockerfile.new "$path"
+
+    - name: Build image
+      if: inputs.build_script == ''
+      uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
+      with:
+        context: ./source
+        file: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
+        tags: |
+          ${{ inputs.target_repository }}:${{ inputs.target_tag }}
+          ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.source_identity.outputs.short }}
+        push: false
+        load: true
+        platforms: ${{ inputs.platform }}
+        build-args: |
+          ${{ inputs.build_args }}
+          ${{ steps.build_args_script.outputs.build_args }}
+          COMMIT_HASH=${{ steps.source_identity.outputs.full }}
+          GIT_SHA=${{ steps.source_identity.outputs.full }}
+          GIT_BRANCH=${{ inputs.source_ref }}
+          VERSION=${{ inputs.source_ref }}-${{ steps.source_identity.outputs.short }}
+        labels: |
+          ethpandaops.io.repo=${{ inputs.source_repository }}
+          ethpandaops.io.commitRef=${{ inputs.source_ref }}
+          commit=${{ steps.source_identity.outputs.short }}
+          version=${{ inputs.source_ref }}
+          buildnum=${{ github.run_number }}
+
+    - name: Run client build script
+      shell: bash
+      if: inputs.build_script
+      env:
+        BUILD_SCRIPT: ${{ inputs.build_script }}
+        source_repository: ${{ inputs.source_repository }}
+        source_ref: ${{ inputs.source_ref }}
+        target_tag: ${{ inputs.target_tag }}
+        target_repository: ${{ inputs.target_repository }}
+        target_dockerfile: ${{ steps.resolve_dockerfile.outputs.dockerfile || './source/Dockerfile' }}
+        source_git_commit_hash: ${{ steps.source_identity.outputs.short }}
+        source_git_commit_hash_full: ${{ steps.source_identity.outputs.full }}
+        GOPROXY: ${{ inputs.GOPROXY }}
+        build_method: ${{ inputs.build_method }}
+      run: '"$BUILD_SCRIPT"'
+
+    - name: Package image and provenance
+      id: package
+      shell: bash
+      env:
+        SOURCE_REPOSITORY: ${{ inputs.source_repository }}
+        SOURCE_REF: ${{ inputs.source_ref }}
+        SOURCE_COMMIT: ${{ steps.source_identity.outputs.full }}
+        SOURCE_COMMIT_SHORT: ${{ steps.source_identity.outputs.short }}
+        SOURCE_PATCH: ${{ inputs.source_patch }}
+        SOURCE_SUBMODULES: ${{ inputs.source_submodules }}
+        BUILD_SCRIPT: ${{ inputs.build_script }}
+        BUILD_ARGS: ${{ inputs.build_args }}
+        BUILD_ARGS_SCRIPT: ${{ inputs.build_args_script }}
+        RESOLVED_BUILD_ARGS: ${{ steps.build_args_script.outputs.build_args }}
+        TARGET_REPOSITORY: ${{ inputs.target_repository }}
+        TARGET_TAG: ${{ inputs.target_tag }}
+        TARGET_DOCKERFILE: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
+        PLATFORM: ${{ inputs.platform }}
+        BUILD_METHOD: ${{ inputs.build_method }}
+        GOPROXY: ${{ inputs.GOPROXY }}
+        BUILDER_REPOSITORY: ${{ github.repository }}
+        BUILDER_COMMIT: ${{ github.sha }}
+        WORKFLOW_REF: ${{ github.workflow_ref }}
+        RUN_ID: ${{ github.run_id }}
+        RUN_ATTEMPT: ${{ github.run_attempt }}
+      run: |
+        set -euo pipefail
+        image="${TARGET_REPOSITORY}:${TARGET_TAG}"
+        commit_image="${TARGET_REPOSITORY}:${TARGET_TAG}-${SOURCE_COMMIT_SHORT}"
+        docker image inspect "$image" >/dev/null
+        docker image inspect "$commit_image" >/dev/null
+        image_id="$(docker image inspect --format '{{.Id}}' "$image")"
+        if [ "$image_id" != "$(docker image inspect --format '{{.Id}}' "$commit_image")" ]; then
+          echo "::error::Architecture tags do not identify the same image"
+          exit 1
+        fi
+        image_platform="$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$image")"
+        if [ "$image_platform" != "$PLATFORM" ]; then
+          echo "::error::Built image platform $image_platform does not match requested platform $PLATFORM"
+          exit 1
+        fi
+
+        output="${RUNNER_TEMP}/build-output"
+        rm -rf "$output"
+        mkdir -p "$output"
+        docker save --output "$output/image.tar" "$image" "$commit_image"
+        archive_sha256="$(sha256sum "$output/image.tar" | awk '{print $1}')"
+        mv "$output/image.tar" "$output/${archive_sha256}.tar"
+
+        platform_slug="${PLATFORM//\//-}"
+        base_target_tag="${TARGET_TAG%-$platform_slug}"
+        target_id="$(printf '%s\n%s\n' "$TARGET_REPOSITORY" "$base_target_tag" | sha256sum | awk '{print $1}')"
+        config_digest="$(jq -cn \
+          --arg builder "$BUILDER_COMMIT" \
+          --arg source_repository "$SOURCE_REPOSITORY" \
+          --arg source_ref "$SOURCE_REF" \
+          --arg source_commit "$SOURCE_COMMIT" \
+          --arg source_patch "$SOURCE_PATCH" \
+          --arg source_submodules "$SOURCE_SUBMODULES" \
+          --arg build_script "$BUILD_SCRIPT" \
+          --arg build_args "$BUILD_ARGS" \
+          --arg build_args_script "$BUILD_ARGS_SCRIPT" \
+          --arg target_repository "$TARGET_REPOSITORY" \
+          --arg target_tag "$TARGET_TAG" \
+          --arg target_dockerfile "$TARGET_DOCKERFILE" \
+          --arg platform "$PLATFORM" \
+          --arg build_method "$BUILD_METHOD" \
+          --arg goproxy "$GOPROXY" \
+          '$ARGS.named' | sha256sum | awk '{print $1}')"
+
+        jq -n \
+          --arg builder_repository "$BUILDER_REPOSITORY" \
+          --arg builder_commit "$BUILDER_COMMIT" \
+          --arg workflow_ref "$WORKFLOW_REF" \
+          --arg run_id "$RUN_ID" \
+          --arg run_attempt "$RUN_ATTEMPT" \
+          --arg source_repository "$SOURCE_REPOSITORY" \
+          --arg source_ref "$SOURCE_REF" \
+          --arg source_commit "$SOURCE_COMMIT" \
+          --arg source_commit_short "$SOURCE_COMMIT_SHORT" \
+          --arg source_patch "$SOURCE_PATCH" \
+          --arg source_submodules "$SOURCE_SUBMODULES" \
+          --arg build_script "$BUILD_SCRIPT" \
+          --arg build_args "$BUILD_ARGS" \
+          --arg build_args_script "$BUILD_ARGS_SCRIPT" \
+          --arg resolved_build_args "$RESOLVED_BUILD_ARGS" \
+          --arg config_digest "$config_digest" \
+          --arg target_repository "$TARGET_REPOSITORY" \
+          --arg target_tag "$TARGET_TAG" \
+          --arg target_dockerfile "$TARGET_DOCKERFILE" \
+          --arg platform "$PLATFORM" \
+          --arg build_method "$BUILD_METHOD" \
+          --arg goproxy "$GOPROXY" \
+          --arg image_id "$image_id" \
+          --arg archive_sha256 "$archive_sha256" \
+          '{schema: 1, builder: {repository: $builder_repository, commit: $builder_commit, workflow_ref: $workflow_ref, run_id: $run_id, run_attempt: $run_attempt}, source: {repository: $source_repository, ref: $source_ref, commit: $source_commit, short_commit: $source_commit_short, patch: $source_patch, submodules: $source_submodules}, build: {script: $build_script, args: $build_args, args_script: $build_args_script, resolved_args: $resolved_build_args, dockerfile: $target_dockerfile, method: $build_method, goproxy: $goproxy}, config_digest: $config_digest, image: {repository: $target_repository, tag: $target_tag, platform: $platform, id: $image_id, archive_sha256: $archive_sha256}}' \
+          > "$output/provenance.json"
+
+        artifact_name="image-${target_id}-${platform_slug}-${config_digest:0:16}-${archive_sha256}-${RUN_ATTEMPT}"
+        echo "artifact_name=$artifact_name" >> "$GITHUB_OUTPUT"
+
+    - name: Upload architecture image
+      id: upload
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      with:
+        name: ${{ steps.package.outputs.artifact_name }}
+        path: ${{ runner.temp }}/build-output
+        if-no-files-found: error
+        compression-level: 0
+        retention-days: 7

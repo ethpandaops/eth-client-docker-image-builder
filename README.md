@@ -47,7 +47,7 @@ Add a new image to [`config.yaml`](./config.yaml) file and it will be built on s
 - source:
     repository: sigp/lighthouse # source repository to build from
     ref: stable # source repository branch/tag/commit to build from
-  build_script: ./teku/build.sh # optional build script to run INSTEAD of the docker build & push (see below)
+  build_script: ./teku/build.sh # optional build script to run instead of the standard docker build (see below)
   target:
     tag: stable # tag to add to the docker image tag, this must be unique for each docker hub repository
     repository: ethpandaops/lighthouse # dockerhub target to deploy the built image
@@ -112,9 +112,9 @@ ethpandaops/lighthouse:banana-abcd123
 
 ## How does the `build_script` work?
 
-The `build_script` is a bash script that is run INSTEAD of the docker build & push. This is useful for clients that have a custom build process.
+The `build_script` is a bash script that is run instead of the standard Docker build. This is useful for clients that have a custom build process.
 
-When the `build_script` is set, you **must** build and push the docker image yourself! Docker will already be logged in to the target repository. You **should** try to use the `target_tag` and `target_repository` environment variables to tag your image.
+When `build_script` is set, it must leave the built image in the local Docker daemon with both `${target_repository}:${target_tag}` and `${target_repository}:${target_tag}-${source_git_commit_hash}`. The build runner has no registry credentials and the script must not push images. Publication is handled by a separate publisher job.
 
 The following environment variables are available to the `build_script`;
 - `source_repository` - source repository to build from
@@ -139,10 +139,13 @@ cd ${SCRIPT_DIR}/../source
 # finally build with the tags from the dockerfile
 docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" -f "../${target_dockerfile}" .
 
-# push the image tags
-docker push "${target_repository}:${target_tag}"
-docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
 ```
+
+## Build and publish responsibilities
+
+Architecture builds run on the disposable runners configured in [`runners.yaml`](./runners.yaml) and [`runner_overrides.yaml`](./runner_overrides.yaml). Build runner labels must start with `self-hosted-ghr-`. These jobs do not receive registry credentials. Each build exports a Docker archive and workflow artifact named with the archive's SHA-256 digest, plus a provenance document recording the builder revision, workflow run, resolved source commit, build configuration and resolved arguments, target identity, platform, image ID, and archive digest.
+
+The publisher runs as a separate `ubuntu-latest` job. It downloads artifacts from the current workflow run, validates the builder revision, source repository/ref/commit, build configuration digest, archive digest, image identity, target, and platform before logging in to a registry. It does not check out or run source repository code. Architecture tags are published first, their registry digests are captured, and multi-architecture indexes are assembled only from `repository@sha256:...` references. Docker Hub publication and optional secondary-registry publication keep the existing tag conventions.
 
 ## Additional Configuration Files
 Our image building process utilizes two additional configuration files: [`platforms.yaml`](./platforms.yaml) and [`runners.yaml`](./runners.yaml). These files help in determining the platforms for which docker images should be built and specifying the runners to use for those platforms, respectively.
@@ -163,13 +166,13 @@ In the example above, the client 'besu' and 'lighthouse' are both configured to 
 ### [`runners.yaml`](./runners.yaml)
 This configuration maps platforms to GitHub Action runners. It tells our workflow which runner should be used when building a Docker image for a specific platform.
 
-Sample Content:
+Sample content:
 ```yaml
-linux/amd64: ubuntu-latest
-linux/arm64: self-hosted
+linux/amd64: self-hosted-ghr-size-xl-do-x64
+linux/arm64: self-hosted-ghr-size-attester7870-arm64
 ```
 
-In this example, the platform linux/amd64 will use the ubuntu-latest runner, while darwin/arm64 will use the self-hosted runner.
+In this example, each architecture is assigned to a disposable build runner. `runner_overrides.yaml` may select a different `self-hosted-ghr-` runner for a specific client and platform.
 
 ## Lint locally
 

@@ -20,5 +20,3 @@ sed -i "/${ANCHOR}/{n;s|.*|  false|}" "${TARGET}"
 
 # NIM_VERSION is exported by the deploy action from ./nimbus-eth2/nim-version.sh
 docker build ${NIM_VERSION:+--build-arg NIM_VERSION="${NIM_VERSION}"} -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" -f "../${target_dockerfile}" .
-docker push "${target_repository}:${target_tag}"
-docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"

@@ -16,6 +16,8 @@ jobs:
       configs: ${{ steps.repo_check.outputs.configs }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: mikefarah/yq@c14f446382944492701b16c1ddb48bb9dbe683e3 # v4.53.6
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -29,11 +31,6 @@ jobs:
         run: |
           python generate_config.py
           echo "Generated config.yaml for workflow use"
-      - name: Login to Docker Hub
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          username: ${{ vars.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
       - id: repo_check
         env:
           CONCURRENT_IMAGE_PULL: ${{ vars.CONCURRENT_IMAGE_PULL }}
@@ -245,6 +242,10 @@ jobs:
                   if [ "$override" != "null" ] && [ -n "$override" ]; then
                     runner=$override
                   fi
+                  if [[ ! "$runner" =~ ^self-hosted-ghr-[A-Za-z0-9._-]+$ ]]; then
+                    echo "[LINE:$LINE] Runner '$runner' for $CLIENT/$platform is not a disposable build runner."
+                    exit 1
+                  fi
                   slug=$(echo "$platform" | tr '/' '-')
                   platformsArr+="{\\\"platform\\\": \\\"$platform\\\", \\\"runner\\\": \\\"$runner\\\", \\\"slug\\\": \\\"$slug\\\"},"
                 done
@@ -296,7 +297,6 @@ jobs:
     secrets:
       DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
       HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-      MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
       HIVE_TESTS_APP_PRIVATE_KEY: "${{ secrets.HIVE_TESTS_APP_PRIVATE_KEY }}"
   next:
     name: Dispatch next run

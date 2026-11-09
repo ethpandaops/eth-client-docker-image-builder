@@ -18,5 +18,3 @@ cd ../source
 
 # Use dimhouse patched lighthouse dockerfile without cache, this also adds the xatulib.so to the image
 docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" .
-docker push "${target_repository}:${target_tag}"
-docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"

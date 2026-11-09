@@ -67,5 +67,3 @@ esac
 cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
 
 docker build -t "${target_repository}:${target_tag}" -t "${target_repository}:${target_tag}-${source_git_commit_hash}" --build-arg ENTRY=/app/cmd/beacon-chain/beacon-chain -f "../${target_dockerfile}" .
-docker push "${target_repository}:${target_tag}"
-docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"

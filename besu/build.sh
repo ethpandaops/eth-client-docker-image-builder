@@ -68,6 +68,4 @@ if [ -z "$tag" ]; then
 fi
 
 docker tag "${tag}" "${target_repository}:${target_tag}"
-docker push "${target_repository}:${target_tag}"
 docker tag "${tag}" "${target_repository}:${target_tag}-${source_git_commit_hash}"
-docker push "${target_repository}:${target_tag}-${source_git_commit_hash}"
