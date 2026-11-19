@@ -1,0 +1,26 @@
+diff --git a/docker/Dockerfile b/docker/Dockerfile
+index 66aab375b6..3b85a1b42b 100644
+--- a/docker/Dockerfile
++++ b/docker/Dockerfile
+@@ -5,6 +5,21 @@
+ # when its OS base updates, so the digest is what is pinned.
+ FROM mirror.gcr.io/library/eclipse-temurin:25.0.5_8-jre-resolute@sha256:b6e00330337143a2c1a20f1c1c693d4b6ce9a3c30ade8b9d03fc68cc9e3871e7 AS java-base
+ 
++# ethpandaops: Eclipse Temurin 25.0.5.1+2 fixes CVE-2026-114938 (Java4Shell) in the x86-64 Base64
++# intrinsic. Until an eclipse-temurin image ships it, amd64 builds swap in Adoptium's release
++# tarball, checked against the SHA-256 Adoptium publishes. arm64 is not affected and has no
++# 25.0.5.1 build yet, so it keeps the base image's JRE.
++ADD https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5.1%2B2/OpenJDK25U-jre_x64_linux_hotspot_25.0.5.1_2.tar.gz /tmp/openjdk.tar.gz
++RUN set -eux; \
++    if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
++      echo "2edef9e4f81ec5ee426d023336d4cfbd7b4644e99884e7a73a6a867b70b17acf  /tmp/openjdk.tar.gz" | sha256sum -c -; \
++      rm -rf "$JAVA_HOME"; \
++      mkdir -p "$JAVA_HOME"; \
++      tar -xzf /tmp/openjdk.tar.gz -C "$JAVA_HOME" --strip-components=1 --no-same-owner; \
++    fi; \
++    rm /tmp/openjdk.tar.gz; \
++    "$JAVA_HOME/bin/java" -version
++
+ # Remove the roots OpenJDK lists after the October 2026 eMudhra CA compromise
+ # (https://openjdk.org/emudhra, JDK-8395690, CVE-2026-114820): emSign Root CA - G1, emSign Root CA - G2,
+ # emSign ECC Root CA - G3 and AAA Certificate Services. Temurin builds its cacerts from Mozilla's root list,
