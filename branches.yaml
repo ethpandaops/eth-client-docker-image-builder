@@ -65,7 +65,7 @@ el:
 # ============================================================
 cl:
   common_branches:
-    - heze-devnet-3
+    - pq-devnet-0
     - heze-devnet-2
   clients:
     caplin:
