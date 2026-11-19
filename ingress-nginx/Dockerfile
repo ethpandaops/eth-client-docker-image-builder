@@ -15,6 +15,28 @@
 ARG BASE_IMAGE=registry.k8s.io/ingress-nginx/nginx:v1.2.1@sha256:9ed93911ae01d8cf4d8b3de0e62e718d7a76ad59ef88dd51bb3b9f87ef443c9a
 ARG CONTROLLER_IMAGE=registry.k8s.io/ingress-nginx/controller:v1.12.1@sha256:d2fbc4ec70d8aa2050dd91a91506e998765e86c96f32cffb56c503c9c34eed5b
 
+# Checks the nginx release tarball's signature. The signing key is Roman
+# Arutyunyan's (fingerprint 43387825DDB1BB97EC36BA5D007C8D7C15D87369), from
+# https://nginx.org/en/pgp_keys.html; all three downloads are also pinned by
+# sha256.
+FROM ${BASE_IMAGE} AS verify
+RUN apk add --no-cache gpgv=2.4.9-r0
+ADD --checksum=sha256:373eb96344f805f7c7c42733aaeca6adde289f00135ff2c167d301c43925b382 \
+    https://nginx.org/keys/arut.key /verify/
+ADD --checksum=sha256:092c4d1781fc9ceb1a759fabffbd5ef09fbe7108f8e37dbf3797eb5a24cf37a2 \
+    https://nginx.org/download/nginx-1.25.5.tar.gz.asc /verify/
+ADD --checksum=sha256:2fe2294f8af4144e7e842eaea884182a84ee7970e11046ba98194400902bbec0 \
+    https://nginx.org/download/nginx-1.25.5.tar.gz /verify/
+RUN <<'EOF'
+set -eu
+cd /verify
+# gpgv reads only binary keyrings: strip the ASCII armor.
+awk '/^-----BEGIN/ {b=1; next} b && /^$/ {d=1; next} /^-----END/ {exit} d && !/^=/ {print}' arut.key \
+  | base64 -d > arut.gpg
+gpgv --status-fd 1 --keyring ./arut.gpg nginx-1.25.5.tar.gz.asc nginx-1.25.5.tar.gz > status
+grep -q '^\[GNUPG:\] VALIDSIG 43387825DDB1BB97EC36BA5D007C8D7C15D87369 ' status
+EOF
+
 # The builder starts from the upstream nginx base image, which already holds
 # the LuaJIT and libmodsecurity headers and libraries the original build used.
 FROM ${BASE_IMAGE} AS builder
@@ -24,8 +46,11 @@ FROM ${BASE_IMAGE} AS builder
 # The -dev packages pull newer openssl (3.3.7), zlib (1.4) and musl (r12) into
 # the builder only; the controller image keeps its own libraries, which are
 # ABI-compatible releases of the same series.
+# fortify-headers is what makes -D_FORTIFY_SOURCE=2 take effect with musl;
+# upstream's build.sh gets it through build-base.
 RUN apk add --no-cache \
     gcc=14.2.0-r4 \
+    fortify-headers=1.1-r5 \
     musl-dev=1.2.5-r12 \
     make=4.4.1-r2 \
     linux-headers=6.6-r1 \
@@ -35,10 +60,8 @@ RUN apk add --no-cache \
     libmaxminddb-dev=1.9.1-r0 \
     libcap=2.78-r0
 
-# nginx 1.25.5 release tarball (signature checked against Roman Arutyunyan's
-# key 43387825DDB1BB97EC36BA5D007C8D7C15D87369 from nginx.org/en/pgp_keys.html).
-ADD --checksum=sha256:2fe2294f8af4144e7e842eaea884182a84ee7970e11046ba98194400902bbec0 \
-    https://nginx.org/download/nginx-1.25.5.tar.gz /tmp/build/
+# The nginx 1.25.5 release tarball whose signature the verify stage checked.
+COPY --from=verify /verify/nginx-1.25.5.tar.gz /tmp/build/
 
 # ingress-nginx's own nginx patches, at the controller-v1.12.1 commit.
 ADD https://github.com/kubernetes/ingress-nginx.git#64780b1fed3af99f4eccbc3fdad7ad785e8a83b6:images/nginx/rootfs/patches /patches/ingress-nginx

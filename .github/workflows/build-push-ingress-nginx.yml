@@ -2,8 +2,10 @@ name: Build ingress-nginx controller image
 
 # Builds ingress-nginx/ (upstream controller v1.12.1 with a rebuilt, patched
 # nginx binary). Pull requests build and test it; a manual run with push
-# enabled publishes it. The build is reproducible, and the image is pushed only
-# when its digest is the one pinned below, which is what deployments reference.
+# enabled publishes it. The build is reproducible, and only an image whose
+# digest is the one pinned below, which is what deployments reference, is
+# pushed: the digest is checked on the local build before anything leaves the
+# runner, and that exact archive is pushed.
 
 on:
   pull_request:
@@ -23,7 +25,7 @@ permissions:
 env:
   IMAGE: docker.io/ethpandaops/ingress-nginx-controller
   TAG: v1.12.1-patched.1
-  EXPECTED_DIGEST: sha256:d60a8137cb2e7e04b87591facf5c8ed07b23fc240cf86817473e0b1df547b61f
+  EXPECTED_DIGEST: sha256:eb226b2e4795498081e07ad632edbad889a590e9ddbd1a2ab4492442e8e50cf9
   SOURCE_DATE_EPOCH: "1794960000"
 
 jobs:
@@ -37,14 +39,17 @@ jobs:
           driver-opts: image=moby/buildkit:v0.34.2@sha256:c5f8862f52499773af85bc07695b2379ef08e8002352b0df2c4864c91d78dabe
       - name: Build
         run: |
-          docker buildx build --platform linux/amd64 --provenance=false --sbom=false \
-            --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
-            --metadata-file metadata.json \
-            --output "type=docker,name=$IMAGE:$TAG,rewrite-timestamp=true" \
-            ingress-nginx/
-          digest=$(jq -r '."containerimage.digest"' metadata.json)
-          echo "built $IMAGE:$TAG@$digest"
-          test "$digest" = "$EXPECTED_DIGEST"
+          build() {
+            docker buildx build --platform linux/amd64 --provenance=false --sbom=false \
+              --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
+              --metadata-file "$1" --output "$2" ingress-nginx/
+            digest=$(jq -r '."containerimage.digest"' "$1")
+            echo "built $IMAGE:$TAG@$digest ($2)"
+            test "$digest" = "$EXPECTED_DIGEST"
+          }
+          # Loaded into docker for the tests, and as an OCI archive to push.
+          build docker.json "type=docker,name=$IMAGE:$TAG,rewrite-timestamp=true"
+          build oci.json "type=oci,dest=image.oci.tar,rewrite-timestamp=true"
       - name: Test
         run: ingress-nginx/test.sh "$IMAGE:$TAG"
       - name: Login to Docker Hub
@@ -56,11 +61,9 @@ jobs:
       - name: Push
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.push }}
         run: |
-          docker buildx build --platform linux/amd64 --provenance=false --sbom=false \
-            --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
-            --metadata-file pushed.json \
-            --output "type=image,name=$IMAGE:$TAG,push=true,rewrite-timestamp=true" \
-            ingress-nginx/
-          digest=$(jq -r '."containerimage.digest"' pushed.json)
-          echo "pushed $IMAGE:$TAG@$digest"
-          test "$digest" = "$EXPECTED_DIGEST"
+          # The archive's manifest is the checked one; --preserve-digests makes
+          # skopeo fail rather than push it under any other digest.
+          skopeo copy --preserve-digests oci-archive:image.oci.tar "docker://$IMAGE:$TAG"
+          pushed=sha256:$(skopeo inspect --raw "docker://$IMAGE:$TAG" | sha256sum | cut -d' ' -f1)
+          echo "pushed $IMAGE:$TAG@$pushed"
+          test "$pushed" = "$EXPECTED_DIGEST"

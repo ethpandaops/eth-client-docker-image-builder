@@ -5,7 +5,7 @@ set -euo pipefail
 
 image=$1
 upstream=registry.k8s.io/ingress-nginx/controller:v1.12.1@sha256:d2fbc4ec70d8aa2050dd91a91506e998765e86c96f32cffb56c503c9c34eed5b
-expected_nginx_sha256=c6a479340d6332126261610f7b713d6fe576077dda932c5ede141f6b7c1158b9
+expected_nginx_sha256=1cf27fe30f057874cca78dec51d46f45a857f298ebe73101d728ef7559d95902
 
 run() { docker run --rm --entrypoint "$1" "${@:2}"; }
 
@@ -21,6 +21,20 @@ run sh --user 0 "$image" -c "
   apk add -q --no-cache libcap-getcap >/dev/null
   getcap /usr/local/nginx/sbin/nginx | grep -q cap_net_bind_service=ep
   ls -l /usr/local/nginx/sbin/nginx"
+
+echo "== FORTIFY_SOURCE checks match upstream (ud2 traps)"
+traps() {
+  id=$(docker create "$1")
+  docker cp "$id:/usr/local/nginx/sbin/nginx" "$2" 2>/dev/null
+  docker rm "$id" >/dev/null
+  objdump -d "$2" | grep -c ud2
+}
+bin=$(mktemp -d)
+upstream_traps=$(traps "$upstream" "$bin/upstream")
+image_traps=$(traps "$image" "$bin/image")
+rm -rf "$bin"
+echo "upstream $upstream_traps, image $image_traps"
+test "$image_traps" -ge "$upstream_traps"
 
 echo "== only the nginx binary differs from upstream"
 # /etc/hostname, /etc/hosts and /etc/resolv.conf are written by docker run.

@@ -62,10 +62,24 @@ docker buildx build --platform linux/amd64 --provenance=false --sbom=false \
 ```
 
 Expected linux/amd64 image digest:
-`sha256:d60a8137cb2e7e04b87591facf5c8ed07b23fc240cf86817473e0b1df547b61f`,
+`sha256:eb226b2e4795498081e07ad632edbad889a590e9ddbd1a2ab4492442e8e50cf9`,
 nginx binary sha256
-`c6a479340d6332126261610f7b713d6fe576077dda932c5ede141f6b7c1158b9`.
-The workflow refuses to push an image with another digest.
+`1cf27fe30f057874cca78dec51d46f45a857f298ebe73101d728ef7559d95902`.
+The workflow checks the digest of the local build before anything is pushed, then
+pushes that exact OCI archive with `skopeo copy --preserve-digests` and checks the
+registry's digest again.
+
+The build verifies the nginx tarball's PGP signature (the `verify` stage) against
+Roman Arutyunyan's key, fingerprint `43387825DDB1BB97EC36BA5D007C8D7C15D87369`,
+fetched from nginx.org and pinned by sha256 like the tarball and signature.
+
+`fortify-headers` must be in the builder: without it musl ignores
+`-D_FORTIFY_SOURCE=2` and the binary loses the checks upstream's has. `test.sh`
+compares the number of `ud2` traps with the upstream binary (426 in both).
+
+Before the first push, create the Docker Hub repository
+`ethpandaops/ingress-nginx-controller` as public with immutable tags, so a later
+push cannot replace `v1.12.1-patched.1`.
 
 Only linux/amd64 is built; the configure flags are build.sh's x86_64 flags.
 
