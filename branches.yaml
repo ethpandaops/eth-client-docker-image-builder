@@ -22,8 +22,13 @@ el:
     - bogota-devnet-2
   clients:
     besu:
-      branches:
-        - main
+      # main builds with besu/temurin-25.0.5.1.patch (Temurin 25.0.5.1+2 on amd64, CVE-2026-114938)
+      # until upstream's Dockerfile ships a fixed JDK; the patch stops applying when it does.
+      custom_configs:
+        - name: "main"
+          source_patch: "besu/temurin-25.0.5.1.patch"
+          ref: "main"
+          tag: "main"
     erigon:
       branches:
         - main
