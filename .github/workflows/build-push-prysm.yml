@@ -85,6 +85,7 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
@@ -123,6 +124,7 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
@@ -158,6 +160,7 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
@@ -193,6 +196,7 @@ jobs:
           DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
+          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT

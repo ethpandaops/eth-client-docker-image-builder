@@ -77,6 +77,9 @@ inputs:
     required: true
   GOPROXY:
     required: false
+  BAZEL_REMOTE_CACHE_PASSWORD:
+    description: Credential for uploads to the Bazel remote cache. Without it, builds only read from the cache.
+    required: false
   HARBOR_USERNAME:
     required: true
   HARBOR_PASSWORD:
@@ -225,6 +228,7 @@ runs:
       source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
       source_git_commit_hash_full: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
       GOPROXY: ${{ inputs.GOPROXY }}
+      BAZEL_REMOTE_CACHE_PASSWORD: ${{ inputs.BAZEL_REMOTE_CACHE_PASSWORD }}
       build_method: ${{ inputs.build_method }}
     run: |
       ${{ inputs.build_script }}

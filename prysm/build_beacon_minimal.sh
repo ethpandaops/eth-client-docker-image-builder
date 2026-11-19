@@ -45,8 +45,16 @@ END
     if grep -qs "disable_progressive_merkleization" tools/BUILD.bazel; then
       extra_bazel_flags="--//tools:disable_progressive_merkleization=false"
     fi
+    # Reads from the remote cache are anonymous; uploads need the cache credential
+    # (BAZEL_REMOTE_CACHE_PASSWORD, a CI secret). Without it, only read from the cache.
+    remote_cache_host="bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443"
+    if [ -n "${BAZEL_REMOTE_CACHE_PASSWORD}" ]; then
+      remote_cache_flags="--remote_cache=grpcs://ci:${BAZEL_REMOTE_CACHE_PASSWORD}@${remote_cache_host}"
+    else
+      remote_cache_flags="--remote_cache=grpcs://${remote_cache_host} --remote_upload_local_results=false"
+    fi
     # Try with remote cache first
-    if ! $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags} --remote_cache=grpcs://bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443; then
+    if ! $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags} ${remote_cache_flags}; then
       echo "Build failed with remote cache, trying without remote cache..."
       # Try without remote cache to avoid cache corruption issues
       if ! $HOME/go/bin/bazelisk build //cmd/beacon-chain:beacon-chain --config=minimal --stamp --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags}; then
