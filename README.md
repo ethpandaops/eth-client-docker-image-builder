@@ -92,6 +92,8 @@ The convention is skipped when the workflow explicitly passes a non-default Dock
 
 Scheduled nimbus builds use `./nimbus-eth2/Dockerfile.<beacon|validator>-<target_tag>` when it exists (e.g. `Dockerfile.beacon-pq-devnet-0`). The `-minimal` tag shares that file and is built with `PRESET=minimal`.
 
+A manual `build-push-nimbus-eth2.yml` dispatch uses `./nimbus-eth2/Dockerfile.beacon-<tag>` for both beacon images when the target tag is `<tag>` or starts with `<tag>-`, the longest match winning, so a fork of such a branch builds with `--tag pq-devnet-0-<name>`.
+
 Branches listed under `skip_validator_client` of the `nimbus` entry in `branches.yaml` are built as `nimbus-eth2` only, without the `nimbus-validator-client` images.
 
 To publish an unprefixed tag from a fork, add a `custom_configs` entry with a `repository`; it replaces the entry a branch of the same tag would generate:
