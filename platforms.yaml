@@ -96,6 +96,9 @@ goevmlab:
 ethlambda:
   - linux/amd64
   - linux/arm64
+silver:
+  - linux/amd64
+  - linux/arm64
 ethrex:
   - linux/amd64
   - linux/arm64
