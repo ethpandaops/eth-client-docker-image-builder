@@ -108,6 +108,8 @@ cl:
         - unstable
         - stable
         - optional-proofs
+      skip_validator_client:
+        - pq-devnet-0
     prysm:
       branches:
         - develop

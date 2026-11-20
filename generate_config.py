@@ -124,8 +124,13 @@ def generate_config():
             expanded_config['prysm-validator'] = client_config
         elif client_name == 'nimbus':
             # Expand nimbus into both eth2 and validator
-            expanded_config['nimbus-eth2'] = client_config
-            expanded_config['nimbus-validator-client'] = client_config
+            validator_client_config = dict(client_config)
+            skipped = validator_client_config.pop('skip_validator_client', None) or []
+            validator_client_config['branches'] = [
+                b for b in validator_client_config.get('branches', []) if b not in skipped
+            ]
+            expanded_config['nimbus-eth2'] = {k: v for k, v in client_config.items() if k != 'skip_validator_client'}
+            expanded_config['nimbus-validator-client'] = validator_client_config
         else:
             # Keep as-is
             expanded_config[client_name] = client_config
