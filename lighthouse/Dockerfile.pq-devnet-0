@@ -3,7 +3,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends clang cmake lib
     && rm -rf /var/lib/apt/lists/*
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 ARG TARGETARCH
-ARG LEANVM_REV=283686575c4e81790591d2c6e3ed21c69c0e3bbe
 
 FROM build-tools AS lighthouse-builder
 WORKDIR /lighthouse
@@ -14,34 +13,33 @@ RUN --mount=type=cache,id=pq-lighthouse-registry,target=/usr/local/cargo/registr
     --mount=type=cache,id=pq-lighthouse-target-${TARGETARCH},target=/lighthouse/target \
     test "$(git rev-parse HEAD)" = "$COMMIT_HASH" \
     && test -r scripts/local_testnet/pq-genesis/lighthouse-pq-bn \
-    && grep -Fq "pub const LEANVM_REV: &str = \"$LEANVM_REV\";" beacon_node/pq_prover/src/lib.rs \
     && if [ "$TARGETARCH" = arm64 ]; then export JEMALLOC_SYS_WITH_LG_PAGE=16; fi \
     && make FEATURES=spec-minimal,portable
 
 FROM build-tools AS sidecar-builder
 WORKDIR /leanvm
-RUN git init -q \
-    && git fetch -q --depth=1 https://github.com/leanEthereum/leanVM "$LEANVM_REV" \
+COPY leanvm-revision /leanvm-revision
+RUN leanvm_rev="$(cat /leanvm-revision)" \
+    && { test "${#leanvm_rev}" -eq 40 && printf '%s\n' "$leanvm_rev" | grep -Eq '^[0-9a-f]{40}$'; } \
+    && git init -q \
+    && git fetch -q --depth=1 https://github.com/leanEthereum/leanVM "$leanvm_rev" \
     && git checkout -q --detach FETCH_HEAD \
-    && test "$(git rev-parse HEAD)" = "$LEANVM_REV"
+    && test "$(git rev-parse HEAD)" = "$leanvm_rev"
+COPY --chmod=755 scripts/local_testnet/pq-genesis/build-leanvm-sidecars /tmp/build-leanvm-sidecars
+COPY --chmod=755 scripts/local_testnet/pq-genesis/leanvm-sidecar-select /tmp/leanvm-sidecar-select
 RUN --mount=type=cache,id=pq-sidecar-registry,target=/usr/local/cargo/registry \
     --mount=type=cache,id=pq-sidecar-target-${TARGETARCH},target=/leanvm/target \
-    case "$TARGETARCH" in \
-      arm64) export JEMALLOC_SYS_WITH_LG_PAGE=16; \
-             export RUSTFLAGS="-C target-cpu=generic -C target-feature=+aes" ;; \
-      amd64) export RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=+ssse3,+pclmulqdq" ;; \
-      *) echo "Unsupported leanVM target architecture: $TARGETARCH" >&2; exit 1 ;; \
-    esac \
-    && cargo build --locked --release -p leanvm-sidecar --features experimental_prover \
-    && install -D target/release/leanvm-sidecar /out/leanvm-sidecar
+    /tmp/build-leanvm-sidecars "$TARGETARCH"
 
-FROM ubuntu:24.04@sha256:73b999393d07f2bf65a40373778a44dc9a6d54ad7718d29247d8ff9413c4d6a8
-ARG COMMIT_HASH
-ARG LEANVM_REV=283686575c4e81790591d2c6e3ed21c69c0e3bbe
-LABEL org.opencontainers.image.revision=$COMMIT_HASH \
-    io.lighthouse.pq.leanvm.revision=$LEANVM_REV
+FROM ubuntu:24.04@sha256:73b999393d07f2bf65a40373778a44dc9a6d54ad7718d29247d8ff9413c4d6a8 AS sidecar-runtime
+ARG TARGETARCH
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libssl3t64 libstdc++6 \
+    && if [ "$TARGETARCH" = amd64 ]; then apt-get install -y --no-install-recommends python3-minimal; fi \
     && rm -rf /var/lib/apt/lists/*
-COPY --from=lighthouse-builder /usr/local/cargo/bin/lighthouse /usr/local/bin/lighthouse
-COPY --from=sidecar-builder /out/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar-builder /out/ /usr/local/
 COPY --chmod=755 scripts/local_testnet/pq-genesis/lighthouse-pq-bn /usr/local/bin/lighthouse-pq-bn
+
+FROM sidecar-runtime
+ARG COMMIT_HASH
+LABEL org.opencontainers.image.revision=$COMMIT_HASH
+COPY --from=lighthouse-builder /usr/local/cargo/bin/lighthouse /usr/local/bin/lighthouse
