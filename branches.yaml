@@ -110,6 +110,11 @@ cl:
         - optional-proofs
       skip_validator_client:
         - pq-devnet-0
+      custom_configs:
+        - name: "pq-devnet-0-vrf-state"
+          repository: "barnabasbusa/nimbus-eth2"
+          ref: "bbusa/pq-full-vrf-tree"
+          tag: "pq-devnet-0-vrf-state-minimal"
     prysm:
       branches:
         - develop
