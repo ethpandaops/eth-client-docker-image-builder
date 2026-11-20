@@ -68,7 +68,7 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth2
-          target_dockerfile: ./nimbus-eth2/Dockerfile.beacon
+          target_dockerfile: ./nimbus-eth2/Dockerfile.beacon-pq-devnet-0
           build_args_script: ./nimbus-eth2/nim-version.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
@@ -108,7 +108,8 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth2
-          target_dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+          target_dockerfile: ./nimbus-eth2/Dockerfile.beacon-pq-devnet-0
+          build_args: PRESET=minimal
           build_args_script: ./nimbus-eth2/nim-version.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
