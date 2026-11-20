@@ -76,6 +76,9 @@ cl:
       skip_common: true
       branches:
         - main
+    ethlambda:
+      branches:
+        - main
     grandine:
       branches:
         - develop

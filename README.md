@@ -9,6 +9,7 @@ Run the *Build **client*** workflow;
 - [Build Dummy-EL](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-dummy-el.yml) [[source](https://github.com/ethpandaops/dummy-el)]
 - [Build Eleel](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-eleel.yml) [[source](https://github.com/sigp/eleel)]
 - [Build Erigon](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-erigon.yml) [[source](https://github.com/ledgerwatch/erigon)]
+- [Build Ethlambda](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ethlambda.yml) [[source](https://github.com/lambdaclass/ethlambda)]
 - [Build Ethrex](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ethrex.yml) [[source](https://github.com/lambdaclass/ethrex)]
 - [Build Geth](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-geth.yml) [[source](https://github.com/ethereum/go-ethereum)]
 - [Build Lighthouse](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-lighthouse.yml) [[source](https://github.com/sigp/lighthouse)]

@@ -9,6 +9,7 @@ DEFAULT_REPOS = {
     'besu': 'besu-eth/besu',
     'caplin': 'erigontech/erigon',
     'erigon': 'erigontech/erigon',
+    'ethlambda': 'lambdaclass/ethlambda',
     'ethrex': 'lambdaclass/ethrex',
     'geth': 'ethereum/go-ethereum',
     'lighthouse': 'sigp/lighthouse',
