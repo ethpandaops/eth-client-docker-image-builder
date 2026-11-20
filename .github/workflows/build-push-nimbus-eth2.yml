@@ -29,6 +29,9 @@ jobs:
     outputs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
+      beacon_dockerfile: ${{ steps.dockerfile.outputs.beacon }}
+      beacon_minimal_dockerfile: ${{ steps.dockerfile.outputs.beacon_minimal }}
+      beacon_minimal_build_args: ${{ steps.dockerfile.outputs.beacon_minimal_build_args }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Prepare Matrix
@@ -46,6 +49,32 @@ jobs:
           repository: ${{ inputs.repository }}
           upstream_repository: status-im/nimbus-eth2
           docker_tag: ${{ inputs.docker_tag }}
+      - name: Resolve beacon dockerfile (prefer ./nimbus-eth2/Dockerfile.beacon-<tag>)
+        id: dockerfile
+        env:
+          TARGET_TAG: ${{ steps.tag.outputs.docker_tag }}
+        run: |
+          beacon=./nimbus-eth2/Dockerfile.beacon
+          beacon_minimal=./nimbus-eth2/Dockerfile.beacon-minimal
+          beacon_minimal_build_args=
+          match=
+          for candidate in ./nimbus-eth2/Dockerfile.beacon-*; do
+            suffix="${candidate#./nimbus-eth2/Dockerfile.beacon-}"
+            case "$suffix" in minimal|*.dockerignore) continue ;; esac
+            case "$TARGET_TAG" in
+              "$suffix"|"$suffix"-*)
+                if [ "${#suffix}" -gt "${#match}" ]; then match="$suffix"; fi ;;
+            esac
+          done
+          if [ -n "$match" ]; then
+            echo "Using per-tag Dockerfile: ./nimbus-eth2/Dockerfile.beacon-$match"
+            beacon="./nimbus-eth2/Dockerfile.beacon-$match"
+            beacon_minimal="$beacon"
+            beacon_minimal_build_args=PRESET=minimal
+          fi
+          echo "beacon=$beacon" >> "$GITHUB_OUTPUT"
+          echo "beacon_minimal=$beacon_minimal" >> "$GITHUB_OUTPUT"
+          echo "beacon_minimal_build_args=$beacon_minimal_build_args" >> "$GITHUB_OUTPUT"
   deploy-beacon:
     needs:
       - prepare
@@ -68,7 +97,7 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth2
-          target_dockerfile: ./nimbus-eth2/Dockerfile.beacon
+          target_dockerfile: ${{ needs.prepare.outputs.beacon_dockerfile }}
           build_args_script: ./nimbus-eth2/nim-version.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
@@ -108,7 +137,8 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth2
-          target_dockerfile: ./nimbus-eth2/Dockerfile.beacon-minimal
+          target_dockerfile: ${{ needs.prepare.outputs.beacon_minimal_dockerfile }}
+          build_args: ${{ needs.prepare.outputs.beacon_minimal_build_args }}
           build_args_script: ./nimbus-eth2/nim-version.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
