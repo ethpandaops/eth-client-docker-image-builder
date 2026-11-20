@@ -22,6 +22,7 @@ DEFAULT_REPOS = {
     'teku': 'consensys-incorporated/teku',
     'lodestar': 'chainsafe/lodestar',
     'reth': 'paradigmxyz/reth',
+    'silver': 'gattaca-com/silver',
     'nethermind': 'nethermindeth/nethermind',
     'eleel': 'sigp/eleel',
     'dummy-el': 'ethpandaops/dummy-el',

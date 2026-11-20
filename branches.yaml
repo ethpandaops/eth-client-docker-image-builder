@@ -117,6 +117,10 @@ cl:
           - prototype/ssz-over-http
         sukunrt/prysm:
           - decoupled-consensus
+    silver:
+      skip_common: true
+      branches:
+        - main
     teku:
       branches:
         - master
