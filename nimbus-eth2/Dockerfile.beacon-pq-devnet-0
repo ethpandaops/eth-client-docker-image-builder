@@ -1,0 +1,64 @@
+ARG NIM_VERSION=2.2.14
+FROM rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c AS rust
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+
+FROM rust AS sidecar
+ARG TARGETARCH
+ARG LEANVM_REV=283686575c4e81790591d2c6e3ed21c69c0e3bbe
+WORKDIR /leanvm
+RUN git init -q \
+    && git fetch -q --depth=1 https://github.com/leanEthereum/leanVM "$LEANVM_REV" \
+    && git checkout -q --detach FETCH_HEAD \
+    && test "$(git rev-parse HEAD)" = "$LEANVM_REV"
+RUN --mount=type=cache,id=pq-sidecar-registry,target=/usr/local/cargo/registry \
+    --mount=type=cache,id=pq-sidecar-target-${TARGETARCH},target=/leanvm/target \
+    case "$TARGETARCH" in \
+      arm64) export JEMALLOC_SYS_WITH_LG_PAGE=16; \
+             export RUSTFLAGS="-C target-cpu=generic -C target-feature=+aes" ;; \
+      amd64) export RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=+ssse3,+pclmulqdq" ;; \
+      *) echo "Unsupported leanVM target architecture: $TARGETARCH" >&2; exit 1 ;; \
+    esac \
+    && cargo build --locked --release -p leanvm-sidecar --features experimental_prover \
+    && install -D target/release/leanvm-sidecar /out/leanvm-sidecar
+
+FROM nimlang/nim:${NIM_VERSION} AS build
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get clean && apt update \
+ && apt -y install build-essential git-lfs ca-certificates
+
+COPY --from=rust /usr/local/rustup /usr/local/rustup
+COPY --from=rust /usr/local/cargo /usr/local/cargo
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    CARGO_NET_GIT_FETCH_WITH_CLI=true \
+    RUSTUP_TOOLCHAIN=1.99.1 \
+    PATH=/usr/local/cargo/bin:${PATH}
+
+ARG PRESET=mainnet
+ARG LEANVM_REV=283686575c4e81790591d2c6e3ed21c69c0e3bbe
+
+ADD . /root/nimbus-eth2
+
+RUN cd /root/nimbus-eth2 \
+ && grep -Fq "rev = \"${LEANVM_REV}\"" beacon_chain/pq/leanxmss_ffi/Cargo.toml \
+ && make -j$(nproc) V=1 USE_SYSTEM_NIM=1 NIMFLAGS="-d:const_preset=${PRESET} -d:disableMarchNative" LOG_LEVEL=TRACE nimbus_beacon_node
+
+FROM debian:trixie-slim AS deploy
+
+SHELL ["/bin/bash", "-c"]
+RUN apt-get clean && apt update \
+ && apt -y install build-essential ca-certificates
+RUN apt update && apt -y upgrade
+
+COPY --from=build /root/nimbus-eth2/build/nimbus_beacon_node /home/user/nimbus-eth2/build/nimbus_beacon_node.bin
+COPY --from=sidecar /out/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=build --chmod=755 /root/nimbus-eth2/docker/pq-devnet/nimbus-pq-bn.sh /home/user/nimbus-eth2/build/nimbus_beacon_node
+RUN ln -s nimbus_beacon_node /home/user/nimbus-eth2/build/beacon_node
+
+ENV PATH="/home/user/nimbus-eth2/build:${PATH}"
+ENTRYPOINT ["nimbus_beacon_node"]
+WORKDIR /home/user/nimbus-eth2/build
+
+STOPSIGNAL SIGINT

@@ -72,6 +72,11 @@ SENTRY_VARIANTS = [
     'nimbus-eth2'
 ]
 
+NIMBUS_KINDS = {
+    'nimbus-eth2': 'beacon',
+    'nimbus-validator-client': 'validator'
+}
+
 # Clients that need to have xatu sidecar builds created automatically
 SIDECAR_VARIANTS = []
 
@@ -208,8 +213,13 @@ def generate_config():
                 # Optional source_patch field
                 source_patch = custom_config.get('source_patch')
                 
-                # Use default repository for custom configs
-                process_branch_custom(client_name, default_repo, ref, tag, config_list, source_patch)
+                repository = custom_config.get('repository', default_repo)
+
+                config_list[:] = [
+                    c for c in config_list
+                    if not (c['target']['repository'] == f'ethpandaops/{client_name}' and c['target']['tag'] == tag)
+                ]
+                process_branch_custom(client_name, repository, ref, tag, config_list, source_patch)
 
     # Sort configs by client name for better readability
     config_list.sort(key=lambda x: extract_client_name(x))
@@ -254,19 +264,28 @@ def extract_client_name(config):
     """Extract the client name from a config"""
     return config['target']['repository'].split('/')[1]
 
+def get_nimbus_tagged_dockerfile(client_name, target_tag):
+    if not target_tag:
+        return None
+    base_tag = target_tag.removesuffix('-minimal')
+    tagged_path = f"./nimbus-eth2/Dockerfile.{NIMBUS_KINDS[client_name]}-{base_tag}"
+    if os.path.exists(tagged_path):
+        return tagged_path
+    return None
+
 def get_dockerfile_path(client_name, target_tag=None):
     """Determine the dockerfile path based on client name and tag conventions"""
     # Special cases for different clients
     if client_name == 'reth-rbuilder':
         return f"./{client_name}/Dockerfile.rbuilder"
-    elif client_name == 'nimbus-eth2':
+    elif client_name in NIMBUS_KINDS:
+        tagged_path = get_nimbus_tagged_dockerfile(client_name, target_tag)
+        if tagged_path:
+            return tagged_path
+        kind = NIMBUS_KINDS[client_name]
         if target_tag and 'minimal' in target_tag:
-            return f"./{client_name}/Dockerfile.beacon-minimal"
-        return f"./{client_name}/Dockerfile.beacon"
-    elif client_name == 'nimbus-validator-client':
-        if target_tag and 'minimal' in target_tag:
-            return f"./{client_name.replace('-validator-client', '-eth2')}/Dockerfile.validator-minimal"
-        return f"./{client_name.replace('-validator-client', '-eth2')}/Dockerfile.validator"
+            return f"./nimbus-eth2/Dockerfile.{kind}-minimal"
+        return f"./nimbus-eth2/Dockerfile.{kind}"
     elif client_name == 'prysm-beacon-chain':
         return f"./prysm/Dockerfile.beacon"
     elif client_name == 'prysm-validator':
@@ -360,7 +379,9 @@ def get_build_args(client_name, source_repo, branch, target_tag):
         return BUILD_ARGS[key_client_tag]
 
     # Special cases
-    if client_name == 'mev-rs' and 'minimal' in target_tag:
+    if client_name in NIMBUS_KINDS and get_nimbus_tagged_dockerfile(client_name, target_tag):
+        return 'PRESET=minimal' if target_tag.endswith('-minimal') else None
+    elif client_name == 'mev-rs' and 'minimal' in target_tag:
         return 'FEATURES=minimal-preset'
     elif client_name == 'reth-rbuilder':
         return 'RBUILDER_BIN=reth-rbuilder'

@@ -90,6 +90,19 @@ Example: dispatching `build-push-lighthouse.yml` with `repository=eth-act/lighth
 
 The convention is skipped when the workflow explicitly passes a non-default Dockerfile (e.g. prysm's `Dockerfile.beacon`, nimbus-eth2's `Dockerfile.beacon-minimal`), so sub-component builds are unaffected.
 
+Scheduled nimbus builds use `./nimbus-eth2/Dockerfile.<beacon|validator>-<target_tag>` when it exists (e.g. `Dockerfile.beacon-pq-devnet-0`). The `-minimal` tag shares that file and is built with `PRESET=minimal`.
+
+To publish an unprefixed tag from a fork, add a `custom_configs` entry with a `repository`; it replaces the entry a branch of the same tag would generate:
+
+```yaml
+lighthouse:
+  custom_configs:
+    - name: "pq-devnet-0"
+      repository: "ethDreamer/lighthouse"
+      ref: "pq-devnet-0"
+      tag: "pq-devnet-0"
+```
+
 ## Output image tags
 
 Take the following config;

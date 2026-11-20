@@ -92,6 +92,11 @@ cl:
           - optional-proofs
         dknopik/lighthouse:
           - partial-columns
+      custom_configs:
+        - name: "pq-devnet-0"
+          repository: "ethDreamer/lighthouse"
+          ref: "pq-devnet-0"
+          tag: "pq-devnet-0"
     lodestar:
       branches:
         - stable
