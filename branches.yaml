@@ -128,6 +128,11 @@ cl:
       skip_common: true
       branches:
         - main
+      custom_configs:
+        - name: "pq-devnet-0"
+          repository: "gattaca-com/pq-silver"
+          ref: "ve/committee_config"
+          tag: "pq-devnet-0"
     teku:
       branches:
         - master
