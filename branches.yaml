@@ -131,7 +131,7 @@ cl:
       custom_configs:
         - name: "pq-devnet-0"
           repository: "gattaca-com/pq-silver"
-          ref: "ve/committee_config"
+          ref: "pq-devnet-0"
           tag: "pq-devnet-0"
     teku:
       branches:
