@@ -1,0 +1,60 @@
+name: Mirror
+description: >
+  Attest tags this job pushed to ghcr.io/ethpandaops/<image> and have the
+  ethpandaops image mirror copy them to docker.io/ethpandaops/<image>. Retries,
+  because the mirror only takes a few jobs per repository at a time and this
+  repository finishes many builds at once. Needs id-token: write and
+  attestations: write.
+
+inputs:
+  tags:
+    description: Full ghcr.io/ethpandaops/<image>:<tag> references this job pushed, separated by newlines
+    required: true
+  digest:
+    description: Digest every tag points at, as pushed by this job
+    required: true
+  attest-platforms:
+    description: Also attest the per-platform manifests behind the tags. "false" when other jobs built and attested them.
+    default: "true"
+  mirror-url:
+    description: secrets.IMAGE_MIRROR_URL
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - name: Mirror to Docker Hub
+    id: mirror
+    continue-on-error: true
+    uses: ethpandaops/actions/mirror-image@dab9cb304b6a1dd648e2f1acef6169f7095f515e
+    with:
+      tags: ${{ inputs.tags }}
+      digest: ${{ inputs.digest }}
+      attest-platforms: ${{ inputs.attest-platforms }}
+      mirror-url: ${{ inputs.mirror-url }}
+  - name: Wait before retrying the mirror
+    if: steps.mirror.outcome == 'failure'
+    shell: bash
+    run: sleep 120
+  - name: Mirror to Docker Hub (retry)
+    id: mirror_retry
+    if: steps.mirror.outcome == 'failure'
+    continue-on-error: true
+    uses: ethpandaops/actions/mirror-image@dab9cb304b6a1dd648e2f1acef6169f7095f515e
+    with:
+      tags: ${{ inputs.tags }}
+      digest: ${{ inputs.digest }}
+      attest-platforms: ${{ inputs.attest-platforms }}
+      mirror-url: ${{ inputs.mirror-url }}
+  - name: Wait before retrying the mirror again
+    if: steps.mirror_retry.outcome == 'failure'
+    shell: bash
+    run: sleep 300
+  - name: Mirror to Docker Hub (last retry)
+    if: steps.mirror_retry.outcome == 'failure'
+    uses: ethpandaops/actions/mirror-image@dab9cb304b6a1dd648e2f1acef6169f7095f515e
+    with:
+      tags: ${{ inputs.tags }}
+      digest: ${{ inputs.digest }}
+      attest-platforms: ${{ inputs.attest-platforms }}
+      mirror-url: ${{ inputs.mirror-url }}

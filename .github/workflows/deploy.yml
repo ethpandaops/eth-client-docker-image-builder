@@ -35,11 +35,11 @@ on:
         type: string
         required: false
       target_tag:
-        description: Docker hub tag to push to
+        description: Tag to push to
         type: string
         required: true
       target_repository:
-        description: Docker hub repository to push to
+        description: Repository to push to, such as ethpandaops/geth. Pushed to ghcr.io/<target_repository> and mirrored to the same name on Docker Hub
         type: string
         required: true
       target_dockerfile:
@@ -61,16 +61,12 @@ on:
         description: Harbor username
         type: string
         required: false
-      DOCKER_USERNAME:
-        description: Docker Hub username
-        type: string
-        required: true
       GOPROXY:
         description: GOPROXY
         type: string
         required: false
     secrets:
-      DOCKER_PASSWORD:
+      IMAGE_MIRROR_URL:
         required: true
       HARBOR_PASSWORD:
         required: false
@@ -81,6 +77,11 @@ on:
 
 jobs:
   deploy:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     name: Deploy ${{ matrix.config.slug }} ${{ inputs.target_tag }}
     continue-on-error: false
     strategy:
@@ -111,8 +112,7 @@ jobs:
         target_repository: ${{ inputs.target_repository }}
         target_dockerfile: ${{ inputs.target_dockerfile }}
         platform: ${{ matrix.config.platform }}
-        DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
-        DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+        IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
         MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
         GOPROXY: "${{ inputs.GOPROXY }}"
         HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
@@ -155,6 +155,11 @@ jobs:
           -d '{"ref":"master"}' \
           || echo "::warning::Announcing the image to hive-tests failed, its hourly check picks it up"
   mainfest:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     name: Manifest
     needs: deploy
     runs-on: ubuntu-latest
@@ -170,6 +175,5 @@ jobs:
         harbor_registry: ${{ inputs.harbor_registry }}
         HARBOR_USERNAME: "${{ inputs.HARBOR_USERNAME }}"
         HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
-        DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
-        DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+        IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
         git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
