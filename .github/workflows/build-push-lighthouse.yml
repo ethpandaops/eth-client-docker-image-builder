@@ -79,6 +79,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/lighthouse
           target_dockerfile: ./lighthouse/Dockerfile
+          build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
           build_args: ${{ inputs.build_args }}
 

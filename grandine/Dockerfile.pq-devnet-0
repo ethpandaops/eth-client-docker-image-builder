@@ -1,22 +1,13 @@
-# Grandine for pq-devnet-0 (mainnet preset), with the leanVM sidecar PQ networks need. Built from
-# Grandine's `pq-devnet-0` branch: the sidecar is built from the leanVM revision Grandine pins in
-# Cargo.toml (proofs of another revision do not verify), and Grandine's grandine-pq starts it and
-# then Grandine on its socket.
+# Grandine for pq-devnet-0 (mainnet preset). The leanVM sidecar comes from the
+# ethpandaops/leanvm-sidecar image of the revision Grandine pins in Cargo.toml, and Grandine's
+# grandine-pq starts it and then Grandine on its socket.
+ARG LEANVM_REV
+FROM ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+
 FROM rust:1.100.0-bookworm AS builder
 RUN apt-get clean && apt-get update && apt-get --yes upgrade && apt-get install --yes cmake libclang-dev
 COPY . .
 RUN scripts/build/release.sh
-
-# leanVM uses edition 2024 and pins no toolchain.
-FROM rust:1.100.0-bookworm AS sidecar
-COPY Cargo.toml /grandine/Cargo.toml
-RUN rev=$(sed -n "s/^lean_xmss = .*rev = '\([0-9a-f]*\)'.*/\1/p" /grandine/Cargo.toml) \
-  && test -n "$rev" \
-  && if [ "$(uname -m)" = x86_64 ]; then \
-  export RUSTFLAGS='-C target-feature=+sse3,+ssse3,+pclmulqdq'; \
-  fi \
-  && cargo install leanvm-sidecar --locked --git https://github.com/leanEthereum/leanVM \
-  --rev "$rev" --features experimental_prover
 
 FROM ubuntu:latest
 RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
@@ -26,7 +17,8 @@ RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y 
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /target/compact/grandine /usr/local/bin/grandine
-COPY --from=sidecar /usr/local/cargo/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
 COPY --chmod=755 scripts/pq/grandine-pq /usr/local/bin/grandine-pq
 
 ENTRYPOINT ["grandine-pq"]

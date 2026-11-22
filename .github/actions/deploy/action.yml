@@ -116,6 +116,13 @@ runs:
           echo "Using per-tag Dockerfile: $candidate (base tag: $base_tag)"
           resolved="$candidate"
         fi
+      elif [ "$target_basename" = "Dockerfile.beacon" ]; then
+        base_tag="${TARGET_TAG%-*-*}"
+        candidate="$(dirname "$TARGET_DOCKERFILE")/Dockerfile.beacon-${base_tag%-minimal}"
+        if [ -f "$candidate" ]; then
+          echo "Using per-tag Dockerfile: $candidate (base tag: $base_tag)"
+          resolved="$candidate"
+        fi
       fi
       echo "dockerfile=$resolved" >> "$GITHUB_OUTPUT"
   - name: Check out source repository

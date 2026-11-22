@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1
+
+ARG LEANVM_REV=c5ee9d239e42d0bc8113eb4aee3e2cae5faf1764
+FROM ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+
+FROM ubuntu:latest
+
+ARG ENTRY=/app/cmd/beacon-chain/beacon-chain
+ENV ENTRY=${ENTRY}
+WORKDIR /app/cmd/beacon-chain/beacon-chain.runfiles/prysm
+ADD ./_beacon-chain /app/cmd/beacon-chain/beacon-chain
+RUN ln -s /app/cmd/beacon-chain/beacon-chain /beacon-chain
+RUN apt-get update && apt-get install -y ca-certificates libc6 libstdc++6 && update-ca-certificates
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar-run /usr/local/bin/leanvm-sidecar-run
+COPY --chmod=755 <<'EOF' /usr/local/bin/prysm-pq-bn
+#!/bin/sh
+exec leanvm-sidecar-run --pq-prover-socket /beacon-chain "$@"
+EOF
+
+ENTRYPOINT ["/usr/local/bin/prysm-pq-bn"]
