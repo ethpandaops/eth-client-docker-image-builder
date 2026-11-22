@@ -29,11 +29,6 @@ jobs:
         run: |
           python generate_config.py
           echo "Generated config.yaml for workflow use"
-      - name: Login to Docker Hub
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-        with:
-          username: ${{ vars.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
       - id: repo_check
         env:
           CONCURRENT_IMAGE_PULL: ${{ vars.CONCURRENT_IMAGE_PULL }}
@@ -268,6 +263,11 @@ jobs:
           echo $CONFIGS >> $GITHUB_OUTPUT
 
   deploy:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs: check
     if: ${{ needs.check.outputs.configs != '[]' && needs.check.outputs.configs != '' }}
     uses: ./.github/workflows/deploy.yml
@@ -291,10 +291,9 @@ jobs:
       platforms: ${{ matrix.config.platforms }}
       harbor_registry: "${{ vars.HARBOR_REGISTRY }}"
       HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
-      DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
       GOPROXY: "${{ vars.GOPROXY }}"
     secrets:
-      DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+      IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
       HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
       MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
       HIVE_TESTS_APP_PRIVATE_KEY: "${{ secrets.HIVE_TESTS_APP_PRIVATE_KEY }}"

@@ -55,6 +55,11 @@ jobs:
           upstream_repository: offchainlabs/prysm
           docker_tag: ${{ inputs.docker_tag }}
   deploy-beacon:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
@@ -81,8 +86,7 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
           BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
@@ -94,6 +98,11 @@ jobs:
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
         shell: bash
   deploy-beacon-minimal:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
@@ -120,8 +129,7 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
           BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
@@ -130,6 +138,11 @@ jobs:
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
         shell: bash
   deploy-validator:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
@@ -156,8 +169,7 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
           BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
@@ -166,6 +178,11 @@ jobs:
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
         shell: bash
   deploy-validator-minimal:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
@@ -192,8 +209,7 @@ jobs:
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
           BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
@@ -202,6 +218,11 @@ jobs:
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
         shell: bash
   manifest-beacon:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
       - deploy-beacon
@@ -220,9 +241,13 @@ jobs:
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           git_commit_hash: ${{ needs.deploy-beacon.outputs.git_commit_hash }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   manifest-beacon-minimal:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
       - deploy-beacon-minimal
@@ -241,9 +266,13 @@ jobs:
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           git_commit_hash: ${{ needs.deploy-beacon-minimal.outputs.git_commit_hash }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   manifest-validator:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
       - deploy-validator
@@ -262,9 +291,13 @@ jobs:
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           git_commit_hash: ${{ needs.deploy-validator.outputs.git_commit_hash }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   manifest-validator-minimal:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
       - deploy-validator-minimal
@@ -283,8 +316,7 @@ jobs:
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           git_commit_hash: ${{ needs.deploy-validator-minimal.outputs.git_commit_hash }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest

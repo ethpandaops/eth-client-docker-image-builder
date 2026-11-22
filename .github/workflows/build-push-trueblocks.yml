@@ -47,6 +47,11 @@ jobs:
           upstream_repository: TrueBlocks/trueblocks-core
           docker_tag: ${{ inputs.docker_tag }}
   deploy:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
     runs-on: ${{ matrix.runner }}
@@ -71,8 +76,7 @@ jobs:
           target_dockerfile: ./trueblocks/Dockerfile
           platform: ${{ matrix.platform }}
 
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
@@ -84,6 +88,11 @@ jobs:
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
         shell: bash
   manifest:
+    permissions:
+      contents: read       # check out this repository
+      packages: write      # push to ghcr.io/ethpandaops
+      id-token: write      # attest, and authenticate to the image mirror
+      attestations: write
     needs:
       - prepare
       - deploy
@@ -101,8 +110,7 @@ jobs:
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           git_commit_hash: ${{ needs.deploy.outputs.git_commit_hash }}
-          DOCKER_USERNAME: "${{ vars.DOCKER_USERNAME }}"
-          DOCKER_PASSWORD: "${{ secrets.DOCKER_PASSWORD }}"
+          IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest

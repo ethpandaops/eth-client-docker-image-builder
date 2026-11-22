@@ -2,6 +2,12 @@
 
 Automates docker builds for ethereum clients. The build process is scheduled every hour to check source repositories for new commits.
 
+## Publishing
+
+Images are pushed to `ghcr.io/ethpandaops/<image>` with the workflow's own `GITHUB_TOKEN`. Each job then attests what it pushed and asks the [image mirror](https://github.com/ethpandaops/image-mirror) to copy it to `docker.io/ethpandaops/<image>` (see [`.github/actions/mirror`](./.github/actions/mirror/action.yml)); the job only succeeds once the tags are on Docker Hub. Image names and tags are the same in both registries. Nothing here holds a Docker Hub credential.
+
+Each per-platform job attests the image it built on its runner; the manifest job attests only the multi-platform index it makes from them.
+
 ## Build image on demand
 
 Run the *Build **client*** workflow;
@@ -51,8 +57,8 @@ Add a new image to [`config.yaml`](./config.yaml) file and it will be built on s
     ref: stable # source repository branch/tag/commit to build from
   build_script: ./teku/build.sh # optional build script to run INSTEAD of the docker build & push (see below)
   target:
-    tag: stable # tag to add to the docker image tag, this must be unique for each docker hub repository
-    repository: ethpandaops/lighthouse # dockerhub target to deploy the built image
+    tag: stable # tag to add to the docker image tag, this must be unique for each image
+    repository: ethpandaops/lighthouse # image to publish, pushed to ghcr.io/ethpandaops/lighthouse and mirrored to Docker Hub
     dockerfile: ./lighthouse/Dockerfile # optional docker file to use, defaults to the source repository's Dockerfile
 ```
 
@@ -133,13 +139,13 @@ ethpandaops/lighthouse:banana-abcd123
 
 The `build_script` is a bash script that is run INSTEAD of the docker build & push. This is useful for clients that have a custom build process.
 
-When the `build_script` is set, you **must** build and push the docker image yourself! Docker will already be logged in to the target repository. You **should** try to use the `target_tag` and `target_repository` environment variables to tag your image.
+When the `build_script` is set, you **must** build and push the docker image yourself! Docker will already be logged in to GHCR. You **must** push to `${target_repository}:${target_tag}` and `${target_repository}:${target_tag}-${source_git_commit_hash}`, the same image under both tags; the job then mirrors them to Docker Hub.
 
 The following environment variables are available to the `build_script`;
 - `source_repository` - source repository to build from
 - `source_ref` - source repository branch/tag/commit to build from
 - `target_tag` - tag to add to the docker image tag
-- `target_repository` - dockerhub target to deploy the built image
+- `target_repository` - image to push to, such as `ghcr.io/ethpandaops/lighthouse`
 - `target_dockerfile` - optional docker file to use, defaults to the source repository's Dockerfile
 - `source_git_commit_hash` - the source repository's short commit hash
 - `source_git_commit_hash_full` - the source repository's full commit hash

@@ -1,5 +1,5 @@
 name: Deploy
-description: Build and push a docker image to Docker Hub
+description: Build and push a docker image to GHCR, then have the image mirror copy it to Docker Hub
 
 inputs:
   source_repository:
@@ -43,11 +43,11 @@ inputs:
     type: string
     required: false
   target_tag:
-    description: Docker hub tag to push to
+    description: Tag to push to
     type: string
     required: true
   target_repository:
-    description: Docker hub repository to push to
+    description: Repository to push to, such as ethpandaops/geth. Pushed to ghcr.io/<target_repository> and mirrored to the same name on Docker Hub
     type: string
     required: true
   target_dockerfile:
@@ -69,9 +69,8 @@ inputs:
     type: string
     default: ''
   # Secrets
-  DOCKER_USERNAME:
-    required: true
-  DOCKER_PASSWORD:
+  IMAGE_MIRROR_URL:
+    description: secrets.IMAGE_MIRROR_URL
     required: true
   MACOS_PASSWORD:
     required: true
@@ -185,6 +184,12 @@ runs:
     uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
     with:
       endpoint: builders
+      # Builds don't log in to Docker Hub, so pull docker.io images through the
+      # pull-through cache the runners' Docker daemon already uses. BuildKit
+      # falls back to docker.io if the cache fails.
+      buildkitd-config-inline: |
+        [registry."docker.io"]
+          mirrors = ["docker-cache.ethquokkaops.io"]
   - name: Wait before retrying Docker Buildx setup
     if: steps.buildx_setup.outcome == 'failure'
     shell: bash
@@ -194,16 +199,20 @@ runs:
     uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
     with:
       endpoint: builders
-  - name: Unlock MacOS keychain for Docker Hub login
+      buildkitd-config-inline: |
+        [registry."docker.io"]
+          mirrors = ["docker-cache.ethquokkaops.io"]
+  - name: Unlock MacOS keychain for registry login
     shell: bash
     if: runner.os == 'macOS'
     run: |
       security -v unlock-keychain -p ${{ inputs.MACOS_PASSWORD }} ~/Library/Keychains/login.keychain-db
-  - name: Login to Docker Hub
+  - name: Login to GHCR
     uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
     with:
-      username: ${{ inputs.DOCKER_USERNAME }}
-      password: ${{ inputs.DOCKER_PASSWORD }}
+      registry: ghcr.io
+      username: ${{ github.actor }}
+      password: ${{ github.token }}
   - name: Login to harbor registry
     if: ${{ inputs.harbor_registry != '' }}
     id: harbor_login
@@ -223,7 +232,7 @@ runs:
       source_repository: ${{ inputs.source_repository }}
       source_ref: ${{ inputs.source_ref }}
       target_tag: ${{ inputs.target_tag }}
-      target_repository: ${{ inputs.target_repository }}
+      target_repository: ghcr.io/${{ inputs.target_repository }}
       target_dockerfile: ${{ steps.resolve_dockerfile.outputs.dockerfile || './source/Dockerfile' }}
       source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
       source_git_commit_hash_full: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
@@ -233,14 +242,30 @@ runs:
     run: |
       ${{ inputs.build_script }}
   - name: Image digest & tags (build script)
+    id: script_digest
     shell: bash
     if: inputs.build_script
+    env:
+      IMAGE: ghcr.io/${{ inputs.target_repository }}
+      TARGET_TAG: ${{ inputs.target_tag }}
+      COMMIT: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
     run: |
+      set -euo pipefail
+      # The digest the script pushed this job's image as, from the local image,
+      # so the mirror step attests what this job built rather than whatever the
+      # tag points to by then.
+      digests=$(docker image inspect --format '{{json .RepoDigests}}' "${IMAGE}:${TARGET_TAG}" \
+        | jq -r --arg repo "$IMAGE" '.[] | select(startswith($repo + "@")) | sub("^[^@]*@"; "")' | sort -u)
+      if [[ $(wc -w <<< "$digests") != 1 ]]; then
+        echo "::error::Expected the build script to push ${IMAGE}:${TARGET_TAG} once, found digests: ${digests:-none}"
+        exit 1
+      fi
+      echo "digest=${digests}" >> "$GITHUB_OUTPUT"
       cat << EOF
-      digest: $(docker image inspect  --format='{{index .RepoDigests 0}}' ${{ inputs.target_repository }}:${{ inputs.target_tag }} | grep -oE "@(.*)" | cut -d'@' -f2-)
+      digest: ${digests}
       tags:
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
+        ${IMAGE}:${TARGET_TAG}
+        ${IMAGE}:${TARGET_TAG}-${COMMIT}
       EOF
   ########################
   # Non build script case
@@ -264,8 +289,8 @@ runs:
       context: ./source
       file: ${{ steps.resolve_dockerfile.outputs.dockerfile }}
       tags: |
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}
       push: true
       platforms: ${{ inputs.platform }}
       build-args: |
@@ -290,7 +315,7 @@ runs:
       docker buildx imagetools create \
         --tag ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} \
         --tag ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }} \
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} || echo "Harbor push failed, continuing..."
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }} || echo "Harbor push failed, continuing..."
   - name: Image digest & tags
     shell: bash
     if: ${{ inputs.build_script == '' }}
@@ -298,6 +323,15 @@ runs:
       cat << EOF
       digest: ${{ steps.docker_build.outputs.digest }}
       tags:
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}
-        ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
       EOF
+  # This job built every platform of this image, so it attests them all.
+  - name: Mirror to Docker Hub
+    uses: ./.github/actions/mirror
+    with:
+      tags: |
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.git_commit_hash.outputs.git_commit_hash }}
+      digest: ${{ steps.docker_build.outputs.digest || steps.script_digest.outputs.digest }}
+      mirror-url: ${{ inputs.IMAGE_MIRROR_URL }}

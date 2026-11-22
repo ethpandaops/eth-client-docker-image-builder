@@ -1,5 +1,5 @@
 name: Manifest
-description: Build and push a docker manifest to Docker Hub
+description: Build and push a multi-platform manifest to GHCR, then have the image mirror copy it to Docker Hub
 
 inputs:
   platforms:
@@ -20,20 +20,19 @@ inputs:
     type: string
     required: false
   target_tag:
-    description: Docker hub tag to push to
+    description: Tag to push to
     type: string
     required: true
   target_repository:
-    description: Docker hub repository to push to
+    description: Repository to push to, such as ethpandaops/geth. Pushed to ghcr.io/<target_repository> and mirrored to the same name on Docker Hub
     type: string
     required: true
   harbor_registry:
     description: Harbor registry to push the images to
     type: string
     default: ''
-  DOCKER_USERNAME:
-    required: true
-  DOCKER_PASSWORD:
+  IMAGE_MIRROR_URL:
+    description: secrets.IMAGE_MIRROR_URL
     required: true
   HARBOR_USERNAME:
     required: true
@@ -69,6 +68,12 @@ runs:
       fi
       echo "git_commit_hash=$hash" >> "$GITHUB_OUTPUT"
       echo "Resolved git_commit_hash: $hash"
+  - name: Login to GHCR
+    uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+    with:
+      registry: ghcr.io
+      username: ${{ github.actor }}
+      password: ${{ github.token }}
   - name: Generate images list
     id: generate_images_list
     shell: bash
@@ -79,23 +84,17 @@ runs:
       len=$(echo $PLATFORMS | jq '. | length')
       for ((i=0; i<$len; i++)); do
           slug=$(echo $PLATFORMS | jq -r --argjson i $i '.[$i].slug')
-          imagetag="${{ inputs.target_tag }}-$slug"
-          image="${{ inputs.target_repository }}:$imagetag"
-          url="https://hub.docker.com/v2/repositories/${{ inputs.target_repository }}/tags?page_size=25&page=1&ordering=&name=$imagetag"
+          image="ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug"
 
-          response=$(curl -sf --retry 3 --retry-delay 5 "$url") || {
-            echo "Warning: Failed to fetch $url, skipping $slug"
-            continue
-          }
-
-          exists=$(echo "$response" | jq -e '.results | length > 0') || exists="false"
-          if [ "$exists" == "true" ]; then
-            IMAGES+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug "
-            TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug ${{ inputs.target_repository }}:${{ inputs.target_tag }}-$slug-${{ steps.resolve_hash.outputs.git_commit_hash }} "
+          if docker buildx imagetools inspect "$image" > /dev/null; then
+            IMAGES+="$image "
+            TAGS+="$image $image-${{ steps.resolve_hash.outputs.git_commit_hash }} "
+          else
+            echo "Warning: $image not found, skipping $slug"
           fi
       done
 
-      TAGS+="${{ inputs.target_repository }}:${{ inputs.target_tag }} ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} "
+      TAGS+="ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }} ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} "
 
       IMAGES=${IMAGES::-1}  # Remove the trailing space
       echo "IMAGES: $IMAGES"
@@ -128,11 +127,6 @@ runs:
     uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
     with:
       endpoint: builders
-  - name: Login to Docker Hub
-    uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-    with:
-      username: ${{ inputs.DOCKER_USERNAME }}
-      password: ${{ inputs.DOCKER_PASSWORD }}
   - name: Login to harbor registry
     if: ${{ inputs.harbor_registry != '' }}
     id: harbor_login
@@ -143,11 +137,19 @@ runs:
       username: ${{ inputs.HARBOR_USERNAME }}
       password: ${{ inputs.HARBOR_PASSWORD }}
 
-  - name: Create and push manifest images to dockerhub
+  - name: Create and push manifest images to GHCR
+    id: create
     shell: bash
     run: |
-      docker buildx imagetools create --dry-run -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
-      docker buildx imagetools create -t ${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+      set -euo pipefail
+      docker buildx imagetools create --dry-run -t ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+      metadata="${RUNNER_TEMP}/manifest-metadata.json"
+      docker buildx imagetools create --metadata-file "$metadata" -t ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }} -t ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} ${{ steps.generate_images_list.outputs.images }}
+      # The index this job pushed, so the mirror step attests it and not
+      # whatever the tags point to by then.
+      digest=$(jq -r '."containerimage.descriptor".digest' "$metadata")
+      echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+      echo "digest: ${digest}"
   - name: Create and push manifest images to harbor (best-effort)
     if: ${{ inputs.harbor_registry != '' && steps.harbor_login.outcome == 'success' }}
     continue-on-error: true
@@ -158,3 +160,14 @@ runs:
         -t ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }} \
         -t ${{ inputs.harbor_registry }}/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }} \
         ${{ steps.generate_images_list.outputs.images }} || echo "Harbor manifest push failed, continuing..."
+  # The platform jobs attested the images they built; this job attests only
+  # the index it made from them.
+  - name: Mirror to Docker Hub
+    uses: ./.github/actions/mirror
+    with:
+      tags: |
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}
+        ghcr.io/${{ inputs.target_repository }}:${{ inputs.target_tag }}-${{ steps.resolve_hash.outputs.git_commit_hash }}
+      digest: ${{ steps.create.outputs.digest }}
+      attest-platforms: "false"
+      mirror-url: ${{ inputs.IMAGE_MIRROR_URL }}
