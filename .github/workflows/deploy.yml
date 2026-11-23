@@ -78,9 +78,9 @@ on:
 jobs:
   deploy:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     name: Deploy ${{ matrix.config.slug }} ${{ inputs.target_tag }}
     continue-on-error: false
@@ -156,9 +156,9 @@ jobs:
           || echo "::warning::Announcing the image to hive-tests failed, its hourly check picks it up"
   mainfest:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     name: Manifest
     needs: deploy
