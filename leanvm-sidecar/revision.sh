@@ -44,7 +44,7 @@ else
   echo "${SOURCE_DIR} pins leanVM ${revision//$'\n'/ }" >&2
 fi
 
-if ! grep -qxE '[A-Za-z0-9][A-Za-z0-9._-]*' <<< "$revision"; then
+if ! [[ "$revision" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
   echo "no single leanVM revision for ${TARGET_TAG}: add its devnet to ${DEVNETS} or pin one in the source" >&2
   exit 1
 fi
