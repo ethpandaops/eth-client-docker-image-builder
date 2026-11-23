@@ -23,6 +23,7 @@ DEFAULT_REPOS = {
     'lodestar': 'chainsafe/lodestar',
     'reth': 'paradigmxyz/reth',
     'silver': 'gattaca-com/silver',
+    'leanvm-sidecar': 'leanEthereum/leanVM',
     'nethermind': 'nethermindeth/nethermind',
     'eleel': 'sigp/eleel',
     'dummy-el': 'ethpandaops/dummy-el',
@@ -292,6 +293,10 @@ def get_dockerfile_path(client_name, target_tag=None):
             return f"./nimbus-eth2/Dockerfile.{kind}-minimal"
         return f"./nimbus-eth2/Dockerfile.{kind}"
     elif client_name == 'prysm-beacon-chain':
+        if target_tag:
+            tagged_path = f"./prysm/Dockerfile.beacon-{target_tag.removesuffix('-minimal')}"
+            if os.path.exists(tagged_path):
+                return tagged_path
         return f"./prysm/Dockerfile.beacon"
     elif client_name == 'prysm-validator':
         return f"./prysm/Dockerfile.validator"
@@ -357,10 +362,20 @@ def get_build_args_script(client_name, branch, target_tag=None):
     """Determine the script that resolves build args from the source at build time"""
     # nimbus pins the Nim versions it accepts in its config.nims and fails
     # the build on anything else, so the base image tag is resolved per ref
-    if client_name in ('nimbus-eth1', 'nimbus-eth2', 'nimbus-validator-client'):
+    if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
+        return './nimbus-eth2/build-args.sh'
+    if client_name == 'nimbus-eth1':
         return './nimbus-eth2/nim-version.sh'
 
+    dockerfile_path = get_dockerfile_path(client_name, target_tag)
+    if dockerfile_path and uses_leanvm_sidecar(dockerfile_path):
+        return './leanvm-sidecar/revision.sh'
+
     return None
+
+def uses_leanvm_sidecar(dockerfile_path):
+    with open(dockerfile_path, 'r') as f:
+        return any(line.startswith('ARG LEANVM_REV') for line in f)
 
 def get_source_submodules(client_name):
     """Determine whether the source checkout needs its submodules"""

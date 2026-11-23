@@ -33,6 +33,7 @@ Run the *Build **client*** workflow;
 - [Build Consensoor](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-consensoor.yml) [[source](https://github.com/ethpandaops/consensoor)]
 
 Run the *Build **tooling*** workflow;
+- [Build leanVM sidecar](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-leanvm-sidecar.yml) [[source](https://github.com/leanEthereum/leanVM)]
 - [Build Eth-DAS-Guardian](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-eth-das-guardian.yml) [[source](https://github.com/probe-lab/eth-das-guardian)]
 - [Build Flashbots Builder](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-flashbots-builder.yml) [[source](https://github.com/flashbots/builder)]
 - [Build tx-fuzz](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-tx-fuzz.yaml) [[source](https://github.com/MariusVanDerWijden/tx-fuzz)]
@@ -93,7 +94,9 @@ Both paths apply this convention automatically:
 
 Example: dispatching `build-push-lighthouse.yml` with `repository=eth-act/lighthouse` and `ref=optional-proofs` resolves the tag to `eth-act-optional-proofs` and automatically picks up `./lighthouse/Dockerfile.eth-act-optional-proofs` if it exists. No workflow changes required to add a new per-tag Dockerfile.
 
-The convention is skipped when the workflow explicitly passes a non-default Dockerfile (e.g. prysm's `Dockerfile.beacon`, nimbus-eth2's `Dockerfile.beacon-minimal`), so sub-component builds are unaffected.
+The convention is skipped when the workflow explicitly passes another non-default Dockerfile (e.g. prysm's `Dockerfile.validator`, nimbus-eth2's `Dockerfile.beacon-minimal`), so sub-component builds are unaffected.
+
+Prysm beacon builds use `./prysm/Dockerfile.beacon-<target_tag>` when it exists (e.g. `Dockerfile.beacon-pq-devnet-0`), for both the default and the `-minimal` image.
 
 Scheduled nimbus builds use `./nimbus-eth2/Dockerfile.<beacon|validator>-<target_tag>` when it exists (e.g. `Dockerfile.beacon-pq-devnet-0`). The `-minimal` tag shares that file and is built with `PRESET=minimal`.
 
@@ -111,6 +114,22 @@ lighthouse:
       ref: "pq-devnet-0"
       tag: "pq-devnet-0"
 ```
+
+## leanVM sidecar
+
+PQ consensus clients prove and verify through a `leanvm-sidecar` process, and every client of a network has to run the same leanVM revision. `ethpandaops/leanvm-sidecar:<leanVM commit SHA>` holds the sidecar built once per revision: one binary per CPU profile (`generic`, `portable`, `avx2`, `avx2-gfni`, `avx512` on amd64, `portable` on arm64) under `/usr/local/lib/leanvm-sidecar`, `/usr/local/bin/leanvm-sidecar` which runs the fastest one the host supports (`LEANVM_CPU_PROFILE` forces one), and `/usr/local/bin/leanvm-sidecar-run <socket-flag> <command> [args]` which starts the sidecar and then the command with the socket.
+
+The PQ Dockerfiles in this repository copy the sidecar from that image:
+
+```dockerfile
+ARG LEANVM_REV
+FROM ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+...
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
+```
+
+`./leanvm-sidecar/revision.sh` sets `LEANVM_REV` to the revision the source pins (`leanvm-revision`, or the leanVM git dependency in `Cargo.toml`); sources that pin none use the default of their Dockerfile. When a client moves to a new revision, add it under `leanvm-sidecar` in `branches.yaml` (or run `panda build leanvm-sidecar --ref <sha>`), otherwise that client's build fails on the missing image.
 
 ## Output image tags
 

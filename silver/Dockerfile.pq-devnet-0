@@ -1,25 +1,7 @@
 # syntax=docker/dockerfile:1
 
-FROM rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c AS sidecar
-ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
-ARG TARGETARCH
-# Every client of a network must run a sidecar of one leanVM revision: a
-# proof only verifies under a compatible one. This is the Lighthouse pin.
 ARG LEANVM_REV=c5ee9d239e42d0bc8113eb4aee3e2cae5faf1764
-WORKDIR /leanvm
-RUN git init -q \
-    && git fetch -q --depth=1 https://github.com/leanEthereum/leanVM "$LEANVM_REV" \
-    && git checkout -q --detach FETCH_HEAD \
-    && test "$(git rev-parse HEAD)" = "$LEANVM_REV"
-RUN --mount=type=cache,id=pq-sidecar-registry,target=/usr/local/cargo/registry \
-    --mount=type=cache,id=pq-sidecar-target-${TARGETARCH},target=/leanvm/target \
-    case "$TARGETARCH" in \
-      arm64) export RUSTFLAGS="-C target-cpu=generic -C target-feature=+aes" ;; \
-      amd64) export RUSTFLAGS="-C target-cpu=x86-64 -C target-feature=+ssse3,+pclmulqdq" ;; \
-      *) echo "Unsupported leanVM target architecture: $TARGETARCH" >&2; exit 1 ;; \
-    esac \
-    && cargo build --locked --release -p leanvm-sidecar --features experimental_prover \
-    && install -D target/release/leanvm-sidecar /out/leanvm-sidecar
+FROM ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
 
 # Follows the source repository's own Dockerfile: `blst`, `hashtree-rs` and
 # `mimalloc` compile C, and both `build.rs` scripts shell out to `buf`.
@@ -50,55 +32,12 @@ LABEL org.opencontainers.image.revision=$COMMIT_HASH
 # Without this the tracing subscriber writes to rolling files under LOG_PATH,
 # where `docker logs` never sees them.
 ENV LOG_STDOUT=1
-COPY --from=sidecar /out/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar-run /usr/local/bin/leanvm-sidecar-run
 COPY --from=build /usr/local/bin/silver /usr/local/bin/silver_surfer /usr/local/bin/
-# Runs the sidecar beside silver and hands silver its socket. Either process
-# exiting ends the container.
 COPY --chmod=755 <<'EOF' /usr/local/bin/silver-pq-bn
-#!/bin/bash
-set -eu
-
-socket_dir=$(mktemp -d "${TMPDIR:-/tmp}/leanvm.XXXXXXXX")
-socket="$socket_dir/sidecar.sock"
-sidecar_pid=
-silver_pid=
-
-cleanup() {
-    for pid in $silver_pid $sidecar_pid; do
-        kill "$pid" 2>/dev/null || true
-        wait "$pid" 2>/dev/null || true
-    done
-    rm -rf -- "$socket_dir"
-}
-trap cleanup EXIT
-trap 'exit 143' TERM
-trap 'exit 130' INT
-
-leanvm-sidecar --socket "$socket" --threads "${LEANVM_THREADS:-0}" &
-sidecar_pid=$!
-deadline=$((SECONDS + 120))
-until [[ -S "$socket" ]]; do
-    if ! kill -0 "$sidecar_pid" 2>/dev/null; then
-        echo 'leanvm-sidecar exited before creating its socket' >&2
-        exit 1
-    fi
-    if (( SECONDS >= deadline )); then
-        echo 'leanvm-sidecar did not create its socket within 120 seconds' >&2
-        exit 1
-    fi
-    sleep 0.1
-done
-
-silver --leanvm-socket "$socket" "$@" &
-silver_pid=$!
-
-status=0
-wait -n "$sidecar_pid" "$silver_pid" || status=$?
-if kill -0 "$silver_pid" 2>/dev/null; then
-    echo 'leanvm-sidecar exited while silver was running' >&2
-    exit 1
-fi
-silver_pid=
-exit "$status"
+#!/bin/sh
+exec leanvm-sidecar-run --leanvm-socket silver "$@"
 EOF
 ENTRYPOINT ["/usr/local/bin/silver-pq-bn"]

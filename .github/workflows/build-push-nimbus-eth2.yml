@@ -103,7 +103,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-eth2
           target_dockerfile: ${{ needs.prepare.outputs.beacon_dockerfile }}
-          build_args_script: ./nimbus-eth2/nim-version.sh
+          build_args_script: ./nimbus-eth2/build-args.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
 
@@ -148,7 +148,7 @@ jobs:
           target_repository: ethpandaops/nimbus-eth2
           target_dockerfile: ${{ needs.prepare.outputs.beacon_minimal_dockerfile }}
           build_args: ${{ needs.prepare.outputs.beacon_minimal_build_args }}
-          build_args_script: ./nimbus-eth2/nim-version.sh
+          build_args_script: ./nimbus-eth2/build-args.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
 
@@ -186,7 +186,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-validator-client
           target_dockerfile: ./nimbus-eth2/Dockerfile.validator
-          build_args_script: ./nimbus-eth2/nim-version.sh
+          build_args_script: ./nimbus-eth2/build-args.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
 
@@ -227,7 +227,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/nimbus-validator-client
           target_dockerfile: ./nimbus-eth2/Dockerfile.validator-minimal
-          build_args_script: ./nimbus-eth2/nim-version.sh
+          build_args_script: ./nimbus-eth2/build-args.sh
           source_submodules: recursive
           platform: ${{ matrix.platform }}
 

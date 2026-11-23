@@ -99,6 +99,9 @@ ethlambda:
 silver:
   - linux/amd64
   - linux/arm64
+leanvm-sidecar:
+  - linux/amd64
+  - linux/arm64
 ethrex:
   - linux/amd64
   - linux/arm64
