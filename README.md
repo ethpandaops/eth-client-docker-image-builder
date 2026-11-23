@@ -123,13 +123,15 @@ The PQ Dockerfiles in this repository copy the sidecar from that image:
 
 ```dockerfile
 ARG LEANVM_REV
-FROM ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+FROM ghcr.io/ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
 ...
 COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
 COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
 ```
 
-`./leanvm-sidecar/revision.sh` sets `LEANVM_REV` to the revision the source pins (`leanvm-revision`, or the leanVM git dependency in `Cargo.toml`); sources that pin none use the default of their Dockerfile. When a client moves to a new revision, add it under `leanvm-sidecar` in `branches.yaml` (or run `panda build leanvm-sidecar --ref <sha>`), otherwise that client's build fails on the missing image.
+`./leanvm-sidecar/revision.sh` sets `LEANVM_REV` for a build. [`leanvm-sidecar/devnets.yaml`](./leanvm-sidecar/devnets.yaml) maps a devnet to the one revision all its images run, and a build whose tag contains that devnet name (`pq-devnet-0`, `pq-devnet-0-minimal`, `<fork>-pq-devnet-0`) gets it, whatever the source pins; a different pin in the source is logged as a warning. Other tags get the revision the source pins (`leanvm-revision`, or the leanVM git dependency in `Cargo.toml`), and the build fails when there is neither.
+
+To move a devnet to a new leanVM revision, change its line in `devnets.yaml`: the sidecar image for it is built on the next scheduled run, and the client images pick it up the next time they are built (`panda build <client> --ref <devnet branch>`, or their next commit). Revisions that no devnet uses are listed under `leanvm-sidecar` in `branches.yaml`.
 
 ## Output image tags
 

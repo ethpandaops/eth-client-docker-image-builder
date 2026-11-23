@@ -2,7 +2,7 @@
 # ethpandaops/leanvm-sidecar image of the revision Grandine pins in Cargo.toml, and Grandine's
 # grandine-pq starts it and then Grandine on its socket.
 ARG LEANVM_REV
-FROM ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+FROM ghcr.io/ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
 
 FROM rust:1.100.0-bookworm AS builder
 RUN apt-get clean && apt-get update && apt-get --yes upgrade && apt-get install --yes cmake libclang-dev
