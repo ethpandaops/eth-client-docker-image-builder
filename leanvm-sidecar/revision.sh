@@ -13,7 +13,7 @@ fi
 
 pinned=""
 if [ -f "${SOURCE_DIR}/leanvm-revision" ]; then
-  pinned=$(tr -d '[:space:]' < "${SOURCE_DIR}/leanvm-revision")
+  pinned=$(tr -d '[:blank:]\r' < "${SOURCE_DIR}/leanvm-revision" | sed '/^$/d' | sort -u)
 else
   for manifest in Cargo.toml beacon_chain/pq/leanxmss_ffi/Cargo.toml; do
     [ -f "${SOURCE_DIR}/${manifest}" ] || continue
@@ -40,8 +40,12 @@ if [ -n "$devnet" ]; then
   fi
   echo "${devnet} runs leanVM ${revision}" >&2
 else
+  if [ -n "$pinned" ] && ! [[ "$pinned" =~ ^[0-9a-f]{40}$ ]]; then
+    echo "${SOURCE_DIR} does not pin exactly one leanVM commit: ${pinned//$'\n'/ }" >&2
+    exit 1
+  fi
   revision="$pinned"
-  echo "${SOURCE_DIR} pins leanVM ${revision//$'\n'/ }" >&2
+  echo "${SOURCE_DIR} pins leanVM ${revision}" >&2
 fi
 
 if ! [[ "$revision" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
