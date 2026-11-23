@@ -52,9 +52,9 @@ jobs:
           docker_tag: ${{ inputs.docker_tag }}
   deploy:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -88,9 +88,9 @@ jobs:
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
   manifest:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare

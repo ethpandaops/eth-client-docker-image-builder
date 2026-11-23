@@ -77,9 +77,9 @@ jobs:
           echo "beacon_minimal_build_args=$beacon_minimal_build_args" >> "$GITHUB_OUTPUT"
   deploy-beacon:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -121,9 +121,9 @@ jobs:
         shell: bash
   deploy-beacon-minimal:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -163,9 +163,9 @@ jobs:
         shell: bash
   deploy-validator:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -204,9 +204,9 @@ jobs:
         shell: bash
   deploy-validator-minimal:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -245,9 +245,9 @@ jobs:
         shell: bash
   manifest-beacon:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -270,9 +270,9 @@ jobs:
           IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   manifest-beacon-minimal:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -295,9 +295,9 @@ jobs:
           IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   manifest-validator:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
@@ -320,9 +320,9 @@ jobs:
           IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
   manifest-validator-minimal:
     permissions:
-      contents: read       # check out this repository
-      packages: write      # push to ghcr.io/ethpandaops
-      id-token: write      # attest, and authenticate to the image mirror
+      contents: read
+      packages: write
+      id-token: write
       attestations: write
     needs:
       - prepare
