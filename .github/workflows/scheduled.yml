@@ -64,7 +64,7 @@ jobs:
               if [[ ! "$COMMIT_HASH_FULL" =~ ^[0-9a-f]{40}$ ]]; then
                   COMMIT_HASH_FULL=$(GIT_TERMINAL_PROMPT=0 git ls-remote "https://github.com/${SOURCE_REPOSITORY}.git" \
                       "refs/heads/${SOURCE_REF}" "refs/tags/${SOURCE_REF}^{}" "refs/tags/${SOURCE_REF}" 2>/dev/null \
-                      | awk 'NR==1 {print $1}' || true)
+                      | awk '$2 ~ /\^\{\}$/ {peeled = $1} NR == 1 {first = $1} END {print (peeled != "" ? peeled : first)}' || true)
               fi
               local COMMIT_HASH=$(echo "$COMMIT_HASH_FULL" | cut -c1-7)
 
