@@ -4,7 +4,7 @@ Automates docker builds for ethereum clients. The build process is scheduled eve
 
 ## Publishing
 
-Images are pushed to `ghcr.io/ethpandaops/<image>` with the workflow's own `GITHUB_TOKEN`. Each job then attests what it pushed and asks the [image mirror](https://github.com/ethpandaops/image-mirror) to copy it to `docker.io/ethpandaops/<image>` (see [`.github/actions/mirror`](./.github/actions/mirror/action.yml)); the job only succeeds once the tags are on Docker Hub. Image names and tags are the same in both registries. Nothing here holds a Docker Hub credential.
+Images are pushed to `ghcr.io/ethpandaops/<image>` with the workflow's own `GITHUB_TOKEN`. Each job then attests what it pushed and asks the [image mirror](https://github.com/ethpandaops/image-mirror) to copy it to `docker.io/ethpandaops/<image>` (see [`.github/actions/mirror`](./.github/actions/mirror/action.yml)); a mirror failure does not fail the job: the image stays on GHCR and the job shows an `image-mirror` warning. Image names and tags are the same in both registries. Nothing here holds a Docker Hub credential.
 
 Each per-platform job attests the image it built on its runner; the manifest job attests only the multi-platform index it makes from them.
 

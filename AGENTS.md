@@ -2,7 +2,7 @@
 
 ## Adding a new image
 
-A new image name (`ethpandaops/<name>`) needs changes here and an image-mirror allowlist entry. The build fails at its last step if the allowlist entry is missing.
+A new image name (`ethpandaops/<name>`) needs changes here and an image-mirror allowlist entry. Without the allowlist entry the build still passes, but the image only reaches GHCR.
 
 In this repository:
 
@@ -16,7 +16,7 @@ Outside this repository:
 
 6. Ask the platform team to add `<name>` to the image-mirror allowlist, for both `deploy.yml` (scheduled builds) and `build-push-<name>.yml` (manual builds) of this repository.
 
-Builds push to `ghcr.io/ethpandaops/<name>` and then ask the image mirror to copy the tags to Docker Hub. The mirror only publishes image names on that allowlist, so until step 6 is rolled out every build of the new image fails with:
+Builds push to `ghcr.io/ethpandaops/<name>` and then ask the image mirror to copy the tags to Docker Hub. The mirror only publishes image names on that allowlist, so until step 6 is rolled out every build of the new image ends with an `image-mirror` warning and this error in the mirror step:
 
 ```
 The image mirror won't publish <name> from ethpandaops/eth-client-docker-image-builder@refs/heads/master.

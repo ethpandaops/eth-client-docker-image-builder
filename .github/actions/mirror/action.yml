@@ -3,8 +3,9 @@ description: >
   Attest tags this job pushed to ghcr.io/ethpandaops/<image> and have the
   ethpandaops image mirror copy them to docker.io/ethpandaops/<image>. Retries,
   because the mirror only takes a few jobs per repository at a time and this
-  repository finishes many builds at once. Needs id-token: write and
-  attestations: write.
+  repository finishes many builds at once. A mirror that still fails after the
+  retries leaves the job green with a warning; the image is on GHCR either way.
+  Needs id-token: write and attestations: write.
 
 inputs:
   tags:
@@ -51,10 +52,21 @@ runs:
     shell: bash
     run: sleep 300
   - name: Mirror to Docker Hub (last retry)
+    id: mirror_last
     if: steps.mirror_retry.outcome == 'failure'
+    continue-on-error: true
     uses: ethpandaops/actions/mirror-image@dab9cb304b6a1dd648e2f1acef6169f7095f515e
     with:
       tags: ${{ inputs.tags }}
       digest: ${{ inputs.digest }}
       attest-platforms: ${{ inputs.attest-platforms }}
       mirror-url: ${{ inputs.mirror-url }}
+  - name: Warn that the image is only on GHCR
+    if: steps.mirror_last.outcome == 'failure'
+    shell: bash
+    env:
+      TAGS: ${{ inputs.tags }}
+    run: |
+      tags=$(xargs <<< "$TAGS")
+      echo "::warning title=image-mirror::Not mirrored to Docker Hub, only on GHCR: ${tags}"
+      echo "**Not mirrored to Docker Hub, only on GHCR:** ${tags}" >> "$GITHUB_STEP_SUMMARY"
