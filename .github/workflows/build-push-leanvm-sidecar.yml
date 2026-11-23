@@ -10,8 +10,8 @@ on:
         type: string
         required: true
       ref:
-        description: The full leanVM commit SHA to build, which is also the docker tag clients pull
-        default: c5ee9d239e42d0bc8113eb4aee3e2cae5faf1764
+        description: The leanVM release tag (or full commit SHA) to build, which is also the docker tag clients pull
+        default: bindings-v0.15.0
         type: string
         required: true
       docker_tag:

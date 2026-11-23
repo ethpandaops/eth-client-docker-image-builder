@@ -83,6 +83,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-beacon-chain
           target_dockerfile: ./prysm/Dockerfile.beacon
+          build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 
@@ -126,6 +127,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-beacon-chain
           target_dockerfile: ./prysm/Dockerfile.beacon
+          build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
           build_method: ${{ inputs.build_method }}
 

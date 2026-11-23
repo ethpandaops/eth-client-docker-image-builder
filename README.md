@@ -117,19 +117,21 @@ lighthouse:
 
 ## leanVM sidecar
 
-PQ consensus clients prove and verify through a `leanvm-sidecar` process, and every client of a network has to run the same leanVM revision. `ethpandaops/leanvm-sidecar:<leanVM commit SHA>` holds the sidecar built once per revision: one binary per CPU profile (`generic`, `portable`, `avx2`, `avx2-gfni`, `avx512` on amd64, `portable` on arm64) under `/usr/local/lib/leanvm-sidecar`, `/usr/local/bin/leanvm-sidecar` which runs the fastest one the host supports (`LEANVM_CPU_PROFILE` forces one), and `/usr/local/bin/leanvm-sidecar-run <socket-flag> <command> [args]` which starts the sidecar and then the command with the socket.
+PQ consensus clients prove and verify through a `leanvm-sidecar` process, and every client of a network has to run the same leanVM revision. `ethpandaops/leanvm-sidecar:<leanVM release tag>` (e.g. `bindings-v0.15.0`, or a full commit SHA for an untagged revision) holds the sidecar built once per revision: one binary per CPU profile (`generic`, `portable`, `avx2`, `avx2-gfni`, `avx512` on amd64, `portable` on arm64) under `/usr/local/lib/leanvm-sidecar`, `/usr/local/bin/leanvm-sidecar` which runs the fastest one the host supports (`LEANVM_CPU_PROFILE` forces one), and `/usr/local/bin/leanvm-sidecar-run <socket-flag> <command> [args]` which starts the sidecar and then the command with the socket.
 
 The PQ Dockerfiles in this repository copy the sidecar from that image:
 
 ```dockerfile
 ARG LEANVM_REV
-FROM ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+FROM ghcr.io/ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
 ...
 COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
 COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
 ```
 
-`./leanvm-sidecar/revision.sh` sets `LEANVM_REV` to the revision the source pins (`leanvm-revision`, or the leanVM git dependency in `Cargo.toml`); sources that pin none use the default of their Dockerfile. When a client moves to a new revision, add it under `leanvm-sidecar` in `branches.yaml` (or run `panda build leanvm-sidecar --ref <sha>`), otherwise that client's build fails on the missing image.
+`./leanvm-sidecar/revision.sh` sets `LEANVM_REV` for a build. [`leanvm-sidecar/devnets.yaml`](./leanvm-sidecar/devnets.yaml) maps a devnet to the one leanVM release all its images run (`pq-devnet-0: bindings-v0.15.0`), and a build whose tag contains that devnet name (`pq-devnet-0`, `pq-devnet-0-minimal`, `<fork>-pq-devnet-0`) gets it, whatever the source pins; a different pin in the source is logged as a warning. Other tags get the commit the source pins (`leanvm-revision`, or the leanVM git dependency in `Cargo.toml`), and the build fails when there is neither.
+
+To move a devnet to a new leanVM revision, change its line in `devnets.yaml`: the sidecar image for it is built on the next scheduled run, and the client images pick it up the next time they are built (`panda build <client> --ref <devnet branch>`, or their next commit). Revisions that no devnet uses are listed under `leanvm-sidecar` in `branches.yaml`.
 
 ## Output image tags
 

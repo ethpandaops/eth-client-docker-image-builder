@@ -1,34 +1,52 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 SOURCE_DIR="${source_dir:-./source}"
 DOCKERFILE="${target_dockerfile:-}"
+TARGET_TAG="${target_tag:-}"
+DEVNETS="${leanvm_devnets:-${SCRIPT_DIR}/devnets.yaml}"
 
 if [ -z "$DOCKERFILE" ] || ! grep -q '^ARG LEANVM_REV' "$DOCKERFILE" 2>/dev/null; then
   exit 0
 fi
 
-revisions=""
+pinned=""
 if [ -f "${SOURCE_DIR}/leanvm-revision" ]; then
-  revisions=$(tr -d '[:space:]' < "${SOURCE_DIR}/leanvm-revision")
+  pinned=$(tr -d '[:space:]' < "${SOURCE_DIR}/leanvm-revision")
 else
   for manifest in Cargo.toml beacon_chain/pq/leanxmss_ffi/Cargo.toml; do
     [ -f "${SOURCE_DIR}/${manifest}" ] || continue
-    revisions=$(grep -i 'github.com/leanEthereum/leanVM' "${SOURCE_DIR}/${manifest}" \
-      | grep -oE "rev = ['\"][0-9a-f]{40}['\"]" | grep -oE '[0-9a-f]{40}' | sort -u) || revisions=""
-    [ -z "$revisions" ] || break
+    pinned=$(grep -i 'github.com/leanEthereum/leanVM' "${SOURCE_DIR}/${manifest}" \
+      | grep -oE "rev = ['\"][0-9a-f]{40}['\"]" | grep -oE '[0-9a-f]{40}' | sort -u) || pinned=""
+    [ -z "$pinned" ] || break
   done
 fi
 
-if [ -z "$revisions" ]; then
-  echo "${SOURCE_DIR} pins no leanVM revision, keeping the default of ${DOCKERFILE}" >&2
-  exit 0
+devnet=""
+revision=""
+while IFS=': ' read -r name rev; do
+  [[ "$name" =~ ^[A-Za-z0-9._-]+$ ]] || continue
+  if [[ "$TARGET_TAG" =~ (^|-)"$name"(-|$) ]] && [ "${#name}" -gt "${#devnet}" ]; then
+    devnet="$name"
+    revision="$rev"
+  fi
+done < "$DEVNETS"
+
+if [ -n "$devnet" ]; then
+  commit=$(git ls-remote https://github.com/leanEthereum/leanVM "refs/tags/${revision}" 2>/dev/null | cut -f1) || commit=""
+  if [ -n "$pinned" ] && [ -n "$commit" ] && [ "$pinned" != "$commit" ]; then
+    echo "::warning::${SOURCE_DIR} pins leanVM ${pinned//$'\n'/ }, ${devnet} runs ${revision} (${commit})" >&2
+  fi
+  echo "${devnet} runs leanVM ${revision}" >&2
+else
+  revision="$pinned"
+  echo "${SOURCE_DIR} pins leanVM ${revision//$'\n'/ }" >&2
 fi
 
-if ! grep -qxE '[0-9a-f]{40}' <<< "$revisions"; then
-  echo "${SOURCE_DIR} does not pin exactly one leanVM revision: ${revisions//$'\n'/ }" >&2
+if ! [[ "$revision" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
+  echo "no single leanVM revision for ${TARGET_TAG}: add its devnet to ${DEVNETS} or pin one in the source" >&2
   exit 1
 fi
 
-echo "${SOURCE_DIR} pins leanVM ${revisions}" >&2
-echo "LEANVM_REV=${revisions}"
+echo "LEANVM_REV=${revision}"

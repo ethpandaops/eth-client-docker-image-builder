@@ -116,6 +116,13 @@ def generate_config():
     # merging each group's `common_branches:` into its clients.
     branches_config = flatten_groups(raw_config)
 
+    with open('leanvm-sidecar/devnets.yaml', 'r') as f:
+        devnet_revisions = yaml.safe_load(f) or {}
+    sidecar_branches = branches_config.setdefault('leanvm-sidecar', {}).setdefault('branches', [])
+    for revision in devnet_revisions.values():
+        if revision not in sidecar_branches:
+            sidecar_branches.append(revision)
+
     # Expand combined client definitions
     expanded_config = {}
     for client_name, client_config in branches_config.items():
