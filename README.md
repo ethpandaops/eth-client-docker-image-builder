@@ -43,7 +43,6 @@ Run the *Build **tooling*** workflow;
 - [Build mev-rs](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-mev-rs.yml) [[source](https://github.com/ralexstokes/mev-rs)]
 - [Build reth-rbuilder](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-reth-rbuilder.yml) [[source](https://github.com/flashbots/rbuilder)]
 - [Build Syncoor](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-syncoor.yml) [[source](https://github.com/ethpandaops/syncoor)]
-- [Build Slashoor](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-slashoor.yml) [[source](https://github.com/ethpandaops/slashoor)]
 - [Build ere-server-zisk](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-ere-server-zisk.yml) [[source](https://github.com/eth-act/ere)]
 - [Build TrueBlocks](https://github.com/ethpandaops/eth-client-docker-image-builder/actions/workflows/build-push-trueblocks.yml) [[source](https://github.com/TrueBlocks/trueblocks-core)]
 

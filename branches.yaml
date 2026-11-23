@@ -194,9 +194,6 @@ tooling:
     # Commented out in config.yaml
     # goevmlab:
     #   branches: ["master"]
-    slashoor:
-      branches:
-        - master
     syncoor:
       branches:
         - master
