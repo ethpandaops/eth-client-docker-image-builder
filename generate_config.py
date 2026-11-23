@@ -370,7 +370,7 @@ def get_build_args_script(client_name, branch, target_tag=None):
     # nimbus pins the Nim versions it accepts in its config.nims and fails
     # the build on anything else, so the base image tag is resolved per ref
     if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
-        return './nimbus-eth2/build-args.sh'
+        return './nimbus-eth2/nim-version.sh ./leanvm-sidecar/revision.sh'
     if client_name == 'nimbus-eth1':
         return './nimbus-eth2/nim-version.sh'
 
