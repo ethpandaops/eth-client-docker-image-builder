@@ -98,7 +98,7 @@ Example: dispatching `build-push-lighthouse.yml` with `repository=eth-act/lighth
 
 The convention is skipped when the workflow explicitly passes another non-default Dockerfile (e.g. prysm's `Dockerfile.validator`, nimbus-eth2's `Dockerfile.beacon-minimal`), so sub-component builds are unaffected.
 
-Prysm beacon builds use `./prysm/Dockerfile.beacon-<target_tag>` when it exists (e.g. `Dockerfile.beacon-pq-devnet-0`), for both the default and the `-minimal` image.
+Prysm beacon builds use `./prysm/Dockerfile.beacon-<target_tag>` when it exists (e.g. `Dockerfile.beacon-pq-devnet-0`), for both the default and the `-minimal` image. A manual `build-push-prysm.yml` dispatch also uses it when the target tag starts with `<target_tag>-`, the longest match winning, so a fork of such a branch builds with `--tag pq-devnet-0-<name>`.
 
 Scheduled nimbus builds use `./nimbus-eth2/Dockerfile.<beacon|validator>-<target_tag>` when it exists (e.g. `Dockerfile.beacon-pq-devnet-0`). The `-minimal` tag shares that file and is built with `PRESET=minimal`.
 

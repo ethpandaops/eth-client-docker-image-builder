@@ -118,10 +118,19 @@ runs:
         fi
       elif [ "$target_basename" = "Dockerfile.beacon" ]; then
         base_tag="${TARGET_TAG%-*-*}"
-        candidate="$(dirname "$TARGET_DOCKERFILE")/Dockerfile.beacon-${base_tag%-minimal}"
-        if [ -f "$candidate" ]; then
-          echo "Using per-tag Dockerfile: $candidate (base tag: $base_tag)"
-          resolved="$candidate"
+        base_tag="${base_tag%-minimal}"
+        match=
+        for candidate in "$(dirname "$TARGET_DOCKERFILE")"/Dockerfile.beacon-*; do
+          suffix="${candidate##*/Dockerfile.beacon-}"
+          case "$suffix" in minimal|*.dockerignore) continue ;; esac
+          case "$base_tag" in
+            "$suffix"|"$suffix"-*)
+              if [ "${#suffix}" -gt "${#match}" ]; then match="$suffix"; fi ;;
+          esac
+        done
+        if [ -n "$match" ]; then
+          resolved="$(dirname "$TARGET_DOCKERFILE")/Dockerfile.beacon-$match"
+          echo "Using per-tag Dockerfile: $resolved (base tag: $base_tag)"
         fi
       fi
       echo "dockerfile=$resolved" >> "$GITHUB_OUTPUT"
