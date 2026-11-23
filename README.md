@@ -49,6 +49,8 @@ Run the *Build **tooling*** workflow;
 
 ## Adding a new image to build on schedule
 
+A new image name also has to be added to the image-mirror allowlist before it can reach Docker Hub; see [AGENTS.md](./AGENTS.md#adding-a-new-image) for the full checklist.
+
 Add a new image to [`config.yaml`](./config.yaml) file and it will be built on schedule from [this workflow](https://github.com/ethpandaops/eth-client-docker-image-builder/blob/master/.github/workflows/scheduled.yml).
 
 ```yaml
