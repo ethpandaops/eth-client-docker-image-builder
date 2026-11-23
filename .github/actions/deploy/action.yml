@@ -100,7 +100,7 @@ runs:
   steps:
   - name: Checkout this repo
     uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-  - name: Resolve target dockerfile (prefer ./<client>/Dockerfile.<tag>)
+  - name: Resolve target dockerfile (prefer ./<client>/Dockerfile.<tag>, also for minimal builds)
     id: resolve_dockerfile
     shell: bash
     env:
@@ -108,7 +108,8 @@ runs:
       TARGET_TAG: ${{ inputs.target_tag }}
     run: |
       resolved="$TARGET_DOCKERFILE"
-      if [ -n "$TARGET_DOCKERFILE" ] && [ "$(basename "$TARGET_DOCKERFILE")" = "Dockerfile" ]; then
+      target_basename="$(basename "$TARGET_DOCKERFILE")"
+      if [ -n "$TARGET_DOCKERFILE" ] && { [ "$target_basename" = "Dockerfile" ] || [ "$target_basename" = "Dockerfile.minimal" ]; }; then
         base_tag="${TARGET_TAG%-*-*}"
         candidate="$(dirname "$TARGET_DOCKERFILE")/Dockerfile.${base_tag}"
         if [ -f "$candidate" ]; then

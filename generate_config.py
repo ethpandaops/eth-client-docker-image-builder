@@ -296,6 +296,8 @@ def get_dockerfile_path(client_name, target_tag=None):
     elif client_name == 'prysm-validator':
         return f"./prysm/Dockerfile.validator"
     elif client_name == 'grandine':
+        if target_tag and os.path.exists(f"./{client_name}/Dockerfile.{target_tag}"):
+            return f"./{client_name}/Dockerfile.{target_tag}"
         if target_tag and 'minimal' in target_tag:
             return f"./{client_name}/Dockerfile.minimal"
         return f"./{client_name}/Dockerfile"

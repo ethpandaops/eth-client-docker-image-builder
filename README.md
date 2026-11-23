@@ -89,7 +89,7 @@ When a build needs a different Dockerfile than the default (e.g. an alt-fork bra
 Both paths apply this convention automatically:
 
 1. **Scheduled builds** (via `config.yaml` → `generate_config.py`): when a per-tag file exists, `get_dockerfile_path()` picks it up and writes `target.dockerfile` into `config.yaml`.
-2. **Manual `workflow_dispatch`** (via the shared `deploy` composite action): at build time, if `basename(target_dockerfile) == "Dockerfile"` and `./<client>/Dockerfile.<resolved-tag>` exists, the per-tag file is used; otherwise the default `./<client>/Dockerfile` is used.
+2. **Manual `workflow_dispatch`** (via the shared `deploy` composite action): at build time, if `basename(target_dockerfile)` is `Dockerfile` or `Dockerfile.minimal` and `./<client>/Dockerfile.<resolved-tag>` exists, the per-tag file is used; otherwise the default `./<client>/Dockerfile` is used.
 
 Example: dispatching `build-push-lighthouse.yml` with `repository=eth-act/lighthouse` and `ref=optional-proofs` resolves the tag to `eth-act-optional-proofs` and automatically picks up `./lighthouse/Dockerfile.eth-act-optional-proofs` if it exists. No workflow changes required to add a new per-tag Dockerfile.
 
