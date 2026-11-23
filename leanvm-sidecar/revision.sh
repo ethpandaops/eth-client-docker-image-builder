@@ -34,8 +34,9 @@ while IFS=': ' read -r name rev; do
 done < "$DEVNETS"
 
 if [ -n "$devnet" ]; then
-  if [ -n "$pinned" ] && [ "$pinned" != "$revision" ]; then
-    echo "::warning::${SOURCE_DIR} pins leanVM ${pinned//$'\n'/ }, ${devnet} runs ${revision}" >&2
+  commit=$(git ls-remote https://github.com/leanEthereum/leanVM "refs/tags/${revision}" 2>/dev/null | cut -f1) || commit=""
+  if [ -n "$pinned" ] && [ -n "$commit" ] && [ "$pinned" != "$commit" ]; then
+    echo "::warning::${SOURCE_DIR} pins leanVM ${pinned//$'\n'/ }, ${devnet} runs ${revision} (${commit})" >&2
   fi
   echo "${devnet} runs leanVM ${revision}" >&2
 else
@@ -43,7 +44,7 @@ else
   echo "${SOURCE_DIR} pins leanVM ${revision//$'\n'/ }" >&2
 fi
 
-if ! grep -qxE '[0-9a-f]{40}' <<< "$revision"; then
+if ! grep -qxE '[A-Za-z0-9][A-Za-z0-9._-]*' <<< "$revision"; then
   echo "no single leanVM revision for ${TARGET_TAG}: add its devnet to ${DEVNETS} or pin one in the source" >&2
   exit 1
 fi

@@ -193,7 +193,7 @@ tooling:
         - main
     leanvm-sidecar:
       branches:
-        - 241b009a61ba5fde797d1213b5bf76310f0d5060
+        - bindings-v0.16.0
     # Commented out in config.yaml
     # goevmlab:
     #   branches: ["master"]
