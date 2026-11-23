@@ -60,7 +60,12 @@ jobs:
               local RESPONSE=$(curl -s -H "Accept: application/vnd.github+json" \
                   -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   "https://api.github.com/repos/${SOURCE_REPOSITORY}/commits/${SOURCE_REF}?per_page=1")
-              local COMMIT_HASH_FULL=$(echo "$RESPONSE" | jq -r '.sha')
+              local COMMIT_HASH_FULL=$(echo "$RESPONSE" | jq -r '.sha' 2>/dev/null || true)
+              if [[ ! "$COMMIT_HASH_FULL" =~ ^[0-9a-f]{40}$ ]]; then
+                  COMMIT_HASH_FULL=$(GIT_TERMINAL_PROMPT=0 git ls-remote "https://github.com/${SOURCE_REPOSITORY}.git" \
+                      "refs/heads/${SOURCE_REF}" "refs/tags/${SOURCE_REF}^{}" "refs/tags/${SOURCE_REF}" 2>/dev/null \
+                      | awk '$2 ~ /^refs\/heads\// {branch = $1} $2 ~ /\^\{\}$/ {peeled = $1} $2 ~ /^refs\/tags\// && $2 !~ /\^\{\}$/ {tag = $1} END {print (branch != "" ? branch : (peeled != "" ? peeled : tag))}' || true)
+              fi
               local COMMIT_HASH=$(echo "$COMMIT_HASH_FULL" | cut -c1-7)
 
               if [[ -z "$COMMIT_HASH" || "$COMMIT_HASH" == "null" ]]; then
