@@ -192,6 +192,8 @@ tooling:
       branches:
         - main
     leanvm-sidecar:
+      devnets:
+        pq-devnet-0: bindings-v0.16.0
       branches:
         - bindings-v0.15.0
     # Commented out in config.yaml
