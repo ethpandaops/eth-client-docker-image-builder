@@ -131,9 +131,17 @@ COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
 COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
 ```
 
-`./leanvm-sidecar/revision.sh` sets `LEANVM_REV` for a build. [`leanvm-sidecar/devnets.yaml`](./leanvm-sidecar/devnets.yaml) maps a devnet to the one leanVM release all its images run (`pq-devnet-0: bindings-v0.16.0`), and a build whose tag contains that devnet name (`pq-devnet-0`, `pq-devnet-0-minimal`, `<fork>-pq-devnet-0`) gets it, whatever the source pins; a different pin in the source is logged as a warning. Other tags get the commit the source pins (`leanvm-revision`, or the leanVM git dependency in `Cargo.toml`), and the build fails when there is neither.
+`./leanvm-sidecar/revision.sh` sets `LEANVM_REV` for a build. The `devnets` map of the `leanvm-sidecar` entry in [`branches.yaml`](./branches.yaml) gives a devnet the one leanVM release all its images run:
 
-To move a devnet to a new leanVM revision, change its line in `devnets.yaml`: the sidecar image for it is built on the next scheduled run, and the client images pick it up the next time they are built (`panda build <client> --ref <devnet branch>`, or their next commit). Revisions that no devnet uses are listed under `leanvm-sidecar` in `branches.yaml`.
+```yaml
+leanvm-sidecar:
+  devnets:
+    pq-devnet-0: bindings-v0.16.0
+```
+
+A build whose tag contains that devnet name (`pq-devnet-0`, `pq-devnet-0-minimal`, `<fork>-pq-devnet-0`) gets it, whatever the source pins; a different pin in the source is logged as a warning. Other tags get the commit the source pins (`leanvm-revision`, or the leanVM git dependency in `Cargo.toml`), and the build fails when there is neither.
+
+To move a devnet to a new leanVM release, change its line there: the sidecar image for it is built on the next scheduled run, and the client images pick it up the next time they are built (`panda build <client> --ref <devnet branch>`, or their next commit). Releases that no devnet uses are listed under `branches` of the same entry.
 
 ## Output image tags
 

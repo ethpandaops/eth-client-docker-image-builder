@@ -11,7 +11,6 @@ on:
         required: true
       ref:
         description: The leanVM release tag (or full commit SHA) to build, which is also the docker tag clients pull
-        default: bindings-v0.16.0
         type: string
         required: true
       docker_tag:

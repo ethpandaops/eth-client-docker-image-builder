@@ -116,9 +116,9 @@ def generate_config():
     # merging each group's `common_branches:` into its clients.
     branches_config = flatten_groups(raw_config)
 
-    with open('leanvm-sidecar/devnets.yaml', 'r') as f:
-        devnet_revisions = yaml.safe_load(f) or {}
-    sidecar_branches = branches_config.setdefault('leanvm-sidecar', {}).setdefault('branches', [])
+    sidecar_config = branches_config.setdefault('leanvm-sidecar', {})
+    devnet_revisions = sidecar_config.pop('devnets', None) or {}
+    sidecar_branches = sidecar_config.setdefault('branches', [])
     for revision in devnet_revisions.values():
         if revision not in sidecar_branches:
             sidecar_branches.append(revision)
@@ -370,7 +370,7 @@ def get_build_args_script(client_name, branch, target_tag=None):
     # nimbus pins the Nim versions it accepts in its config.nims and fails
     # the build on anything else, so the base image tag is resolved per ref
     if client_name in ('nimbus-eth2', 'nimbus-validator-client'):
-        return './nimbus-eth2/build-args.sh'
+        return './nimbus-eth2/nim-version.sh ./leanvm-sidecar/revision.sh'
     if client_name == 'nimbus-eth1':
         return './nimbus-eth2/nim-version.sh'
 
