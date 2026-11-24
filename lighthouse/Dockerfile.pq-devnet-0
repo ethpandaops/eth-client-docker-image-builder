@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG LEANVM_REV
 FROM ghcr.io/ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
 
@@ -12,11 +14,21 @@ ARG COMMIT_HASH
 RUN --mount=type=cache,id=pq-lighthouse-registry,target=/usr/local/cargo/registry \
     --mount=type=cache,id=pq-lighthouse-git,target=/usr/local/cargo/git \
     --mount=type=cache,id=pq-lighthouse-target-${TARGETARCH},target=/lighthouse/target \
-    test "$(git rev-parse HEAD)" = "$COMMIT_HASH" \
-    && test -r scripts/local_testnet/pq-genesis/lighthouse-pq-bn \
-    && if [ "$TARGETARCH" = arm64 ]; then export JEMALLOC_SYS_WITH_LG_PAGE=16; fi \
-    && if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
-    && make FEATURES=spec-minimal,portable
+    <<'EOF'
+set -eu
+test "$(git rev-parse HEAD)" = "$COMMIT_HASH"
+test -r scripts/local_testnet/pq-genesis/lighthouse-pq-bn
+case "$TARGETARCH" in
+    amd64) target=x86_64-unknown-linux-gnu; optimized="-C target-cpu=x86-64-v3" ;;
+    arm64) target=aarch64-unknown-linux-gnu; optimized="-C target-feature=+sha3" ;;
+    *) echo "Unsupported target architecture: $TARGETARCH" >&2; exit 1 ;;
+esac
+if [ "$TARGETARCH" = arm64 ]; then export JEMALLOC_SYS_WITH_LG_PAGE=16; fi
+CARGO_TARGET_DIR=/lighthouse/target/baseline \
+    make FEATURES=spec-minimal,portable CARGO_INSTALL_EXTRA_FLAGS="--target $target --root /out/baseline"
+RUSTFLAGS="$optimized" CARGO_TARGET_DIR=/lighthouse/target/optimized \
+    make FEATURES=spec-minimal,portable CARGO_INSTALL_EXTRA_FLAGS="--target $target --root /out/optimized"
+EOF
 
 FROM ubuntu:24.04@sha256:73b999393d07f2bf65a40373778a44dc9a6d54ad7718d29247d8ff9413c4d6a8
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libssl3t64 libstdc++6 \
@@ -26,4 +38,24 @@ LABEL org.opencontainers.image.revision=$COMMIT_HASH
 COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
 COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
 COPY --chmod=755 scripts/local_testnet/pq-genesis/lighthouse-pq-bn /usr/local/bin/lighthouse-pq-bn
-COPY --from=lighthouse-builder /usr/local/cargo/bin/lighthouse /usr/local/bin/lighthouse
+COPY --from=lighthouse-builder /out/baseline/bin/lighthouse /usr/local/lib/lighthouse/lighthouse-baseline
+COPY --from=lighthouse-builder /out/optimized/bin/lighthouse /usr/local/lib/lighthouse/lighthouse-optimized
+COPY --chmod=755 <<'EOF' /usr/local/bin/lighthouse
+#!/bin/sh
+set -eu
+
+case "$(uname -m)" in
+    x86_64) required="avx2 bmi1 bmi2 fma f16c movbe abm" ;;
+    aarch64) required="sha3" ;;
+    *) required=unsupported ;;
+esac
+cpu_flags=$(grep -m1 -E '^(flags|Features)' /proc/cpuinfo 2>/dev/null || true)
+profile=optimized
+for flag in $required; do
+    case " ${cpu_flags#*:} " in
+        *" $flag "*) ;;
+        *) profile=baseline ;;
+    esac
+done
+exec /usr/local/lib/lighthouse/lighthouse-$profile "$@"
+EOF

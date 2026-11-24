@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 # Grandine for pq-devnet-0 (mainnet preset). The leanVM sidecar comes from the
 # ethpandaops/leanvm-sidecar image of the revision Grandine pins in Cargo.toml, and Grandine's
 # grandine-pq starts it and then Grandine on its socket.
@@ -8,8 +10,22 @@ FROM rust:1.100.0-bookworm AS builder
 RUN apt-get clean && apt-get update && apt-get --yes upgrade && apt-get install --yes cmake libclang-dev
 ARG TARGETARCH
 COPY . .
-RUN if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
-    && scripts/build/release.sh
+RUN <<'EOF'
+set -eu
+case "$TARGETARCH" in
+    amd64) target=x86_64-unknown-linux-gnu; optimized="-C target-cpu=x86-64-v3" ;;
+    arm64) target=aarch64-unknown-linux-gnu; optimized="-C target-feature=+sha3" ;;
+    *) echo "Unsupported target architecture: $TARGETARCH" >&2; exit 1 ;;
+esac
+build_profile() {
+    profile=$1
+    flags=$2
+    RUSTFLAGS="$flags" CARGO_BUILD_TARGET="$target" CARGO_TARGET_DIR="/build/$profile" scripts/build/release.sh
+    install -D "/build/$profile/$target/compact/grandine" "/out/grandine-$profile"
+}
+build_profile baseline ""
+build_profile optimized "$optimized"
+EOF
 
 FROM ubuntu:latest
 RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
@@ -18,7 +34,26 @@ RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y 
   curl \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /target/compact/grandine /usr/local/bin/grandine
+COPY --from=builder /out/grandine-baseline /out/grandine-optimized /usr/local/lib/grandine/
+COPY --chmod=755 <<'EOF' /usr/local/bin/grandine
+#!/bin/sh
+set -eu
+
+case "$(uname -m)" in
+    x86_64) required="avx2 bmi1 bmi2 fma f16c movbe abm" ;;
+    aarch64) required="sha3" ;;
+    *) required=unsupported ;;
+esac
+cpu_flags=$(grep -m1 -E '^(flags|Features)' /proc/cpuinfo 2>/dev/null || true)
+profile=optimized
+for flag in $required; do
+    case " ${cpu_flags#*:} " in
+        *" $flag "*) ;;
+        *) profile=baseline ;;
+    esac
+done
+exec /usr/local/lib/grandine/grandine-$profile "$@"
+EOF
 COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
 COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
 COPY --chmod=755 scripts/pq/grandine-pq /usr/local/bin/grandine-pq

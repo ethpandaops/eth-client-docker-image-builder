@@ -19,10 +19,24 @@ COPY . .
 ARG COMMIT_HASH
 RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
     --mount=type=cache,id=pq-silver-target-${TARGETARCH},target=/silver/target \
-    if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
-    && SILVER_BUILD_COMMIT="$COMMIT_HASH" \
-      cargo build --profile release-prod --locked --features silver/metrics --bin silver --bin silver_surfer \
-    && cp target/release-prod/silver target/release-prod/silver_surfer /usr/local/bin/
+    <<'EOF'
+set -eu
+case "$TARGETARCH" in
+    amd64) target=x86_64-unknown-linux-gnu; optimized="-C target-cpu=x86-64-v3" ;;
+    arm64) target=aarch64-unknown-linux-gnu; optimized="-C target-feature=+sha3" ;;
+    *) echo "Unsupported target architecture: $TARGETARCH" >&2; exit 1 ;;
+esac
+build_profile() {
+    profile=$1
+    flags=$2
+    SILVER_BUILD_COMMIT="$COMMIT_HASH" RUSTFLAGS="$flags" CARGO_TARGET_DIR="/silver/target/$profile" \
+        cargo build --target "$target" --profile release-prod --locked --features silver/metrics --bin silver --bin silver_surfer
+    install -D "/silver/target/$profile/$target/release-prod/silver" "/out/silver-$profile"
+}
+build_profile baseline ""
+build_profile optimized "$optimized"
+install "/silver/target/baseline/$target/release-prod/silver_surfer" /out/silver_surfer
+EOF
 
 FROM debian:bookworm-slim
 RUN apt-get update \
@@ -36,7 +50,27 @@ ENV LOG_STDOUT=1
 COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
 COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
 COPY --from=sidecar /usr/local/bin/leanvm-sidecar-run /usr/local/bin/leanvm-sidecar-run
-COPY --from=build /usr/local/bin/silver /usr/local/bin/silver_surfer /usr/local/bin/
+COPY --from=build /out/silver-baseline /out/silver-optimized /usr/local/lib/silver/
+COPY --from=build /out/silver_surfer /usr/local/bin/silver_surfer
+COPY --chmod=755 <<'EOF' /usr/local/bin/silver
+#!/bin/sh
+set -eu
+
+case "$(uname -m)" in
+    x86_64) required="avx2 bmi1 bmi2 fma f16c movbe abm" ;;
+    aarch64) required="sha3" ;;
+    *) required=unsupported ;;
+esac
+cpu_flags=$(grep -m1 -E '^(flags|Features)' /proc/cpuinfo 2>/dev/null || true)
+profile=optimized
+for flag in $required; do
+    case " ${cpu_flags#*:} " in
+        *" $flag "*) ;;
+        *) profile=baseline ;;
+    esac
+done
+exec /usr/local/lib/silver/silver-$profile "$@"
+EOF
 COPY --chmod=755 <<'EOF' /usr/local/bin/silver-pq-bn
 #!/bin/sh
 exec leanvm-sidecar-run --leanvm-socket silver "$@"
