@@ -6,8 +6,10 @@ FROM ghcr.io/ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
 
 FROM rust:1.100.0-bookworm AS builder
 RUN apt-get clean && apt-get update && apt-get --yes upgrade && apt-get install --yes cmake libclang-dev
+ARG TARGETARCH
 COPY . .
-RUN scripts/build/release.sh
+RUN if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
+    && scripts/build/release.sh
 
 FROM ubuntu:latest
 RUN apt-get clean && apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
