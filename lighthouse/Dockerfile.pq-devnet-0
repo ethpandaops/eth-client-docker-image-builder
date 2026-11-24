@@ -15,6 +15,7 @@ RUN --mount=type=cache,id=pq-lighthouse-registry,target=/usr/local/cargo/registr
     test "$(git rev-parse HEAD)" = "$COMMIT_HASH" \
     && test -r scripts/local_testnet/pq-genesis/lighthouse-pq-bn \
     && if [ "$TARGETARCH" = arm64 ]; then export JEMALLOC_SYS_WITH_LG_PAGE=16; fi \
+    && if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
     && make FEATURES=spec-minimal,portable
 
 FROM ubuntu:24.04@sha256:73b999393d07f2bf65a40373778a44dc9a6d54ad7718d29247d8ff9413c4d6a8

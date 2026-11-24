@@ -19,7 +19,8 @@ COPY . .
 ARG COMMIT_HASH
 RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
     --mount=type=cache,id=pq-silver-target-${TARGETARCH},target=/silver/target \
-    SILVER_BUILD_COMMIT="$COMMIT_HASH" \
+    if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
+    && SILVER_BUILD_COMMIT="$COMMIT_HASH" \
       cargo build --profile release-prod --locked --features silver/metrics --bin silver --bin silver_surfer \
     && cp target/release-prod/silver target/release-prod/silver_surfer /usr/local/bin/
 
