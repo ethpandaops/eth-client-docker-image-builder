@@ -109,10 +109,10 @@ Branches listed under `skip_validator_client` of the `nimbus` entry in `branches
 To publish an unprefixed tag from a fork, add a `custom_configs` entry with a `repository`; it replaces the entry a branch of the same tag would generate:
 
 ```yaml
-lighthouse:
+silver:
   custom_configs:
     - name: "pq-devnet-0"
-      repository: "ethDreamer/lighthouse"
+      repository: "gattaca-com/pq-silver"
       ref: "pq-devnet-0"
       tag: "pq-devnet-0"
 ```
