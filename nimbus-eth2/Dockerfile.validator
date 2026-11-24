@@ -2,6 +2,10 @@
 # versions the source ref accepts from its config.nims. This default only
 # applies to refs that don't declare one (stable, column-syncer).
 ARG NIM_VERSION=2.2.10
+
+# PQ refs build the leanxmss_ffi rust crate while compiling beacon_chain/spec/xmss.nim
+FROM rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c AS rust
+
 FROM nimlang/nim:${NIM_VERSION} AS build
 
 SHELL ["/bin/bash", "-c"]
@@ -10,6 +14,14 @@ RUN apt-get clean && apt update \
  && apt -y install build-essential git-lfs ca-certificates
 
 RUN ldd --version ldd
+
+COPY --from=rust /usr/local/rustup /usr/local/rustup
+COPY --from=rust /usr/local/cargo /usr/local/cargo
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    CARGO_NET_GIT_FETCH_WITH_CLI=true \
+    RUSTUP_TOOLCHAIN=1.99.1 \
+    PATH=/usr/local/cargo/bin:${PATH}
 
 ADD . /root/nimbus-eth2
 
