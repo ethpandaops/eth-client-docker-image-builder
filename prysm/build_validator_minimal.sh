@@ -13,10 +13,12 @@ else
   go install github.com/bazelbuild/bazelisk@latest
 fi
 
-# Until this upstream issue (https://github.com/prysmaticlabs/prysm/issues/14703) is resolved, we
-# need to build minimal using Bazel.
-# build_method=${build_method:-go}
-build_method=bazel 
+build_method=${build_method:-go}  # Default to go if not set
+
+if [ "${build_method}" == "go" ] && [ -z "$(git ls-files '*.minimal.ssz.go' | head -n 1)" ]; then
+  echo "No minimal generated files in this source tree, building minimal with Bazel..."
+  build_method=bazel
+fi
 
 case ${build_method} in
   "go")
@@ -24,18 +26,19 @@ case ${build_method} in
     go mod tidy
 
     # Define ldflags for version information
+    version_pkg="$(awk '$1 == "module" {print $2; exit}' go.mod)/runtime/version"
     ldflags=$(cat <<-END
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
+        -X '${version_pkg}.gitCommit=$(git rev-parse HEAD)' \
+        -X '${version_pkg}.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
+        -X '${version_pkg}.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
+        -X '${version_pkg}.buildDateUnix=$(date +%s)'
 END
     )
 
     # Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
     # cryptographic operations) needs specific CPU features.
     CGO_ENABLED=1 go build \
-      -tags=blst_enabled,blst_portable \
+      -tags=blst_enabled,blst_portable,minimal \
       -ldflags "${ldflags}" \
       -o _validator ./cmd/validator
     ;;

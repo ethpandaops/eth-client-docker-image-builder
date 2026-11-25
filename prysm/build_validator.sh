@@ -21,11 +21,12 @@ case ${build_method} in
     go mod tidy
 
     # Define ldflags for version information
+    version_pkg="$(awk '$1 == "module" {print $2; exit}' go.mod)/runtime/version"
     ldflags=$(cat <<-END
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
+        -X '${version_pkg}.gitCommit=$(git rev-parse HEAD)' \
+        -X '${version_pkg}.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
+        -X '${version_pkg}.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
+        -X '${version_pkg}.buildDateUnix=$(date +%s)'
 END
     )
 
