@@ -29,6 +29,7 @@ jobs:
     outputs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
+      beacon_dockerfile: ${{ steps.dockerfile.outputs.dockerfile }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Prepare Matrix
@@ -46,6 +47,17 @@ jobs:
           repository: ${{ inputs.repository }}
           upstream_repository: offchainlabs/prysm
           docker_tag: ${{ inputs.docker_tag }}
+      - name: Resolve beacon dockerfile (prefer ./prysm/Dockerfile.beacon-<tag>)
+        id: dockerfile
+        env:
+          TARGET_TAG: ${{ steps.tag.outputs.docker_tag }}
+        run: |
+          dockerfile=./prysm/Dockerfile.beacon
+          if [ -f "./prysm/Dockerfile.beacon-$TARGET_TAG" ]; then
+            echo "Using per-tag Dockerfile: ./prysm/Dockerfile.beacon-$TARGET_TAG"
+            dockerfile="./prysm/Dockerfile.beacon-$TARGET_TAG"
+          fi
+          echo "dockerfile=$dockerfile" >> "$GITHUB_OUTPUT"
   deploy-beacon:
     permissions:
       contents: read
@@ -74,7 +86,7 @@ jobs:
           build_script: ./prysm/build_beacon.sh
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-beacon-chain
-          target_dockerfile: ./prysm/Dockerfile.beacon
+          target_dockerfile: ${{ needs.prepare.outputs.beacon_dockerfile }}
           build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
 
@@ -116,7 +128,7 @@ jobs:
           build_script: ./prysm/build_beacon_minimal.sh
           target_tag: ${{ needs.prepare.outputs.target_tag }}-minimal-${{ matrix.slug }}
           target_repository: ethpandaops/prysm-beacon-chain
-          target_dockerfile: ./prysm/Dockerfile.beacon
+          target_dockerfile: ${{ needs.prepare.outputs.beacon_dockerfile }}
           build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
 

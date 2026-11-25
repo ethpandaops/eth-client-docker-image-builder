@@ -34,6 +34,7 @@ jobs:
     outputs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
+      dockerfile: ${{ steps.dockerfile.outputs.dockerfile }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Prepare Matrix
@@ -51,6 +52,17 @@ jobs:
           repository: ${{ inputs.repository }}
           upstream_repository: sigp/lighthouse
           docker_tag: ${{ inputs.docker_tag }}
+      - name: Resolve dockerfile (prefer ./lighthouse/Dockerfile.<tag>)
+        id: dockerfile
+        env:
+          TARGET_TAG: ${{ steps.tag.outputs.docker_tag }}
+        run: |
+          dockerfile=./lighthouse/Dockerfile
+          if [ -f "./lighthouse/Dockerfile.$TARGET_TAG" ]; then
+            echo "Using per-tag Dockerfile: ./lighthouse/Dockerfile.$TARGET_TAG"
+            dockerfile="./lighthouse/Dockerfile.$TARGET_TAG"
+          fi
+          echo "dockerfile=$dockerfile" >> "$GITHUB_OUTPUT"
   deploy:
     permissions:
       contents: read
@@ -78,7 +90,7 @@ jobs:
           source_ref: ${{ inputs.ref }}
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/lighthouse
-          target_dockerfile: ./lighthouse/Dockerfile
+          target_dockerfile: ${{ needs.prepare.outputs.dockerfile }}
           build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
           build_args: ${{ inputs.build_args }}

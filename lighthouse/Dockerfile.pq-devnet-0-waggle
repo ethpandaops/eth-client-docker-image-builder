@@ -1,0 +1,29 @@
+ARG LEANVM_REV
+FROM ghcr.io/ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+
+FROM rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c AS lighthouse-builder
+RUN apt-get update && apt-get install -y --no-install-recommends clang cmake libclang-dev protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+ARG TARGETARCH
+WORKDIR /lighthouse
+COPY . .
+ARG COMMIT_HASH
+RUN --mount=type=cache,id=pq-lighthouse-registry,target=/usr/local/cargo/registry \
+    --mount=type=cache,id=pq-lighthouse-git,target=/usr/local/cargo/git \
+    --mount=type=cache,id=pq-lighthouse-target-${TARGETARCH},target=/lighthouse/target \
+    test "$(git rev-parse HEAD)" = "$COMMIT_HASH" \
+    && test -r scripts/local_testnet/pq-genesis/lighthouse-pq-bn \
+    && if [ "$TARGETARCH" = arm64 ]; then export JEMALLOC_SYS_WITH_LG_PAGE=16; fi \
+    && if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
+    && make FEATURES=spec-minimal,portable
+
+FROM ubuntu:24.04@sha256:73b999393d07f2bf65a40373778a44dc9a6d54ad7718d29247d8ff9413c4d6a8
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libssl3t64 libstdc++6 \
+    && rm -rf /var/lib/apt/lists/*
+ARG COMMIT_HASH
+LABEL org.opencontainers.image.revision=$COMMIT_HASH
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
+COPY --chmod=755 scripts/local_testnet/pq-genesis/lighthouse-pq-bn /usr/local/bin/lighthouse-pq-bn
+COPY --from=lighthouse-builder /usr/local/cargo/bin/lighthouse /usr/local/bin/lighthouse
