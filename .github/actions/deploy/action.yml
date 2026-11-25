@@ -338,6 +338,7 @@ runs:
       EOF
   # This job built every platform of this image, so it attests them all.
   - name: Mirror to Docker Hub
+    if: github.ref == 'refs/heads/master'
     uses: ./.github/actions/mirror
     with:
       tags: |
