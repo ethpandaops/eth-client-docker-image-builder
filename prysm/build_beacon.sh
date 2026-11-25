@@ -17,7 +17,7 @@ go mod tidy
 version_pkg="$(awk '$1 == "module" {print $2; exit}' go.mod)/runtime/version"
 ldflags=$(cat <<-END
     -X '${version_pkg}.gitCommit=$(git rev-parse HEAD)' \
-    -X '${version_pkg}.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
+    -X '${version_pkg}.gitTag=$(git describe --tags --abbrev=0 2>/dev/null || echo Unknown)' \
     -X '${version_pkg}.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
     -X '${version_pkg}.buildDateUnix=$(date +%s)'
 END
