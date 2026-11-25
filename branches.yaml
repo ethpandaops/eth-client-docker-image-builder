@@ -93,6 +93,11 @@ cl:
           - optional-proofs
         dknopik/lighthouse:
           - partial-columns
+      custom_configs:
+        - name: "pq-devnet-0-waggle"
+          repository: "kamilsa/lighthouse"
+          ref: "leanvm-proof-broadcast"
+          tag: "pq-devnet-0-waggle"
     lodestar:
       branches:
         - stable
