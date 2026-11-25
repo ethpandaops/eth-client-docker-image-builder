@@ -163,6 +163,7 @@ runs:
   # The platform jobs attested the images they built; this job attests only
   # the index it made from them.
   - name: Mirror to Docker Hub
+    if: github.ref == 'refs/heads/master'
     uses: ./.github/actions/mirror
     with:
       tags: |
