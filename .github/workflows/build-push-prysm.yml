@@ -24,7 +24,7 @@ on:
         options:
           - bazel
           - go
-        default: bazel
+        default: go
         required: true
       correlation_id:
         description: Optional correlation ID passed through to the run name (used by integrations)
