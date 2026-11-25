@@ -1,0 +1,44 @@
+# syntax=docker/dockerfile:1
+
+ARG LEANVM_REV
+FROM ghcr.io/ethpandaops/leanvm-sidecar:${LEANVM_REV} AS sidecar
+
+# Follows the source repository's own Dockerfile: `blst`, `hashtree-rs` and
+# `mimalloc` compile C, and both `build.rs` scripts shell out to `buf`.
+FROM rust:1.91-bookworm AS build
+ARG TARGETARCH
+ARG BUF_VERSION=1.67.0
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends clang \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL -o /usr/local/bin/buf \
+      "https://github.com/bufbuild/buf/releases/download/v${BUF_VERSION}/buf-Linux-$(uname -m)" \
+    && chmod +x /usr/local/bin/buf
+WORKDIR /silver
+COPY . .
+ARG COMMIT_HASH
+RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
+    --mount=type=cache,id=pq-silver-target-${TARGETARCH},target=/silver/target \
+    if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
+    && SILVER_BUILD_COMMIT="$COMMIT_HASH" \
+      cargo build --profile release-prod --locked --features silver/metrics,silver/seacast --bin silver --bin silver_surfer \
+    && cp target/release-prod/silver target/release-prod/silver_surfer /usr/local/bin/
+
+FROM debian:bookworm-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates libstdc++6 \
+    && rm -rf /var/lib/apt/lists/*
+ARG COMMIT_HASH
+LABEL org.opencontainers.image.revision=$COMMIT_HASH
+# Without this the tracing subscriber writes to rolling files under LOG_PATH,
+# where `docker logs` never sees them.
+ENV LOG_STDOUT=1
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar /usr/local/bin/leanvm-sidecar
+COPY --from=sidecar /usr/local/lib/leanvm-sidecar /usr/local/lib/leanvm-sidecar
+COPY --from=sidecar /usr/local/bin/leanvm-sidecar-run /usr/local/bin/leanvm-sidecar-run
+COPY --from=build /usr/local/bin/silver /usr/local/bin/silver_surfer /usr/local/bin/
+COPY --chmod=755 <<'EOF' /usr/local/bin/silver-pq-bn
+#!/bin/sh
+exec leanvm-sidecar-run --leanvm-socket silver "$@"
+EOF
+ENTRYPOINT ["/usr/local/bin/silver-pq-bn"]
