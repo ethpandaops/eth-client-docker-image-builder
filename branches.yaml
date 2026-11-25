@@ -115,6 +115,11 @@ cl:
           - prototype/ssz-over-http
         sukunrt/prysm:
           - decoupled-consensus
+      custom_configs:
+        - name: "pq-devnet-0-waggle"
+          repository: "cskiraly/prysm"
+          ref: "seacast-devnet-clean"
+          tag: "pq-devnet-0-waggle"
     silver:
       skip_common: true
       branches:
@@ -124,6 +129,10 @@ cl:
           repository: "gattaca-com/pq-silver"
           ref: "pq-devnet-0"
           tag: "pq-devnet-0"
+        - name: "pq-devnet-0-waggle"
+          repository: "gattaca-com/pq-silver"
+          ref: "seacast-gossip"
+          tag: "pq-devnet-0-waggle"
     teku:
       branches:
         - master
