@@ -18,14 +18,6 @@ on:
         description: Override target docker tag (defaults to the above source ref if left blank)
         type: string
         required: false
-      build_method:
-        description: Build method to use (go or bazel)
-        type: choice
-        options:
-          - bazel
-          - go
-        default: go
-        required: true
       correlation_id:
         description: Optional correlation ID passed through to the run name (used by integrations)
         type: string
@@ -85,12 +77,10 @@ jobs:
           target_dockerfile: ./prysm/Dockerfile.beacon
           build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
-          build_method: ${{ inputs.build_method }}
 
           IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
           HARBOR_USERNAME: "${{ vars.HARBOR_USERNAME }}"
           HARBOR_PASSWORD: "${{ secrets.HARBOR_PASSWORD }}"
           harbor_registry: ${{ vars.HARBOR_REGISTRY }}
@@ -129,12 +119,10 @@ jobs:
           target_dockerfile: ./prysm/Dockerfile.beacon
           build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
-          build_method: ${{ inputs.build_method }}
 
           IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
@@ -169,12 +157,10 @@ jobs:
           target_repository: ethpandaops/prysm-validator
           target_dockerfile: ./prysm/Dockerfile.validator
           platform: ${{ matrix.platform }}
-          build_method: ${{ inputs.build_method }}
 
           IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT
@@ -209,12 +195,10 @@ jobs:
           target_repository: ethpandaops/prysm-validator
           target_dockerfile: ./prysm/Dockerfile.validator
           platform: ${{ matrix.platform }}
-          build_method: ${{ inputs.build_method }}
 
           IMAGE_MIRROR_URL: "${{ secrets.IMAGE_MIRROR_URL }}"
           MACOS_PASSWORD: "${{ secrets.MACOS_PASSWORD }}"
           GOPROXY: "${{ vars.GOPROXY }}"
-          BAZEL_REMOTE_CACHE_PASSWORD: "${{ secrets.BAZEL_REMOTE_CACHE_PASSWORD }}"
       - name: Set job output
         id: set_output
         run: echo "git_commit_hash=${{ steps.deploy.outputs.git_commit_hash }}" >> $GITHUB_OUTPUT

@@ -108,13 +108,8 @@ cl:
     prysm:
       branches:
         - develop
-        - master
         - optional-proofs
       alt_repos:          
-        developeruche/prysm:
-          - poc/optional-proofs
-        bharath-123/prysm:
-          - buildoor-apis
         syjn99/prysm:
           - prototype/ssz-over-http
         sukunrt/prysm:

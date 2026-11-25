@@ -5,72 +5,30 @@ cd ${SCRIPT_DIR}/../source
 OS_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 if [ "${OS_NAME}" == "darwin" ]; then
   /opt/homebrew/bin/brew install go
-  /opt/homebrew/bin/go install github.com/bazelbuild/bazelisk@latest
 else
   sudo apt-get update
   sudo apt-get upgrade -y
-  sudo apt install -y ca-certificates python3
-  go install github.com/bazelbuild/bazelisk@latest
+  sudo apt install -y ca-certificates
 fi
 
-build_method=${build_method:-go}  # Default to go if not set
+go mod tidy
 
-case ${build_method} in
-  "go")
-    echo "Building with Go..."
-    go mod tidy
-
-    # Define ldflags for version information
-    ldflags=$(cat <<-END
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitCommit=$(git rev-parse HEAD)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.gitTag=$(git describe --tags 2>/dev/null || echo Unknown)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
-        -X 'github.com/offchainlabs/prysm/v5/runtime/version.buildDateUnix=$(date +%s)'
+# Define ldflags for version information
+version_pkg="$(awk '$1 == "module" {print $2; exit}' go.mod)/runtime/version"
+ldflags=$(cat <<-END
+    -X '${version_pkg}.gitCommit=$(git rev-parse HEAD)' \
+    -X '${version_pkg}.gitTag=$(git describe --tags --abbrev=0 2>/dev/null || echo Unknown)' \
+    -X '${version_pkg}.buildDate=$(date -u +%Y-%m-%d\ %H:%M:%S%:z)' \
+    -X '${version_pkg}.buildDateUnix=$(date +%s)'
 END
-    )
+)
 
-    # Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
-    # cryptographic operations) needs specific CPU features.
-    CGO_ENABLED=1 go build \
-      -tags=blst_enabled,blst_portable \
-      -ldflags "${ldflags}" \
-      -o _validator ./cmd/validator
-    ;;
-  "bazel")
-    echo "Building with Bazel..."
-    # Branches carrying the //tools:disable_progressive_merkleization build setting
-    # (glamsterdam-devnet-7+) gate progressive SSZ merkleization off in their
-    # .bazelrc for spectest compatibility; devnet images need it enabled.
-    extra_bazel_flags=""
-    if grep -qs "disable_progressive_merkleization" tools/BUILD.bazel; then
-      extra_bazel_flags="--//tools:disable_progressive_merkleization=false"
-    fi
-    # Reads from the remote cache are anonymous; uploads need the cache credential
-    # (BAZEL_REMOTE_CACHE_PASSWORD, a CI secret). Without it, only read from the cache.
-    remote_cache_host="bazel-remote-cache-grpc.primary.production.platform.ethpandaops.io:443"
-    if [ -n "${BAZEL_REMOTE_CACHE_PASSWORD}" ]; then
-      remote_cache_flags="--remote_cache=grpcs://ci:${BAZEL_REMOTE_CACHE_PASSWORD}@${remote_cache_host}"
-    else
-      remote_cache_flags="--remote_cache=grpcs://${remote_cache_host} --remote_upload_local_results=false"
-    fi
-    # Try with remote cache first
-    if ! $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags} ${remote_cache_flags}; then
-      echo "Build failed with remote cache, trying without remote cache..."
-      # Try without remote cache to avoid cache corruption issues
-      if ! $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags}; then
-        echo "Build still failing, cleaning local Bazel cache and retrying..."
-        # Clean the local Bazel cache and try once more
-        $HOME/go/bin/bazelisk clean --expunge
-        $HOME/go/bin/bazelisk build //cmd/validator:validator --config=release --define pgo_enabled=0 --enable_bzlmod=false ${extra_bazel_flags}
-      fi
-    fi
-    mv bazel-bin/cmd/validator/validator_/validator _validator
-    ;;
-  *)
-    echo "Invalid build_method value: ${build_method}. Must be 'go' or 'bazel'"
-    exit 1
-    ;;
-esac
+# Build with blst_enabled and blst_portable to support both amd64 and arm64. The BLST library (used for
+# cryptographic operations) needs specific CPU features.
+CGO_ENABLED=1 go build \
+  -tags=blst_enabled,blst_portable \
+  -ldflags "${ldflags}" \
+  -o _validator ./cmd/validator
 
 cp ${SCRIPT_DIR}/entrypoint.sh entrypoint.sh
 

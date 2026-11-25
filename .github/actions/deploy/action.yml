@@ -59,11 +59,6 @@ inputs:
     description: The platform to build for
     type: string
     required: true
-  build_method:
-    description: Build method to use (go or bazel)
-    type: string
-    default: go
-    required: false
   harbor_registry:
     description: Harbor registry to push the images to
     type: string
@@ -75,9 +70,6 @@ inputs:
   MACOS_PASSWORD:
     required: true
   GOPROXY:
-    required: false
-  BAZEL_REMOTE_CACHE_PASSWORD:
-    description: Credential for uploads to the Bazel remote cache. Without it, builds only read from the cache.
     required: false
   HARBOR_USERNAME:
     required: true
@@ -257,8 +249,6 @@ runs:
       source_git_commit_hash: ${{ steps.git_commit_hash.outputs.git_commit_hash }}
       source_git_commit_hash_full: ${{ steps.git_commit_hash_full.outputs.git_commit_hash_full }}
       GOPROXY: ${{ inputs.GOPROXY }}
-      BAZEL_REMOTE_CACHE_PASSWORD: ${{ inputs.BAZEL_REMOTE_CACHE_PASSWORD }}
-      build_method: ${{ inputs.build_method }}
     run: |
       ${{ inputs.build_script }}
   - name: Image digest & tags (build script)
