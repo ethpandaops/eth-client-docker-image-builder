@@ -126,14 +126,10 @@ cl:
           ref: "seacast-devnet-clean"
           tag: "pq-devnet-0-seacast"
     silver:
-      skip_common: true
+      common_repository: "gattaca-com/pq-silver"
       branches:
         - main
       custom_configs:
-        - name: "pq-devnet-0"
-          repository: "gattaca-com/pq-silver"
-          ref: "pq-devnet-0"
-          tag: "pq-devnet-0"
         - name: "pq-devnet-0-seacast"
           repository: "gattaca-com/pq-silver"
           ref: "seacast-gossip"
