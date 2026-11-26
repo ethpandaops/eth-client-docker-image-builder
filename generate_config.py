@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import fnmatch
 import yaml
 import os
 import sys
@@ -86,7 +87,9 @@ def flatten_groups(raw_config):
 
     Top-level keys are groups (el, cl, mev, zk, tooling, other, lean). Each group
     may declare `common_branches:` which are merged into every client's branches
-    under its `clients:` map. A client can set `skip_common: true` to opt out.
+    under its `clients:` map. A client can set `skip_common: true` to opt out, or
+    `common_repository:` to build the common branches matching `common_branches_match:`
+    (a glob, default `*`) from another repository.
     """
     flat = {}
     for group_name, group_data in raw_config.items():
@@ -97,7 +100,16 @@ def flatten_groups(raw_config):
         for client_name, client_config in clients.items():
             merged = dict(client_config) if client_config else {}
             skip_common = merged.pop('skip_common', False)
-            if common_branches and not skip_common:
+            common_repository = merged.pop('common_repository', None)
+            common_match = merged.pop('common_branches_match', '*')
+            if common_branches and not skip_common and common_repository:
+                custom = list(merged.get('custom_configs', []) or [])
+                tags = {c['tag'] for c in custom}
+                for cb in common_branches:
+                    if cb not in tags and fnmatch.fnmatch(cb, common_match):
+                        custom.append({'name': cb, 'repository': common_repository, 'ref': cb, 'tag': cb})
+                merged['custom_configs'] = custom
+            elif common_branches and not skip_common:
                 existing = list(merged.get('branches', []) or [])
                 for cb in common_branches:
                     if cb not in existing:
@@ -277,14 +289,25 @@ def extract_client_name(config):
     """Extract the client name from a config"""
     return config['target']['repository'].split('/')[1]
 
-def get_nimbus_tagged_dockerfile(client_name, target_tag):
+def longest_prefix_dockerfile(base, target_tag):
+    """Return `<base>-<suffix>` for the longest suffix that equals the tag or prefixes it at a `-`."""
     if not target_tag:
         return None
-    base_tag = target_tag.removesuffix('-minimal')
-    tagged_path = f"./nimbus-eth2/Dockerfile.{NIMBUS_KINDS[client_name]}-{base_tag}"
-    if os.path.exists(tagged_path):
-        return tagged_path
-    return None
+    tag = target_tag.removesuffix('-minimal')
+    directory, name = os.path.split(base)
+    best = None
+    for entry in os.listdir(directory):
+        if not entry.startswith(name + '-') or entry.endswith('.dockerignore'):
+            continue
+        suffix = entry[len(name) + 1:]
+        if suffix == 'minimal':
+            continue
+        if (tag == suffix or tag.startswith(suffix + '-')) and (best is None or len(suffix) > len(best)):
+            best = suffix
+    return f"{base}-{best}" if best else None
+
+def get_nimbus_tagged_dockerfile(client_name, target_tag):
+    return longest_prefix_dockerfile(f"./nimbus-eth2/Dockerfile.{NIMBUS_KINDS[client_name]}", target_tag)
 
 def get_dockerfile_path(client_name, target_tag=None):
     """Determine the dockerfile path based on client name and tag conventions"""
@@ -300,11 +323,7 @@ def get_dockerfile_path(client_name, target_tag=None):
             return f"./nimbus-eth2/Dockerfile.{kind}-minimal"
         return f"./nimbus-eth2/Dockerfile.{kind}"
     elif client_name == 'prysm-beacon-chain':
-        if target_tag:
-            tagged_path = f"./prysm/Dockerfile.beacon-{target_tag.removesuffix('-minimal')}"
-            if os.path.exists(tagged_path):
-                return tagged_path
-        return f"./prysm/Dockerfile.beacon"
+        return longest_prefix_dockerfile("./prysm/Dockerfile.beacon", target_tag) or "./prysm/Dockerfile.beacon"
     elif client_name == 'prysm-validator':
         return f"./prysm/Dockerfile.validator"
     elif client_name == 'grandine':
