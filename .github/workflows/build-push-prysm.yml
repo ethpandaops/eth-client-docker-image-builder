@@ -47,15 +47,23 @@ jobs:
           repository: ${{ inputs.repository }}
           upstream_repository: offchainlabs/prysm
           docker_tag: ${{ inputs.docker_tag }}
-      - name: Resolve beacon dockerfile (prefer ./prysm/Dockerfile.beacon-<tag>)
+      - name: Resolve beacon dockerfile (longest ./prysm/Dockerfile.beacon-<prefix> of the tag)
         id: dockerfile
         env:
           TARGET_TAG: ${{ steps.tag.outputs.docker_tag }}
         run: |
           dockerfile=./prysm/Dockerfile.beacon
-          if [ -f "./prysm/Dockerfile.beacon-$TARGET_TAG" ]; then
-            echo "Using per-tag Dockerfile: ./prysm/Dockerfile.beacon-$TARGET_TAG"
-            dockerfile="./prysm/Dockerfile.beacon-$TARGET_TAG"
+          match=
+          for candidate in ./prysm/Dockerfile.beacon-*; do
+            suffix="${candidate#./prysm/Dockerfile.beacon-}"
+            case "$TARGET_TAG" in
+              "$suffix"|"$suffix"-*)
+                if [ "${#suffix}" -gt "${#match}" ]; then match="$suffix"; fi ;;
+            esac
+          done
+          if [ -n "$match" ]; then
+            echo "Using per-tag Dockerfile: ./prysm/Dockerfile.beacon-$match"
+            dockerfile="./prysm/Dockerfile.beacon-$match"
           fi
           echo "dockerfile=$dockerfile" >> "$GITHUB_OUTPUT"
   deploy-beacon:

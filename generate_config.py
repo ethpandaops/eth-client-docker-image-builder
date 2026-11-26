@@ -86,7 +86,8 @@ def flatten_groups(raw_config):
 
     Top-level keys are groups (el, cl, mev, zk, tooling, other, lean). Each group
     may declare `common_branches:` which are merged into every client's branches
-    under its `clients:` map. A client can set `skip_common: true` to opt out.
+    under its `clients:` map. A client can set `skip_common: true` to opt out, or
+    `common_repository:` to build the common branches from another repository.
     """
     flat = {}
     for group_name, group_data in raw_config.items():
@@ -97,7 +98,15 @@ def flatten_groups(raw_config):
         for client_name, client_config in clients.items():
             merged = dict(client_config) if client_config else {}
             skip_common = merged.pop('skip_common', False)
-            if common_branches and not skip_common:
+            common_repository = merged.pop('common_repository', None)
+            if common_branches and not skip_common and common_repository:
+                custom = list(merged.get('custom_configs', []) or [])
+                tags = {c['tag'] for c in custom}
+                for cb in common_branches:
+                    if cb not in tags:
+                        custom.append({'name': cb, 'repository': common_repository, 'ref': cb, 'tag': cb})
+                merged['custom_configs'] = custom
+            elif common_branches and not skip_common:
                 existing = list(merged.get('branches', []) or [])
                 for cb in common_branches:
                     if cb not in existing:
