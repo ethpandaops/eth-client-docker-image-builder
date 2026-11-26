@@ -138,6 +138,10 @@ cl:
           repository: "gattaca-com/pq-silver"
           ref: "seacast-gossip"
           tag: "pq-devnet-0-seacast"
+        - name: "pq-devnet-1"
+          repository: "gattaca-com/pq-silver"
+          ref: "pq-devnet-1"
+          tag: "pq-devnet-1"
     teku:
       branches:
         - master
