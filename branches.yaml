@@ -127,6 +127,7 @@ cl:
           tag: "pq-devnet-0-seacast"
     silver:
       common_repository: "gattaca-com/pq-silver"
+      common_branches_match: "pq-*"
       branches:
         - main
       custom_configs:
