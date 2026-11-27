@@ -289,22 +289,22 @@ def extract_client_name(config):
     """Extract the client name from a config"""
     return config['target']['repository'].split('/')[1]
 
-def longest_prefix_dockerfile(base, target_tag):
-    """Return `<base>-<suffix>` for the longest suffix that equals the tag or prefixes it at a `-`."""
+def longest_prefix_dockerfile(base, target_tag, sep='-'):
+    """Return `<base><sep><suffix>` for the longest suffix that equals the tag or prefixes it at a `-`."""
     if not target_tag:
         return None
     tag = target_tag.removesuffix('-minimal')
     directory, name = os.path.split(base)
     best = None
     for entry in os.listdir(directory):
-        if not entry.startswith(name + '-') or entry.endswith('.dockerignore'):
+        if not entry.startswith(name + sep) or entry.endswith('.dockerignore'):
             continue
-        suffix = entry[len(name) + 1:]
+        suffix = entry[len(name) + len(sep):]
         if suffix == 'minimal':
             continue
         if (tag == suffix or tag.startswith(suffix + '-')) and (best is None or len(suffix) > len(best)):
             best = suffix
-    return f"{base}-{best}" if best else None
+    return f"{base}{sep}{best}" if best else None
 
 def get_nimbus_tagged_dockerfile(client_name, target_tag):
     return longest_prefix_dockerfile(f"./nimbus-eth2/Dockerfile.{NIMBUS_KINDS[client_name]}", target_tag)
@@ -324,6 +324,8 @@ def get_dockerfile_path(client_name, target_tag=None):
         return f"./nimbus-eth2/Dockerfile.{kind}"
     elif client_name == 'prysm-beacon-chain':
         return longest_prefix_dockerfile("./prysm/Dockerfile.beacon", target_tag) or "./prysm/Dockerfile.beacon"
+    elif client_name == 'silver':
+        return longest_prefix_dockerfile("./silver/Dockerfile", target_tag, sep='.')
     elif client_name == 'prysm-validator':
         return f"./prysm/Dockerfile.validator"
     elif client_name == 'grandine':
