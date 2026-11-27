@@ -30,7 +30,7 @@ RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
       cargo build --profile release-prod --locked --features "$features" $bin_args; \
     fi && \
     mkdir -p /out && \
-    for b in $bins; do cp "target/release-prod/$b" /out/; done
+    cp $(for b in $bins; do printf 'target/release-prod/%s ' "$b"; done) /out/
 
 FROM debian:bookworm-slim
 RUN apt-get update && \
