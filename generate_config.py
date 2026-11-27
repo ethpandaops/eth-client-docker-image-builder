@@ -373,8 +373,6 @@ def get_build_script(client_name, branch, target_tag=None):
         if target_tag and 'minimal' in target_tag:
             return f"./prysm/build_beacon_minimal.sh"
         return f"./prysm/build_beacon.sh"
-    elif client_name == 'silver':
-        return longest_prefix_dockerfile("./silver/Dockerfile", target_tag, sep='.')
     elif client_name == 'prysm-validator':
         if target_tag and 'minimal' in target_tag:
             return f"./prysm/build_validator_minimal.sh"

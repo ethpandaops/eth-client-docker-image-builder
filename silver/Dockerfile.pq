@@ -13,10 +13,11 @@ RUN apt-get update && \
 WORKDIR /silver
 COPY . .
 
-ARG SILVER_BUILD_COMMIT
+ARG COMMIT_HASH
 RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
     --mount=type=cache,id=pq-silver-git,target=/usr/local/cargo/git \
     --mount=type=cache,id=pq-silver-target-${TARGETARCH},target=/silver/target \
+    export SILVER_BUILD_COMMIT="$COMMIT_HASH" && \
     if [ "$TARGETARCH" = amd64 ]; then \
       scripts/build-prod.sh --features silver/metrics --bin silver --bin silver_surfer; \
     else \
