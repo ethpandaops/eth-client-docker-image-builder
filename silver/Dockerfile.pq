@@ -21,17 +21,21 @@ RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
     export SILVER_BUILD_COMMIT="$COMMIT_HASH" && \
     features=silver/metrics && \
     if [ "$PRESET" = minimal ]; then features="$features,silver/minimal"; fi && \
+    bins="silver silver_surfer" && \
+    if [ -d crates/vc ]; then bins="$bins silver-vc"; fi && \
+    bin_args=$(for b in $bins; do printf -- '--bin %s ' "$b"; done) && \
     if [ "$TARGETARCH" = amd64 ]; then \
-      scripts/build-prod.sh --features "$features" --bin silver --bin silver_surfer; \
+      scripts/build-prod.sh --features "$features" $bin_args; \
     else \
-      cargo build --profile release-prod --locked --features "$features" --bin silver --bin silver_surfer; \
+      cargo build --profile release-prod --locked --features "$features" $bin_args; \
     fi && \
-    cp target/release-prod/silver target/release-prod/silver_surfer /usr/local/bin/
+    mkdir -p /out && \
+    for b in $bins; do cp "target/release-prod/$b" /out/; done
 
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 ENV LOG_STDOUT=1
-COPY --from=builder /usr/local/bin/silver /usr/local/bin/silver_surfer /usr/local/bin/
+COPY --from=builder /out/ /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/silver"]
