@@ -21,16 +21,21 @@ RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
     export SILVER_BUILD_COMMIT="$COMMIT_HASH" && \
     features=silver/metrics && \
     if [ "$PRESET" = minimal ]; then features="$features,silver/minimal"; fi && \
-    bins="silver silver_surfer" && \
-    if [ -d crates/vc ]; then bins="$bins silver-vc"; fi && \
-    bin_args=$(for b in $bins; do printf -- '--bin %s ' "$b"; done) && \
     if [ "$TARGETARCH" = amd64 ]; then \
-      scripts/build-prod.sh --features "$features" $bin_args; \
+      build="scripts/build-prod.sh --features $features"; \
     else \
-      cargo build --profile release-prod --locked --features "$features" $bin_args; \
+      build="cargo build --profile release-prod --locked --features $features"; \
     fi && \
+    $build --bin silver --bin silver_surfer && \
     mkdir -p /out && \
-    cp $(for b in $bins; do printf 'target/release-prod/%s ' "$b"; done) /out/
+    cp target/release-prod/silver target/release-prod/silver_surfer /out/ && \
+    if [ -d crates/vc ]; then \
+      if $build --bin silver-vc; then \
+        cp target/release-prod/silver-vc /out/; \
+      else \
+        echo "warning: silver-vc failed to build, shipping the image without it" >&2; \
+      fi; \
+    fi
 
 FROM debian:bookworm-slim
 RUN apt-get update && \
