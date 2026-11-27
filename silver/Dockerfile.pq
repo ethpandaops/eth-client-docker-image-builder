@@ -14,14 +14,17 @@ WORKDIR /silver
 COPY . .
 
 ARG COMMIT_HASH
+ARG PRESET=mainnet
 RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
     --mount=type=cache,id=pq-silver-git,target=/usr/local/cargo/git \
-    --mount=type=cache,id=pq-silver-target-${TARGETARCH},target=/silver/target \
+    --mount=type=cache,id=pq-silver-target-${TARGETARCH}-${PRESET},target=/silver/target \
     export SILVER_BUILD_COMMIT="$COMMIT_HASH" && \
+    features=silver/metrics && \
+    if [ "$PRESET" = minimal ]; then features="$features,silver/minimal"; fi && \
     if [ "$TARGETARCH" = amd64 ]; then \
-      scripts/build-prod.sh --features silver/metrics --bin silver --bin silver_surfer; \
+      scripts/build-prod.sh --features "$features" --bin silver --bin silver_surfer; \
     else \
-      cargo build --profile release-prod --locked --features silver/metrics --bin silver --bin silver_surfer; \
+      cargo build --profile release-prod --locked --features "$features" --bin silver --bin silver_surfer; \
     fi && \
     cp target/release-prod/silver target/release-prod/silver_surfer /usr/local/bin/
 

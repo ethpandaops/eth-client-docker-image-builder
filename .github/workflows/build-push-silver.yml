@@ -30,6 +30,7 @@ jobs:
       platforms: ${{ steps.setup.outputs.platforms }}
       target_tag: ${{ steps.tag.outputs.docker_tag }}
       dockerfile: ${{ steps.dockerfile.outputs.dockerfile }}
+      build_args: ${{ steps.dockerfile.outputs.build_args }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Prepare Matrix
@@ -53,11 +54,14 @@ jobs:
           TARGET_TAG: ${{ steps.tag.outputs.docker_tag }}
         run: |
           dockerfile=./source/Dockerfile
+          build_args=
+          tag="${TARGET_TAG%-minimal}"
+          if [ "$tag" != "$TARGET_TAG" ]; then build_args=PRESET=minimal; fi
           match=
           for candidate in ./silver/Dockerfile.*; do
             suffix="${candidate#./silver/Dockerfile.}"
             case "$suffix" in *.dockerignore) continue ;; esac
-            case "$TARGET_TAG" in
+            case "$tag" in
               "$suffix"|"$suffix"-*)
                 if [ "${#suffix}" -gt "${#match}" ]; then match="$suffix"; fi ;;
             esac
@@ -67,6 +71,7 @@ jobs:
             dockerfile="./silver/Dockerfile.$match"
           fi
           echo "dockerfile=$dockerfile" >> "$GITHUB_OUTPUT"
+          echo "build_args=$build_args" >> "$GITHUB_OUTPUT"
   deploy:
     permissions:
       contents: read
@@ -95,6 +100,7 @@ jobs:
           target_tag: ${{ needs.prepare.outputs.target_tag }}-${{ matrix.slug }}
           target_repository: ethpandaops/silver
           target_dockerfile: ${{ needs.prepare.outputs.dockerfile }}
+          build_args: ${{ needs.prepare.outputs.build_args }}
           build_args_script: ./leanvm-sidecar/revision.sh
           platform: ${{ matrix.platform }}
 

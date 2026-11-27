@@ -65,7 +65,8 @@ MINIMAL_VARIANTS = [
     'prysm-beacon-chain',
     'prysm-validator',
     'nimbus-eth2',
-    'nimbus-validator-client'
+    'nimbus-validator-client',
+    'silver'
 ]
 
 # Clients that need to have sentry builds created automatically
@@ -169,6 +170,8 @@ def generate_config():
         # Get default repository for this client
         default_repo = DEFAULT_REPOS.get(client_name, f"ethpandaops/{client_name}")
 
+        skip_minimal = set(client_config.get('skip_minimal', []) or [])
+
         # Process main branches
         if 'branches' in client_config:
             for branch_spec in client_config['branches']:
@@ -183,7 +186,7 @@ def generate_config():
                     process_branch(client_name, default_repo, branch_spec, safe_branch_name, config_list)
 
                     # Auto-generate minimal builds if needed
-                    if client_name in MINIMAL_VARIANTS:
+                    if client_name in MINIMAL_VARIANTS and branch_spec not in skip_minimal:
                         process_branch(client_name, default_repo, branch_spec, f"{safe_branch_name}-minimal", config_list)
 
                     # Auto-generate sentry builds if needed
@@ -224,11 +227,12 @@ def generate_config():
                         process_branch(client_name, alt_repo, branch_spec, target_tag, config_list)
 
                         # Auto-generate minimal builds for alt repos too
-                        if client_name in MINIMAL_VARIANTS:
+                        if client_name in MINIMAL_VARIANTS and branch_spec not in skip_minimal:
                             process_branch(client_name, alt_repo, branch_spec, f"{prefix}-{safe_branch_name}-minimal", config_list)
 
         # Process custom configurations if they exist
         if 'custom_configs' in client_config:
+            custom_tags = {c['tag'] for c in client_config['custom_configs']}
             for custom_config in client_config['custom_configs']:
                 # Extract required fields
                 name = custom_config['name']
@@ -245,6 +249,15 @@ def generate_config():
                     if not (c['target']['repository'] == f'ethpandaops/{client_name}' and c['target']['tag'] == tag)
                 ]
                 process_branch_custom(client_name, repository, ref, tag, config_list, source_patch)
+
+                minimal_tag = f"{tag}-minimal"
+                if (client_name in MINIMAL_VARIANTS and not tag.endswith('-minimal')
+                        and minimal_tag not in custom_tags and tag not in skip_minimal):
+                    config_list[:] = [
+                        c for c in config_list
+                        if not (c['target']['repository'] == f'ethpandaops/{client_name}' and c['target']['tag'] == minimal_tag)
+                    ]
+                    process_branch_custom(client_name, repository, ref, minimal_tag, config_list, source_patch)
 
     # Sort configs by client name for better readability
     config_list.sort(key=lambda x: extract_client_name(x))
@@ -433,6 +446,8 @@ def get_build_args(client_name, source_repo, branch, target_tag):
         return 'PRESET=minimal' if target_tag.endswith('-minimal') else None
     elif client_name == 'mev-rs' and 'minimal' in target_tag:
         return 'FEATURES=minimal-preset'
+    elif client_name == 'silver' and target_tag.endswith('-minimal'):
+        return 'PRESET=minimal'
     elif client_name == 'reth-rbuilder':
         return 'RBUILDER_BIN=reth-rbuilder'
 
