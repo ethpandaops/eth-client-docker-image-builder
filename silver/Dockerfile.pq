@@ -22,16 +22,25 @@ RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
     features=silver/metrics && \
     if [ "$PRESET" = minimal ]; then features="$features,silver/minimal"; fi && \
     if [ "$TARGETARCH" = amd64 ]; then \
-      scripts/build-prod.sh --features "$features" --bin silver --bin silver_surfer; \
+      build="scripts/build-prod.sh --features $features"; \
     else \
-      cargo build --profile release-prod --locked --features "$features" --bin silver --bin silver_surfer; \
+      build="cargo build --profile release-prod --locked --features $features"; \
     fi && \
-    cp target/release-prod/silver target/release-prod/silver_surfer /usr/local/bin/
+    $build --bin silver --bin silver_surfer && \
+    mkdir -p /out && \
+    cp target/release-prod/silver target/release-prod/silver_surfer /out/ && \
+    if [ -d crates/vc ]; then \
+      if $build --bin silver-vc; then \
+        cp target/release-prod/silver-vc /out/; \
+      else \
+        echo "warning: silver-vc failed to build, shipping the image without it" >&2; \
+      fi; \
+    fi
 
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 ENV LOG_STDOUT=1
-COPY --from=builder /usr/local/bin/silver /usr/local/bin/silver_surfer /usr/local/bin/
+COPY --from=builder /out/ /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/silver"]
