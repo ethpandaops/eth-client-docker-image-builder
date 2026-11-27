@@ -10,6 +10,10 @@
 # Each top-level key is a group (el, cl, mev, zk, tooling, other, lean).
 # A group's `common_branches:` list is merged into every client in that group
 # (set `skip_common: true` on a client to opt out).
+#
+# Clients with a compile-time preset (grandine, mev-rs, nimbus, prysm, silver)
+# also get a `<tag>-minimal` build of every branch and custom config; list
+# branches or custom tags under `skip_minimal:` to opt them out.
 
 # ============================================================
 # Execution Layer (EL)
@@ -128,6 +132,8 @@ cl:
     silver:
       common_repository: "gattaca-com/pq-silver"
       common_branches_match: "pq-*"
+      skip_minimal:
+        - main
       branches:
         - main
       custom_configs:

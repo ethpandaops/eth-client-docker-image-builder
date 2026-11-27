@@ -17,11 +17,14 @@ RUN apt-get update \
 WORKDIR /silver
 COPY . .
 ARG COMMIT_HASH
+ARG PRESET=mainnet
 RUN --mount=type=cache,id=pq-silver-registry,target=/usr/local/cargo/registry \
-    --mount=type=cache,id=pq-silver-target-${TARGETARCH},target=/silver/target \
+    --mount=type=cache,id=pq-silver-target-${TARGETARCH}-${PRESET},target=/silver/target \
     if [ "$TARGETARCH" = amd64 ]; then export RUSTFLAGS="-C target-cpu=x86-64-v3"; fi \
+    && features=silver/metrics \
+    && if [ "$PRESET" = minimal ]; then features="$features,silver/minimal"; fi \
     && SILVER_BUILD_COMMIT="$COMMIT_HASH" \
-      cargo build --profile release-prod --locked --features silver/metrics --bin silver --bin silver_surfer \
+      cargo build --profile release-prod --locked --features "$features" --bin silver --bin silver_surfer \
     && cp target/release-prod/silver target/release-prod/silver_surfer /usr/local/bin/
 
 FROM debian:bookworm-slim
