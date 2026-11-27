@@ -47,15 +47,24 @@ jobs:
           repository: ${{ inputs.repository }}
           upstream_repository: gattaca-com/silver
           docker_tag: ${{ inputs.docker_tag }}
-      - name: Resolve dockerfile (prefer ./silver/Dockerfile.<tag>)
+      - name: Resolve dockerfile (longest ./silver/Dockerfile.<prefix> of the tag)
         id: dockerfile
         env:
           TARGET_TAG: ${{ steps.tag.outputs.docker_tag }}
         run: |
           dockerfile=./source/Dockerfile
-          if [ -f "./silver/Dockerfile.$TARGET_TAG" ]; then
-            echo "Using per-tag Dockerfile: ./silver/Dockerfile.$TARGET_TAG"
-            dockerfile="./silver/Dockerfile.$TARGET_TAG"
+          match=
+          for candidate in ./silver/Dockerfile.*; do
+            suffix="${candidate#./silver/Dockerfile.}"
+            case "$suffix" in *.dockerignore) continue ;; esac
+            case "$TARGET_TAG" in
+              "$suffix"|"$suffix"-*)
+                if [ "${#suffix}" -gt "${#match}" ]; then match="$suffix"; fi ;;
+            esac
+          done
+          if [ -n "$match" ]; then
+            echo "Using per-tag Dockerfile: ./silver/Dockerfile.$match"
+            dockerfile="./silver/Dockerfile.$match"
           fi
           echo "dockerfile=$dockerfile" >> "$GITHUB_OUTPUT"
   deploy:
